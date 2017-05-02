@@ -9,13 +9,17 @@ Include Tone-Editor.min.js in your page *after* Tone.js.
 
 Then,
 ```javascript
-// Define some Tone objects
-var reverb = new Tone.Freeverb({
+
+// Define some Tone components and their settings.
+// ** Your workflow will be simplest if you keep settings in separate objects. **
+var reverbSettings =
+{
   "roomSize": 0.7,
 	"dampening": 4300
-}).toMaster()
+}
 
-var synth = new Tone.MonoSynth({
+var synthSettings =
+{
   oscillator: {
       type: "square"
   },
@@ -38,34 +42,45 @@ var synth = new Tone.MonoSynth({
       baseFrequency: 300,
       octaves: 3.2
   }
-}).connect(reverb)
+}
 
-// Use Tone.Editor.add() to initialize the editor and add your Tone objects
-Tone.Editor.add(synth, reverb)
+var reverb = new Tone.Freeverb(reverbSettings).toMaster()
+
+var synth = new Tone.MonoSynth(synthSettings).connect(reverb)
+
+// Use ToneEditor.add() to initialize the editor and add your Tone objects
+ToneEditor
+  .add('synth', synth)
+  .add('reverb', reverb)
+
 ```
-Any changes made to the GUI will directly effect your Tone objects.
-To save your changes, click the **copy** button and your presets will be copied to your clipboard.
+Any changes made to the GUI will affect your Tone objects. See `example/index.html` for more info.
 
-## Other Methods
+## Copying changes back into your code
+Click the clipboard button on any component to copy its settings to the clipboard
+
+Click the clipboard button at the top of the panel to copy settings for all the components in the Editor
+
+## Options
 ```javascript
-// Remove objects from Editor
-.remove(synth)
 
 // Change options (defaults are below)
-.set({
-  // align the panel left or right
+ToneEditor.options({
+  // Align the panel left or right
   align: 'left',
-  // Tone objects can be nested. Choose how many levels are visible.
-  nestedLevels: 2,
-  // The Editor panel can get out of the way after a certain amount of time
-  autoHide: false,
-  autoHideTimeout: 1.5,
-  // Visualize Tone.Meter objects //
-  visualMeters: false
+
+  // Make the keyboard visible from the start
+  keyboardVisible: false,
+
+  // When true, will include 'var yourComponentNameSettings = ' before settings when copying to clipboard
+  // Makes it easier to copy changes from all tone objects at once
+  useSettingsObjects: true,
+
+  // Minify text before copying to clipboard
+  minify: false
 })
 
-// All methods are chainable
+// .add() and .options() are chainable ;)
 ```
-You can also manipulate Editor from your browser's console if your objects are accessible from the global scope
 
-### This is early in development, so no guarantees. If you have feedback on these ideas I'd love to hear it.
+### This is in development, so no guarantees. If you have feedback on these ideas I'd love to hear it.
