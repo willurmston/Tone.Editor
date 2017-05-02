@@ -1,0 +1,398 @@
+@import url('https://fonts.googleapis.com/css?family=Inconsolata')
+
+html
+  position: fixed
+  width: 100vw
+  height: 100vh
+  margin: 0
+
+body
+  margin: 0
+  position: fixed
+  overflow: hidden
+  width: 100vw
+  height: 100vh
+
+div.tone-editor_container
+  position: relative
+  width: 260px
+  height: 100vh
+  position: fixed
+  top: 0
+  left: 0
+  background: white
+  padding: 10px
+  box-shadow: 2px 0px 8px rgba(0, 0, 0, 0.14)
+
+  *
+    user-select: none
+    font-family: 'Inconsolata'
+
+  div.header
+    width: 100%
+    display: flex
+    justify-content: flex-start
+
+    *
+      margin-right: 4px
+
+    h3
+      opacity: 0.5
+      display: inline-block
+      margin: 4px 6px 4px 0
+
+    div.keyboard-button
+      display: block
+      cursor: pointer
+
+    .copy-all
+      display: block
+      cursor: pointer
+
+
+  svg.keyboard
+    width: 100%
+    margin-bottom: 6px
+    // height: 0
+    transition: height 0.15s
+    cursor: pointer
+
+    g#labels
+      opacity: 0.4
+
+  svg.keyboard.collapsed
+    height: 0
+    margin-bottom: 0
+    transition: height 0.15s
+
+  div.component.selected
+
+  div.component
+    position: relative
+    background: darkGray
+    padding-left: 6px
+    font-size: 16px
+    max-height: 24px
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1)
+    border-top: 1px solid rgba(255, 255, 255, 0.5)
+    box-shadow: 2px 2px 8px rgba(100, 100, 100, 0.2)
+    overflow: hidden
+    border-radius: 4px
+    margin-bottom: 10px
+
+  div.component.expanded
+    max-height: 3000px
+    padding-bottom: 4px
+
+  .keyboard-target-button.active
+    opacity: 1
+
+
+  div.subcomponent
+    position: relative
+    background: darkGray
+    // padding-left: 6px
+    font-size: 16px
+    // max-height: 30px
+    max-height: 24px
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1)
+    background-color: rgba(0, 0, 0, 0.2)
+    overflow: hidden
+
+    div.component-header
+      h3.component-name
+        margin-left: 12px
+        font-weight: 200
+
+
+  div.subcomponent.expanded
+    // padding-bottom: 4px
+    max-height: 3000px
+
+  div.component-header
+    position: relative
+    width: 100%
+    display: flex
+    align-items: center
+    height: 24px
+    // height: 30px
+
+    h3
+      margin: 0
+      font-size: 16px
+
+    h3.component-name
+      font-weight: 800
+      margin-left: 2px
+      margin-bottom: 1px
+
+    a.component-class
+      margin-left: 10px
+      opacity: 0.4
+      font-weight: 200
+      cursor: pointer
+      margin-left: 6px
+      opacity: 0.4
+      font-weight: 200
+      cursor: pointer
+      font-size: 13px
+      flex-grow: 0
+      margin-bottom: 0px
+      text-overflow: ellipsis
+
+    a.component-class:hover
+      text-decoration: underline
+      cursor: pointer
+
+    .expand-triangle
+      width: 13px
+      height: 26px
+      background-image: url(../img/expand-triangle.png)
+      background-size: contain
+      background-position: center
+      background-repeat: no-repeat
+      position: absolute
+      right: 7px
+      top: -1px
+      opacity: 0.9
+      cursor: pointer
+      transition: transform 0.05s
+
+    .expand-triangle.expanded
+      transform: rotateZ(-90deg)
+      transition: transform 0.05s
+
+    .expand-triangle.expanded:hover
+      opacity: 1
+
+    .extra-buttons
+      margin-left: 10px
+      overflow: hidden
+      transition: opacity 0.15s
+      display: flex
+
+      *
+        cursor: pointer
+        opacity: 0
+        transition: opacity 0.15s
+        margin-right: 4px
+
+      .keyboard-target-button.active
+        opacity: 1
+
+
+  .component-header:hover
+
+    .extra-buttons > *
+      opacity: 0.75
+      transition: opacity 0.15s
+
+
+  .parameter-group
+    width: 100%
+    max-height: calc(100vh - 100px)
+    background-color: rgba(255, 255, 255, 0.2)
+    // border-left: 1px solid rgba(0, 0, 0, 0.1)
+    box-sizing: border-box
+    overflow-y: scroll
+
+    .parameter:hover
+      .parameter-name, .value
+        color: rgba(0, 0, 0, 0.6)
+
+    .parameter::before
+      position: absolute
+      content: ""
+      display: block
+      width: 100%
+      height: 1px
+      top: 0px
+      background: rgba(0,0,0,0.1)
+      z-index: 10
+
+    .parameter.overwritten
+      .parameter-name
+        font-style: italic
+
+      canvas
+        opacity: 1
+
+    .parameter.overridden-by-signal
+      // opacity:
+      pointer-events: none
+
+      .blocker
+        width: 100%
+        height: 100%
+        position: absolute
+        top: 0
+        left: 0
+        background-image: url(../img/blocked.png)
+        background-size: contain
+        opacity: 0.7
+        pointer-events: none
+
+      canvas
+        opacity: 0
+
+    .parameter
+      position: relative
+      width: 100%
+      height: 30px
+      // border-top: 1px solid rgba(0, 0, 0, 0.1)
+      box-sizing: border-box
+      display: flex
+      align-items: center
+      justify-content: space-between
+      color: rgba(0, 0, 0, 0.5)
+      font-weight: 200
+      overflow: hidden
+
+      canvas
+        position: absolute
+        left: 0
+        top: 0
+        opacity: 0.5
+        filter: drop-shadow(1px 0px 2px rgba(0, 0, 0, 0.2))
+
+
+      .parameter-name
+        margin-left: 10px
+        z-index: 1
+        position: relative
+        top: -1px
+        pointer-events: none
+
+
+
+      .parameter-value
+        margin-right: 10px
+        display: flex
+        font-size: 16px
+        z-index: 1
+        position: relative
+        top: -1px
+
+        div.value
+          min-width: 20px
+          width: auto
+          margin-right: 2px
+          padding: 0 2px 0 2px
+          text-align: right
+          font-size: 16px
+          display: block
+          cursor: text
+
+        div.value::selection
+          font-size: 40px
+          // background: #fff2a8
+          // background: HSLA(56, 100%, 80%, 1.00)
+          background: rgba(255,255,0,1)
+          opacity: 1
+          // color: hsla(0,0%,100%,1)
+
+        div.value:hover
+          // background: rgba(0, 0, 0, 0.15)
+          background: rgba(0, 0, 0, 0.15)
+          cursor: text
+
+        div.value:focus
+          background: rgba(0, 0, 0, 0.15)
+          color: rgba(0, 0, 0, 0.6)
+          outline: none
+          // color: hsla(0,0%,100%,1)
+          // padding-top: 2px
+          // padding-bottom: 2px
+
+        div.unit
+          opacity: 0.7
+          min-width: 17px
+
+    .parameter.signal
+      .parameter-name::after
+        content: "~"
+        display: inline-block
+        font-size: 22px
+        font-weight: bold
+        position: relative
+        top: 2px
+        opacity: 0.8
+
+    .parameter.signal:hover
+      .parameter-name::after
+        animation: signal-icon-spin 0.8s infinite linear
+
+    // PARAMETER TYPES
+    // PARAMETER.MENU
+    div.menu
+      cursor: pointer
+      background: rgba(255,255,255,0.5)
+
+      div.value
+        cursor: pointer
+
+      span.menu-icon
+        width: 1px
+        position: relative
+        top: 4px
+        height: 11px
+        border: dotted rgba(0, 0, 0, 0.2) 3px
+        box-sizing: border-box
+
+      select
+        background: white
+        border: none
+        opacity: 0
+        width: 100%
+        height: 100%
+        position: absolute
+        top: 0
+        left: 0
+
+    // PARAMETER.CSLIDER
+    div.cslider
+      cursor: ew-resize
+
+      div.cslider-inner
+        position: absolute
+        top: 0
+        left: 50%
+        height: 100%
+        width: 60px
+        opacity: 0.5
+        background: rgba(200, 200, 200, 1)
+        box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.3)
+        background: white
+
+      div.center-line
+        width: 1px
+        height: 100%
+        position: absolute
+        left: 50%
+        border: dashed rgba(0, 0, 0, 0.3) 1px
+        box-sizing: border-box
+        pointer-events: none
+
+    // PARAMETER.HSLIDER
+    div.hslider
+      cursor: ew-resize
+
+      div.hslider-inner
+        position: absolute
+        top: 0
+        left: 0
+        height: 100%
+        width: 60%
+        background: rgba(200, 200, 200, 1)
+        box-shadow: 2px 0px 2px rgba(0, 0, 0, 0.1)
+        background: white
+        opacity: 0.5
+
+
+@keyframes signal-icon-spin
+  0%
+    transform: rotateX(0deg)
+  50%
+    transform: rotateX(50deg)
+  100%
+    transform: rotateX(0deg)

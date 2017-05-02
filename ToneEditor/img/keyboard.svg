@@ -1,0 +1,84 @@
+<svg class="keyboard collapsed" width="402px" viewBox="0 0 402 108" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="keyboard" transform="translate(1.000000, 1.000000)">
+            <g id="white-keys" stroke="#979797" stroke-width="0.5" fill="#FFFFFF">
+                <rect id="Rectangle-3" x="0" y="0" width="36.3636364" height="106"></rect>
+                <rect id="Rectangle-3-Copy-6" x="218.181818" y="0" width="36.3636364" height="106"></rect>
+                <rect id="Rectangle-3-Copy-3" x="109.090909" y="0" width="36.3636364" height="106"></rect>
+                <rect id="Rectangle-3-Copy-7" x="327.272727" y="0" width="36.3636364" height="106"></rect>
+                <rect id="Rectangle-3-Copy" x="36.3636364" y="0" width="36.3636364" height="106"></rect>
+                <rect id="Rectangle-3-Copy-8" x="254.545455" y="0" width="36.3636364" height="106"></rect>
+                <rect id="Rectangle-3-Copy-4" x="145.454545" y="0" width="36.3636364" height="106"></rect>
+                <rect id="Rectangle-3-Copy-9" x="364" y="0" width="36.3636364" height="106"></rect>
+                <rect id="Rectangle-3-Copy-2" x="72.7272727" y="0" width="36.3636364" height="106"></rect>
+                <rect id="Rectangle-3-Copy-10" x="290.909091" y="0" width="36.3636364" height="106"></rect>
+                <rect id="Rectangle-3-Copy-5" x="181.818182" y="0" width="36.3636364" height="106"></rect>
+            </g>
+            <g id="black-keys" transform="translate(22.000000, 0.000000)" stroke="#979797" stroke-width="0.5" fill="#494949">
+                <rect id="Rectangle-3-Copy-11" x="3.55271368e-15" y="0" width="29.1204057" height="64.4568302"></rect>
+                <rect id="Rectangle-3-Copy-12" x="36" y="0" width="29.1204057" height="64.4568302"></rect>
+                <rect id="Rectangle-3-Copy-14" x="109" y="0" width="29.1204057" height="64.4568302"></rect>
+                <rect id="Rectangle-3-Copy-15" x="145" y="0" width="29.1204057" height="64.4568302"></rect>
+                <rect id="Rectangle-3-Copy-16" x="182" y="0" width="29.1204057" height="64.4568302"></rect>
+                <rect id="Rectangle-3-Copy-17" x="254" y="0" width="29.1204057" height="64.4568302"></rect>
+                <rect id="Rectangle-3-Copy-18" x="291" y="0" width="29.1204057" height="64.4568302"></rect>
+            </g>
+            <g id="labels" transform="translate(5.000000, 35.249990)" font-size="24" font-family="Inconsolata-Bold, Inconsolata" letter-spacing="1.24347818" font-weight="bold">
+                <text id="A" fill="#5E5E5E">
+                    <tspan x="7.51701689" y="61.8296296">A</tspan>
+                </text>
+                <text id="J" fill="#5E5E5E">
+                    <tspan x="225.698835" y="61.8296296">J</tspan>
+                </text>
+                <text id="F" fill="#5E5E5E">
+                    <tspan x="116.607926" y="61.8296296">F</tspan>
+                </text>
+                <text id=";" fill="#5E5E5E">
+                    <tspan x="334.789744" y="61.8296296">;</tspan>
+                </text>
+                <text id="S" fill="#5E5E5E">
+                    <tspan x="43.8806533" y="61.8296296">S</tspan>
+                </text>
+                <text id="K" fill="#5E5E5E">
+                    <tspan x="262.062471" y="61.8296296">K</tspan>
+                </text>
+                <text id="G" fill="#5E5E5E">
+                    <tspan x="152.971562" y="61.8296296">G</tspan>
+                </text>
+                <text id="‘" fill="#5E5E5E">
+                    <tspan x="370.77539" y="61.8296296">‘</tspan>
+                </text>
+                <text id="D" fill="#5E5E5E">
+                    <tspan x="78.330414" y="61.8296296">D</tspan>
+                </text>
+                <text id="L" fill="#5E5E5E">
+                    <tspan x="296.512232" y="61.8296296">L</tspan>
+                </text>
+                <text id="H" fill="#5E5E5E">
+                    <tspan x="187.421323" y="61.8296296">H</tspan>
+                </text>
+                <text id="W" fill="#FFFFFF">
+                    <tspan x="25.1068314" y="21.1808804">W</tspan>
+                </text>
+                <text id="E" fill="#FFFFFF">
+                    <tspan x="61.1068314" y="21.1808804">E</tspan>
+                </text>
+                <text id="T" fill="#FFFFFF">
+                    <tspan x="134.106831" y="21.1808804">T</tspan>
+                </text>
+                <text id="Y" fill="#FFFFFF">
+                    <tspan x="170.106831" y="21.1808804">Y</tspan>
+                </text>
+                <text id="U" fill="#FFFFFF">
+                    <tspan x="207.106831" y="21.1808804">U</tspan>
+                </text>
+                <text id="O" fill="#FFFFFF">
+                    <tspan x="279.106831" y="21.1808804">O</tspan>
+                </text>
+                <text id="P" fill="#FFFFFF">
+                    <tspan x="316.106831" y="21.1808804">P</tspan>
+                </text>
+            </g>
+        </g>
+    </g>
+</svg>
