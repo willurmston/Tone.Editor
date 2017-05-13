@@ -1,4 +1,4 @@
-define( function() {
+define('Utils/GetMeta', function() {
 
   // guess metadata for a parameter, based on...
 
@@ -144,10 +144,16 @@ define( function() {
     }
   }
 
-  module.exports = function (uiElement) {
-    var parentComponent = uiElement.parentComponent
-    var name = uiElement.name
-    var toneParam = uiElement.toneParameter
+  module.exports = function (uiElementOrName,     toneParam, parentComponent) {
+
+
+    if (typeof uiElementOrName === 'object') {
+      var name = uiElementOrName.name
+      var toneParam = uiElementOrName.toneParameter
+      var parentComponent = uiElementOrName.parentComponent
+    } else {
+      var name = uiElementOrName
+    }
 
     var meta = {}
 

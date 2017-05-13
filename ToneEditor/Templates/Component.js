@@ -1,4 +1,4 @@
-define(['./utils','./ToneEditor','./UIElement','./Keyboard'], function(utils, ToneEditor, UIElement, Keyboard){
+define(['./Utils','./ToneEditor','./Templates/UIElement','./Keyboard'], function(utils, ToneEditor, UIElement, Keyboard){
   function Component(name, toneComponent, options) {
     var options = options || {}
     this.name = name
@@ -23,7 +23,7 @@ define(['./utils','./ToneEditor','./UIElement','./Keyboard'], function(utils, To
     if (this.isSubcomponent) {
       this.expanded = false
 
-      tempContainer.innerHTML = require('./Templates/Subcomponent.html')
+      tempContainer.innerHTML = require('./Subcomponent.html')
 
       this.element = tempContainer.firstElementChild
 
@@ -31,9 +31,9 @@ define(['./utils','./ToneEditor','./UIElement','./Keyboard'], function(utils, To
       this.expanded = true
 
       if (this.name === "Master") {
-        tempContainer.innerHTML = require('./Templates/Master.html')
+        tempContainer.innerHTML = require('./Templates/Components/Master.html')
       } else {
-        tempContainer.innerHTML = require('./Templates/Component.html')
+        tempContainer.innerHTML = require('./Templates/Components/Component.html')
       }
 
       this.element = tempContainer.firstElementChild
@@ -100,24 +100,31 @@ define(['./utils','./ToneEditor','./UIElement','./Keyboard'], function(utils, To
       } else if (typeof prop === 'array') {
 
       } else if (typeof prop === 'number') {
-        var newUIElement = new UIElement( key, _this, options )
 
-        if (newUIElement.hidden) {
-          newUIElement = undefined
+        var meta = utils.getMeta(key, toneComponent[key], _this )
+
+        if (meta.uiType === 'hidden') {
+
         } else {
-          _this.parameters[key] = newUIElement
+          // get the right constructor based on uiType
+          var uiConstructor = require('../../Templates/UIElement/'+meta.uiType.capitalize()+'.js')
+
+          _this.parameters[key] = new uiConstructor( key, _this, meta, options )
         }
 
       } else if (typeof prop === 'boolean') {
         var options = {
           uiType: 'toggle'
         }
-        var newUIElement = new UIElement( key, _this, options )
 
-        if (newUIElement.hidden) {
-          newUIElement = undefined
+        var meta = utils.getMeta(key, toneComponent[key], _this )
+
+        if (meta.uiType === 'hidden') {
+
         } else {
-          _this.parameters[key] = newUIElement
+          // get the right constructor based on uiType
+          var uiConstructor = require('./Templates/UIElement/'+meta.uiType.capitalize()+'.js')
+          _this.parameters[key] = new uiConstructor( key, _this, meta, options )
         }
       }
     })

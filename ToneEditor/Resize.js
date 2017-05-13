@@ -1,4 +1,4 @@
-define(['./ToneEditor','./utils'], function(ToneEditor, utils) {
+define('Resize', ['ToneEditor','Utils'], function(ToneEditor, utils) {
 
   var resizeHandle = document.createElement('div')
   resizeHandle.classList.add('resize-handle')

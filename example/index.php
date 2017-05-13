@@ -61,6 +61,8 @@
       .master()
       .transport()
 
+      console.log(ToneEditor)
+
     </script>
   </body>
 </html>

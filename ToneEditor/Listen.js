@@ -1,4 +1,4 @@
-define(['./utils','./ToneEditor','./Keyboard'], function(utils, ToneEditor, Keyboard) {
+define('Listen', ['Utils','ToneEditor','Keyboard'], function(utils, ToneEditor, Keyboard) {
   startListeners = function() {
 
     // DELEGATED CLICK LISTENERS

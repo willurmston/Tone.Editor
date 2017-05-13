@@ -1,4 +1,4 @@
-define(['./libs/clipboard.min','./utils','./ToneEditor', './Component'], function (Clipboard, utils, ToneEditor, Component) {
+define(['./libs/clipboard.min','Utils','ToneEditor', 'Templates/Component'], function (Clipboard, utils, ToneEditor, Component) {
 
   Component.prototype.toString = function(minify, useRefObjects) {
     var minify = minify || ToneEditor._options.minify

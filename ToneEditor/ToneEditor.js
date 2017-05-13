@@ -1,5 +1,5 @@
 
-  define(['./utils'], function(utils) {
+  define('ToneEditor', ['Utils'], function(utils) {
     var ToneEditor = function() {
       // See README for documentation
       this._options = {

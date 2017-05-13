@@ -3,15 +3,15 @@
 // INITIALIZE EVERYTHING
 
 define([
-  './utils',
-  './libs/nexusUI',
-  './ToneEditor',
-  './State',
-  './Listen',
-  './API',
-  './Keyboard',
-  './Copy',
-  './Resize'
+  'Utils/Utils.js',
+  'libs/nexusUI',
+  'ToneEditor',
+  'State',
+  'Listen',
+  'API',
+  'Keyboard',
+  'Copy',
+  'Resize'
 ], function(utils, NexusUI, ToneEditor, State, Listen) {
   // incorporate state-saving methods
   // utils.extend(ToneEditor, State)

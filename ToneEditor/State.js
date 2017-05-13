@@ -1,4 +1,4 @@
-define(['./utils', './ToneEditor','./Keyboard'], function(utils, ToneEditor, Keyboard) {
+define('State', ['Utils', 'ToneEditor','Keyboard'], function(utils, ToneEditor, Keyboard) {
 
   ToneEditor.saveState = function() {
     //global

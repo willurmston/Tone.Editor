@@ -1,4 +1,4 @@
-define(['./Utils/Classify', './Utils/GetMeta', './Utils/isSignal'], function(classify, getMeta, isSignal){
+define('Utils', ['Utils/Classify', 'Utils/GetMeta', 'Utils/isSignal'], function(classify, getMeta, isSignal){
   // ADD / REMOVE / HAS CLASS ========================================================
   Node.prototype.hasClass = function (className) {
       if (this.classList) {
