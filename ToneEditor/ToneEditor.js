@@ -1,21 +1,23 @@
 
   define(['./utils'], function(utils) {
     var ToneEditor = function() {
+      // See README for documentation
       this._options = {
         minify: false,
-        useRefObjects: true,
-        showKeyboard: false
+        useSettingsObjects: true,
+        showKeyboard: false,
+        align: 'left',
+        copyLog: false
       }
       this.components = []
       this.componentsById = {}
-      this._editedParameters = []
       var _this = this
       this._updateEditCount = function() {
         if (this._editedParameters.length === 1) {
           _this._copyAllButton.classList.add('visible')
-          _this._copyAllButton.innerHTML = 'copy '+_this._editedParameters.length+' change'
+          // _this._copyAllButton.innerHTML = 'copy '+_this._editedParameters.length+' change'
         } else {
-          _this._copyAllButton.innerHTML = 'copy '+_this._editedParameters.length+' changes'
+          // _this._copyAllButton.innerHTML = 'copy '+_this._editedParameters.length+' changes'
         }
       }
 
@@ -31,7 +33,7 @@
       this.componentContainer = this.element.querySelector('.component-container')
 
       // inject css
-      console.log( require('./sass/main.sass') )
+      require('./sass/main.sass')
 
       this.draw = function() {
         document.body.appendChild(this.element)

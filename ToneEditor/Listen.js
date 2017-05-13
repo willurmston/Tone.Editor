@@ -1,9 +1,6 @@
 define(['./utils','./ToneEditor','./Keyboard'], function(utils, ToneEditor, Keyboard) {
   startListeners = function() {
 
-
-
-
     // DELEGATED CLICK LISTENERS
     ToneEditor.element.addEventListener('click', function(e){
       if (e.target.hasClass('component-class')) {

@@ -2,7 +2,7 @@ define(['./libs/clipboard.min','./utils','./ToneEditor', './Component'], functio
 
   Component.prototype.toString = function(minify, useRefObjects) {
     var minify = minify || ToneEditor._options.minify
-    var useRefObjects = useRefObjects || ToneEditor._options.useRefObjects
+    var useSettingsObjects = useSettingsObjects || ToneEditor._options.useSettingsObjects
 
     // MINIFY (default: false)
     // Minify/collapse copied text
@@ -14,7 +14,7 @@ define(['./libs/clipboard.min','./utils','./ToneEditor', './Component'], functio
 
     // USE REF OBJECTS (default: false)
     // Make copying and pasting more convenient by returning the settings as an object that you can reference elsewhere in your code.
-    if (useRefObjects) {
+    if (useSettingsObjects) {
       result = 'var '+this.name+'Settings=\n'+result
     }
 
@@ -38,7 +38,7 @@ define(['./libs/clipboard.min','./utils','./ToneEditor', './Component'], functio
         text+=component.toString()
       }
 
-      console.log(text)
+      if (ToneEditor._options.copyLog) console.log(text)
       return text
     }
   })

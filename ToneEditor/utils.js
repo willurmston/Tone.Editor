@@ -30,6 +30,10 @@ define(['./Utils/Classify', './Utils/GetMeta', './Utils/isSignal'], function(cla
       return this;
   };
 
+  String.prototype.capitalize = function() {
+      return this.charAt(0).toUpperCase() + this.slice(1);
+  }
+
   function extend(obj, props) {
       for(var prop in props) {
           if(props.hasOwnProperty(prop)) {
@@ -52,6 +56,18 @@ define(['./Utils/Classify', './Utils/GetMeta', './Utils/isSignal'], function(cla
     }
   }
 
+  function getWindowSize() {
+    var w = window,
+    d = document,
+    e = d.documentElement,
+    g = d.getElementsByTagName('body')[0],
+    x = w.innerWidth || e.clientWidth || g.clientWidth,
+    y = w.innerHeight|| e.clientHeight|| g.clientHeight;
+
+    return {width: x, height: y}
+  }
+
+
   function getComponent(element) {
 
     // return component
@@ -64,7 +80,8 @@ define(['./Utils/Classify', './Utils/GetMeta', './Utils/isSignal'], function(cla
     classify: classify,
     getMeta: getMeta,
     isSignal: isSignal,
-    getComponent: getComponent
+    getComponent: getComponent,
+    getWindowSize: getWindowSize
   }
 
 })

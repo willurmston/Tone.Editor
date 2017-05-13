@@ -10,13 +10,12 @@ define([
   './Listen',
   './API',
   './Keyboard',
-  './Copy'
+  './Copy',
+  './Resize'
 ], function(utils, NexusUI, ToneEditor, State, Listen) {
   // incorporate state-saving methods
   // utils.extend(ToneEditor, State)
   ToneEditor.initialized = false
-
-  console.log(State)
 
   // ONLY called from API methods when ToneEditor.initialized = false
   ToneEditor.init = function() {

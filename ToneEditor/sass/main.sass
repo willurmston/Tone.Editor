@@ -1,32 +1,51 @@
 @import url('https://fonts.googleapis.com/css?family=Inconsolata')
 
-html
-  position: fixed
-  width: 100vw
-  height: 100vh
-  margin: 0
+// html
+//   position: fixed
+//   width: 100vw
+//   height: 100vh
+//   margin: 0
+//
+// body
+//   margin: 0
+//   position: fixed
+//   overflow: hidden
+//   width: 100vw
+//   height: 100vh
 
-body
-  margin: 0
-  position: fixed
-  overflow: hidden
-  width: 100vw
-  height: 100vh
 
-div.tone-editor_container
+.tone-editor_container.align-right
+  left: auto
+  right: 0
+  border-right: none
+  border-left: 2px solid rgba(0,0,0,0.2)
+
+  .resize-handle
+    left: 0
+    right: auto
+
+.tone-editor_container
   position: relative
-  width: 260px
+  width: 272px
   height: 100vh
   position: fixed
   top: 0
   left: 0
   background: white
   padding: 10px
-  box-shadow: 2px 0px 8px rgba(0, 0, 0, 0.14)
+  // box-shadow: 2px 0px 8px rgba(0, 0, 0, 0.14)
+  border-right: 2px solid rgba(0,0,0,0.2)
 
   *
     user-select: none
     font-family: 'Inconsolata'
+
+  .component-container
+    display: flex
+    align-items: flex-start
+    flex-wrap: wrap
+    // min-width: 266px
+
 
   div.header
     width: 100%
@@ -68,10 +87,13 @@ div.tone-editor_container
   div.component.selected
 
   div.component
+    width: 266px
     position: relative
     background: darkGray
     padding-left: 6px
     font-size: 16px
+    flex-grow: 0
+    flex-shrink: 0
     max-height: 24px
     border-bottom: 1px solid rgba(0, 0, 0, 0.1)
     border-top: 1px solid rgba(255, 255, 255, 0.5)
@@ -79,6 +101,7 @@ div.tone-editor_container
     overflow: hidden
     border-radius: 4px
     margin-bottom: 10px
+    margin-right: 10px
 
   div.component.expanded
     max-height: 3000px
@@ -306,7 +329,7 @@ div.tone-editor_container
 
         div.unit
           opacity: 0.7
-          min-width: 17px
+          min-width: 24px
 
     .parameter.signal
       .parameter-name::after
@@ -387,6 +410,21 @@ div.tone-editor_container
         box-shadow: 2px 0px 2px rgba(0, 0, 0, 0.1)
         background: white
         opacity: 0.5
+
+  .resize-handle
+    width: 10px
+    height: 100%
+    position: absolute
+    right: 0
+    top: 0
+    cursor: ew-resize
+    z-index: 10000
+
+  .component.master
+    // position: absolute
+    // bottom: 20px
+    // left: 8px
+    // z-index: 200
 
 
 @keyframes signal-icon-spin

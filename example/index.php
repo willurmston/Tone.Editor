@@ -42,16 +42,24 @@
         }
       }).connect(reverb)
 
-      // var synthPart = new Tone.Sequence(function(time, note){
-      // 	synth.triggerAttackRelease(note, "16n", time);
-      // }, ["C2", ["C3", ["C3", "D2"]], "E2", ["D2", "A1"]]).start(0);
+      var synthPart = new Tone.Sequence(function(time, note){
+      	synth.triggerAttackRelease(note, "16n", time);
+      }, ["C2", ["C3", ["C3", "D2"]], "E2", ["D2", "A1"]]).start(0);
 
       Tone.Transport.start("+0.1");
 
+      // Tone.Transport.loop = true
+
       ToneEditor.add({
         'synth': synth,
-        'reverb': reverb
-      }).keyboard()
+        'reverb': reverb,
+      }).options({
+        log: true,
+        minify: true,
+        align: 'right'
+      })
+      .master()
+      .transport()
 
     </script>
   </body>

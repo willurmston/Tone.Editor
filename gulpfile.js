@@ -49,7 +49,12 @@ gulp.task('webpack', function() {
 
 // Rerun a task when a file changes
 gulp.task('watch', function() {
-  gulp.watch('ToneEditor/*', ['webpack'])
+  gulp.watch('ToneEditor/**', ['webpack'])
+  // gulp.watch('ToneEditor/Utils/*', ['webpack'])
+  // gulp.watch('ToneEditor/Templates/*', ['webpack'])
+  // gulp.watch('ToneEditor/libs/*', ['webpack'])
+  // gulp.watch('ToneEditor/sass/*', ['webpack'])
+  // gulp.watch('ToneEditor/img/*', ['webpack'])
 })
 
 // The default task (called when you run `gulp` from cli)

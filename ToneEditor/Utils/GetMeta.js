@@ -46,25 +46,16 @@ define( function() {
       uiType: 'slider',
       unit: '',
       min: 0,
-      max: 100
+      max: 100,
+      isDefault: true
     }
   }
 
   // CHECK BASED ON CLASS
   var fromClass = {
     // INSTRUMENT
+
     // EFFECT
-    // COMPONENT
-    'Oscillator': {
-      'frequency': fromName.frequency,
-      'detune': fromName.detune,
-      'type': {
-        uiType: 'menu',
-        menuItems: ['sine', 'square', 'triangle', 'sawtooth']
-      },
-      'phase': fromName.phase,
-      'volume': fromName.volume
-    },
     'Filter': {
       'type': {
         uiType: 'menu',
@@ -77,7 +68,58 @@ define( function() {
         menuItems: [-12, -24, -48, -96]
       },
       'frequency': fromName.frequency
+    },
+
+    // COMPONENT
+    'Oscillator': {
+      'frequency': fromName.frequency,
+      'detune': fromName.detune,
+      'type': {
+        uiType: 'menu',
+        menuItems: ['sine', 'square', 'triangle', 'sawtooth']
+      },
+      'phase': fromName.phase,
+      'volume': fromName.volume
+    },
+
+    // CORE
+    'Transport': {
+      'bpm': {
+        uiType: 'slider',
+        unit: 'bpm',
+        min: 0,
+        max: 200
+      },
+      'swing': {
+        uiType: 'slider',
+        unit: '',
+        min: 0,
+        max: 1
+      },
+      'timeSignature': {
+        uiType: 'slider',
+        unit: '',
+        min: 1,
+        max: 16,
+        integer: true
+      },
+      'loopStart': {
+        uiType: 'slider',
+        unit: 's',
+        min: 0,
+        max: 300,
+      },
+      'loopEnd': {
+        uiType: 'slider',
+        unit: 's',
+        min: 0,
+        max: 300,
+      },
+      'PPQ': {
+        uiType: 'hidden'
+      }
     }
+
   }
 
   // CHECK BASED ON UNIT

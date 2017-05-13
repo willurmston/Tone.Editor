@@ -1,5 +1,5 @@
 define(['./utils','./ToneEditor','./UIElement','./Keyboard'], function(utils, ToneEditor, UIElement, Keyboard){
-  var Component = function(name, toneComponent, options) {
+  function Component(name, toneComponent, options) {
     var options = options || {}
     this.name = name
     // this.id = 'tone-component-'+Date.now()
@@ -13,50 +13,34 @@ define(['./utils','./ToneEditor','./UIElement','./Keyboard'], function(utils, To
 
     this.toneComponent = toneComponent
 
-
     var _this = this
     this.deferred = []
-    this.deferUntilDrawn = function(callback) {
-      _this.deferred.push(callback)
-    }
 
     //BUILD HTML
     var tempContainer = document.createElement('div')
 
     // import html template
     if (this.isSubcomponent) {
-      this.expanded = true
+      this.expanded = false
 
       tempContainer.innerHTML = require('./Templates/Subcomponent.html')
 
       this.element = tempContainer.firstElementChild
 
     } else {
-      this.expanded = false
+      this.expanded = true
 
-      tempContainer.innerHTML = require('./Templates/Component.html')
+      if (this.name === "Master") {
+        tempContainer.innerHTML = require('./Templates/Master.html')
+      } else {
+        tempContainer.innerHTML = require('./Templates/Component.html')
+      }
 
       this.element = tempContainer.firstElementChild
 
       this.keyboardTargetButton = this.element.querySelector('.keyboard-target-button')
-      this.element.addEventListener('click', function(e) {
-        var classList = e.target.classList
-        console.log(classList)
-        if (classList.contains('keyboardTargetButton')) {
-          Keyboard.setTarget(_this)
-        } else if (classList.contains('expand-triangle')) {
-
-          if (_this.expanded) {
-            _this.collapse()
-          } else {
-            _this.expand()
-          }
 
 
-          console.log(_this.expanded)
-
-        }
-      })
 
       if (this.heritage[0] === 'Instrument') {
 
@@ -70,6 +54,21 @@ define(['./utils','./ToneEditor','./UIElement','./Keyboard'], function(utils, To
 
     this.expandTriangle = this.element.querySelector('.expand-triangle')
 
+    this.element.addEventListener('click', function(e) {
+      var classList = e.target.classList
+      if (classList.contains('keyboardTargetButton')) {
+        Keyboard.setTarget(_this)
+      } else if (classList.contains('expand-triangle') && e.target === _this.expandTriangle) {
+
+        if (_this.expanded) {
+          _this.collapse()
+        } else {
+          _this.expand()
+        }
+      }
+    })
+
+    // this.expandTriangle.setAttribute('data-component-id', _this.id)
 
     // inject values into html template
     tempContainer.querySelector('.component-name').innerHTML = this.name
@@ -101,16 +100,32 @@ define(['./utils','./ToneEditor','./UIElement','./Keyboard'], function(utils, To
       } else if (typeof prop === 'array') {
 
       } else if (typeof prop === 'number') {
-        _this.parameters[key] = new UIElement( key, _this, options )
+        var newUIElement = new UIElement( key, _this, options )
 
-      } else if (typeof prop === 'string') {
-        var options = {}
-        // make menu of options instead of slider
-        // options.uiType = 'menu'
-        _this.parameters[key] = new UIElement( key, _this, options )
+        if (newUIElement.hidden) {
+          newUIElement = undefined
+        } else {
+          _this.parameters[key] = newUIElement
+        }
+
+      } else if (typeof prop === 'boolean') {
+        var options = {
+          uiType: 'toggle'
+        }
+        var newUIElement = new UIElement( key, _this, options )
+
+        if (newUIElement.hidden) {
+          newUIElement = undefined
+        } else {
+          _this.parameters[key] = newUIElement
+        }
       }
     })
+  }
 
+
+  Component.prototype.deferUntilDrawn = function(callback) {
+    this.deferred.push(callback)
   }
 
   Component.prototype.expand = function() {
@@ -118,7 +133,6 @@ define(['./utils','./ToneEditor','./UIElement','./Keyboard'], function(utils, To
     this.expandTriangle.classList.add('expanded')
     this.expanded = true
 
-    console.log('expanded')
     ToneEditor.saveState()
   }
 
@@ -127,7 +141,6 @@ define(['./utils','./ToneEditor','./UIElement','./Keyboard'], function(utils, To
     this.expandTriangle.classList.remove('expanded')
     this.expanded = false
 
-    console.log('collapsed')
     ToneEditor.saveState()
   }
 
@@ -144,7 +157,11 @@ define(['./utils','./ToneEditor','./UIElement','./Keyboard'], function(utils, To
       _this.parameterGroupElement.appendChild( subComponent.draw() )
     })
 
-    ToneEditor.componentContainer.appendChild(this.element)
+    if (ToneEditor.masterShown) {
+      ToneEditor.componentContainer.insertBefore(this.element, ToneEditor.componentsById['Master'].element )
+    } else {
+      ToneEditor.componentContainer.appendChild(this.element)
+    }
 
     //call deferred functions
     this.deferred.forEach(function(callback) {
@@ -154,6 +171,16 @@ define(['./utils','./ToneEditor','./UIElement','./Keyboard'], function(utils, To
     return this.element
   }
 
+  // updates all nexusUI widget values
+  Component.prototype.update = function() {
+    utils.iterate(this.parameters, function(name,parameter) {
+      parameter.applyValue( parameter.getValue() )
+    })
 
+    utils.iterate(this.subComponents, function(name, subComponent) {
+      // call update on subComponents
+      subComponent.update()
+    })
+  }
   module.exports = Component
 })

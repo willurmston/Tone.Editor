@@ -30,11 +30,14 @@ define(['./utils', './ToneEditor','./Keyboard'], function(utils, ToneEditor, Key
     localStorage.ToneEditor = {
       componentsById: JSON.stringify(componentsById)
     }
-    var keyboard = {
-      targetID: Keyboard.target.id,
-      octave: Keyboard.octave
+
+    if (Keyboard.target) {
+      var keyboard = {
+        targetID: Keyboard.target.id,
+        octave: Keyboard.octave
+      }
+      localStorage.Keyboard = JSON.stringify(keyboard)
     }
-    localStorage.Keyboard = JSON.parse(keyboard)
   }
 
   ToneEditor.retrieveState = function() {

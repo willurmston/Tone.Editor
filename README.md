@@ -1,5 +1,5 @@
 # Tone.Editor
-A Graphical User Interace overlay for developing websites using [Tone.js](github.com/https://github.com/Tonejs/Tone.js). Use it during design and development, then throw it out when you're done.
+A GUI overlay for making websites using [Tone.js](github.com/https://github.com/Tonejs/Tone.js). Use it during design and development, then throw it out when you're done.
 
 ## Why?
 Tone.js is a fun, flexible and hi-performance web music framework. However, because it's text-based, the process of making music with it can be a drag. It might take 20 page refreshes to get a synth sound that you like. A GUI layer solves this problem, allowing you fiddle with parameters of all your Tone objects in real time, then copy the changes into your code.
@@ -49,12 +49,16 @@ var reverb = new Tone.Freeverb(reverbSettings).toMaster()
 var synth = new Tone.MonoSynth(synthSettings).connect(reverb)
 
 // Use ToneEditor.add() to initialize the editor and add your Tone objects
+// Accepts either:
+//    a name and a Tone component
+//    an object with keys and values
+
 ToneEditor
   .add('synth', synth)
   .add('reverb', reverb)
 
 ```
-Any changes made to the GUI will affect your Tone objects. See `example/index.html` for more info.
+Any changes made to the GUI will affect your Tone objects. See `example/index.html` for a demo.
 
 ## Copying changes back into your code
 Click the clipboard button on any component to copy its settings to the clipboard
@@ -64,23 +68,30 @@ Click the clipboard button at the top of the panel to copy settings for all the 
 ## Options
 ```javascript
 
+// Adds the Tone.Master output to the Editor and always keeps it at the bottom
+ToneEditor.showMaster()
+
 // Change options (defaults are below)
 ToneEditor.options({
   // Align the panel left or right
   align: 'left',
 
+  // Minify text before copying to clipboard
+  minify: false,
+
   // Make the keyboard visible from the start
-  keyboardVisible: false,
+  showKeyboard: false,
 
   // When true, will include 'var yourComponentNameSettings = ' before settings when copying to clipboard
-  // Makes it easier to copy changes from all tone objects at once
+  // This makes it easier to copy changes from all Tone objects at once
   useSettingsObjects: true,
 
-  // Minify text before copying to clipboard
-  minify: false
+  // If copied text is logged to the console
+  copyLog: false
 })
 
-// .add() and .options() are chainable ;)
+
+// all methods are chainable ;)
 ```
 
 ### This is in development, so no guarantees. If you have feedback on these ideas I'd love to hear it.

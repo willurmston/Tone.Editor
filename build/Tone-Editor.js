@@ -1,20 +1,12264 @@
-!function(t){function i(s){if(e[s])return e[s].exports;var n=e[s]={i:s,l:!1,exports:{}};return t[s].call(n.exports,n,n.exports,i),n.l=!0,n.exports}var e={};i.m=t,i.c=e,i.i=function(t){return t},i.d=function(t,e,s){i.o(t,e)||Object.defineProperty(t,e,{configurable:!1,enumerable:!0,get:s})},i.n=function(t){var e=t&&t.__esModule?function(){return t.default}:function(){return t};return i.d(e,"a",e),e},i.o=function(t,i){return Object.prototype.hasOwnProperty.call(t,i)},i.p="/ToneEditor/",i(i.s=10)}([function(t,i,e){var s,n;s=[e(12),e(13),e(14)],void 0!==(n=function(i,e,s){function n(t,i){for(var e in i)i.hasOwnProperty(e)&&(t[e]=i[e])}function o(t,i,e,s,n){return t<i&&(t=i),t>e&&(t=e),(t-i)*(n-s)/(e-i)+s}function r(t,i){for(var e in t)t.hasOwnProperty(e)&&i(e,t[e])}function h(t){}Node.prototype.hasClass=function(t){return this.classList?this.classList.contains(t):-1<this.className.indexOf(t)},Node.prototype.addClass=function(t){if(this.classList)this.classList.add(t);else if(!this.hasClass(t)){var i=this.className.split(" ");i.push(t),this.className=i.join(" ")}return this},Node.prototype.removeClass=function(t){if(this.classList)this.classList.remove(t);else{var i=this.className.split(" ");i.splice(i.indexOf(t),1),this.className=i.join(" ")}return this},t.exports={extend:n,remap:o,iterate:r,classify:i,getMeta:e,isSignal:s,getComponent:h}}.apply(i,s))&&(t.exports=n)},function(t,i,e){var s,n;s=[e(0)],void 0!==(n=function(i){var s=function(){this._options={minify:!1,useRefObjects:!0,showKeyboard:!1},this.components=[],this.componentsById={},this._editedParameters=[];var t=this;this._updateEditCount=function(){1===this._editedParameters.length?(t._copyAllButton.classList.add("visible"),t._copyAllButton.innerHTML="copy "+t._editedParameters.length+" change"):t._copyAllButton.innerHTML="copy "+t._editedParameters.length+" changes"},this._copyAllButton=null,this.element=document.querySelectorAll("div.tone-editor_container")[0];var i=document.createElement("div");i.innerHTML=e(25),this.element=i.firstElementChild,this.componentContainer=this.element.querySelector(".component-container"),console.log(e(29)),this.draw=function(){return document.body.appendChild(this.element),t._copyAllButton=t.element.querySelector("div.copy-all"),t.element}};s.prototype._focusValueElement=function(t){t.setAttribute("data-previous-value",t.innerHTML),t.setAttribute("contenteditable",!0),t.focus(),document.execCommand("selectAll",!1,null)},t.exports=new s}.apply(i,s))&&(t.exports=n)},function(t,i,e){var s,n;s=[e(0),e(1)],void 0!==(n=function(i,e){var s={target:void 0,element:e.element.querySelector("svg.keyboard"),isVisible:!1,show:function(){this.element.classList.remove("collapsed"),this.isVisible=!0},hide:function(){this.element.classList.add("collapsed"),this.isVisible=!1,this._saveState("keyboardVisible",this.isVisible)},toggle:function(){this.element.classList.toggle("collapsed"),this.isVisible=!this.isVisible},setTarget:function(t){this.isVisible||this.show(),this.target&&this.target.keyboardTargetButton.classList.remove("active"),this.target=t,t.keyboardTargetButton.classList.add("active")}},n={65:0,87:1,83:2,69:3,68:4,70:5,84:6,71:7,89:8,72:9,85:10,74:11,73:12,75:13};s.octave=4;var o={};document.addEventListener("keydown",function(t){var i=n[t.keyCode];switch(t.keyCode){case 16:s.shiftIsDown=!0;break;case 18:s.optionIsDown=!0;break;case 90:currentOctave--;break;case 88:currentOctave++;break;default:if(s.isVisible&&void 0!==s.target&&void 0!==i){var e=Tone.Frequency().midiToFrequency(12*s.octave+i);void 0===o[e]&&(console.log("should start"),console.log(o[e]),o[e]=!0,s.target.toneComponent.triggerAttack(e))}}}),document.addEventListener("keyup",function(t){var i=n[t.keyCode];switch(t.keyCode){case 16:s.shiftIsDown=!1;break;case 18:s.optionIsDown=!1;break;default:if(s.isVisible&&void 0!==s.target&&void 0!==i){var e=Tone.Frequency().midiToFrequency(12*s.octave+i);!0===o[e]&&(console.log("should end"),s.target.toneComponent.triggerRelease(e,"+0").triggerRelease(),o[e]=void 0)}}}),t.exports=s}.apply(i,s))&&(t.exports=n)},function(t,i,e){var s,n;s=[e(15),e(0),e(1),e(4)],void 0!==(n=function(t,i,e,s){s.prototype.toString=function(t,i){var t=t||e._options.minify,i=i||e._options.useRefObjects;if(t)var s=JSON.stringify(this.toneComponent.get());else var s=JSON.stringify(this.toneComponent.get(),null,"\t");return i&&(s="var "+this.name+"Settings=\n"+s),s},new t(".tone-editor_container .copy-button",{text:function(t){var i="";if(t.classList.contains("copy-all"))e.components.forEach(function(t){i+=t.toString(!0,!0)+";\n"});else{var s=t.getAttribute("data-component-id"),n=e.componentsById[s];i+=n.toString()}return console.log(i),i}})}.apply(i,s))&&(t.exports=n)},function(t,i,e){var s,n;s=[e(0),e(1),e(11),e(2)],void 0!==(n=function(i,s,n,o){var r=function(t,s,h){var h=h||{};this.name=t,this.id=this.name,this.heritage=i.classify(s),this.class=this.heritage[1]||this.heritage[0]||"",this.isSubcomponent=h.isSubcomponent||!1,this.parentComponent=h.parentComponent||void 0,this.toneComponent=s;var a=this;this.deferred=[],this.deferUntilDrawn=function(t){a.deferred.push(t)};var g=document.createElement("div");this.isSubcomponent?(this.expanded=!0,g.innerHTML=e(24),this.element=g.firstElementChild):(this.expanded=!1,g.innerHTML=e(21),this.element=g.firstElementChild,this.keyboardTargetButton=this.element.querySelector(".keyboard-target-button"),this.element.addEventListener("click",function(t){var i=t.target.classList;console.log(i),i.contains("keyboardTargetButton")?o.setTarget(a):i.contains("expand-triangle")&&(a.expanded?a.collapse():a.expand(),console.log(a.expanded))}),"Instrument"===this.heritage[0]||this.keyboardTargetButton.remove(),this.element.querySelector(".copy-button").setAttribute("data-component-id",this.id)),this.expandTriangle=this.element.querySelector(".expand-triangle"),g.querySelector(".component-name").innerHTML=this.name,g.querySelector(".component-class").innerHTML=this.class,this.parameterGroupElement=this.element.querySelector(".parameter-group"),this.components=[];var a=this,l=s.get();this.parameters={},this.subComponents={},i.iterate(l,function(t,i){if("object"==typeof i&&!1===a.isSubcomponent){var e={isSubcomponent:!0,parentComponent:a};a.subComponents[t]=new r(t,a.toneComponent[t],e)}else if("array"==typeof i);else if("number"==typeof i)a.parameters[t]=new n(t,a,e);else if("string"==typeof i){var e={};a.parameters[t]=new n(t,a,e)}})};r.prototype.expand=function(){this.element.classList.add("expanded"),this.expandTriangle.classList.add("expanded"),this.expanded=!0,console.log("expanded"),s.saveState()},r.prototype.collapse=function(){this.element.classList.remove("expanded"),this.expandTriangle.classList.remove("expanded"),this.expanded=!1,console.log("collapsed"),s.saveState()},r.prototype.draw=function(){var t=this;return i.iterate(this.parameters,function(i,e){t.parameterGroupElement.appendChild(e.draw())}),i.iterate(this.subComponents,function(i,e){t.parameterGroupElement.appendChild(e.draw())}),s.componentContainer.appendChild(this.element),this.deferred.forEach(function(t){t()}),this.element},t.exports=r}.apply(i,s))&&(t.exports=n)},function(t,i){var e;e=function(){return this}();try{e=e||Function("return this")()||(0,eval)("this")}catch(t){"object"==typeof window&&(e=window)}t.exports=e},function(t,i,e){var s,n;s=[e(0),e(1),e(4),e(2),e(3)],void 0!==(n=function(i,e,s,n,o){e.add=function(t,i){function n(t,i){if(t instanceof Tone.Instrument||t instanceof Tone.Effect||t instanceof Tone.Player){var i=i||o(),n=new s(i,t);e.components.push(n),e.componentsById[i]=n,n.draw()}else console.log("%cIgnored unsupported Tone object","color: DarkOrange",t),console.log("%cTone-Editor only supports Tone.Instrument, Tone.Effect, Tone.Player","color: DarkOrange")}function o(){return"component-"+e.components.length}if(!1===e.initialized&&e.init(),null!==t&&"object"==typeof t)if(t instanceof Tone)n(t);else for(var r in t)n(t[r],r);else n(i,t);return e},e.show=function(){return!1===e.initialized&&e.init(),e.element.classList.remove("hidden"),e},e.hide=function(){return!1===e.initialized&&e.init(),e.element.classList.add("hidden"),e},e.keyboard=function(){return!1===e.initialized&&e.init(),n.show(),e.components.forEach(function(t){"Instrument"===t.heritage[0]&&n.setTarget(t)}),e},e.options=function(t){return i.extend(this._options,t),e},t.exports=e}.apply(i,s))&&(t.exports=n)},function(t,i,e){var s,n;s=[e(0),e(1),e(2)],void 0!==(n=function(i,e,s){startListeners=function(){e.element.addEventListener("click",function(t){t.target.hasClass("component-class")?window.open("https://tonejs.github.io/docs/#"+t.target.innerHTML,"_blank"):t.target.hasClass("copy-all")?t.target.style.animation="tone-editor_copied 1s":t.target.hasClass("value")?"false"===t.target.getAttribute("contenteditable")&&(e._focusValueElement(t.target),document.execCommand("selectAll",!1,null)):t.target.hasClass("keyboard-button")&&s.toggle()}),e.element.addEventListener("dblclick",function(t){t.target.parentNode.hasClass("parameter")&&e._focusValueElement(t.target.parentNode.querySelectorAll("div.value")[0])}),e.element.addEventListener("mousedown",function(t){e.element.addClass("mouse-down"),e._mouseIsDown=!0}),e.element.addEventListener("mouseup",function(t){e.element.removeClass("mouse-down"),e._mouseIsDown=!1})},t.exports=startListeners}.apply(i,s))&&(t.exports=n)},function(t,i,e){var s,n;s=[e(0),e(1),e(2)],void 0!==(n=function(t,i,e){return i.saveState=function(){var s={};t.iterate(i.componentsById,function(i,e){s[i]={id:e.id,collapsed:e.expanded,subComponents:{}},t.iterate(e.subComponents,function(t,e){s[i].subComponents[t]=JSON.stringify({id:e.id,collapsed:e.expanded})})}),localStorage.ToneEditor={componentsById:JSON.stringify(s)};var n={targetID:e.target.id,octave:e.octave};localStorage.Keyboard=JSON.parse(n)},i.retrieveState=function(){return localStorage.getItem("ToneEditor")},i}.apply(i,s))&&(t.exports=n)},function(module,exports,__webpack_require__){(function(global){var require,require,__WEBPACK_AMD_DEFINE_RESULT__;!function t(i,e,s){function n(r,h){if(!e[r]){if(!i[r]){var a="function"==typeof require&&require;if(!h&&a)return require(r,!0);if(o)return require(r,!0);var g=new Error("Cannot find module '"+r+"'");throw g.code="MODULE_NOT_FOUND",g}var l=e[r]={exports:{}};i[r][0].call(l.exports,function(t){var e=i[r][1][t];return n(e||t)},l,l.exports,t,i,e,s)}return e[r].exports}for(var o="function"==typeof require&&require,r=0;r<s.length;r++)n(s[r]);return n}({1:[function(t,e,s){var n=t("./lib/core/manager"),o=t("./lib/utils/dom"),r=t("./lib/utils/drawing"),h=t("./lib/utils/math"),a=t("extend"),g=t("webfontloader");window.nx=new n,window.nx.onload=function(){},window.nx=a(window.nx,o),window.nx=a(window.nx,r),window.nx=a(window.nx,h),window.onload=function(){try{g.load({google:{families:["Open Sans"]}})}catch(t){console.log("font not loaded")}nx.addStylesheet();var t=document.getElementsByTagName("canvas");for(i=0;i<t.length;i++)nx.transform(t[i]);nx.isTouchDevice&&(document.addEventListener("touchmove",nx.blockMove,!0),document.addEventListener("touchstart",nx.blockMove,!0)),nx.onload(),nx.startPulse()}},{"./lib/core/manager":2,"./lib/utils/dom":4,"./lib/utils/drawing":5,"./lib/utils/math":6,extend:45,webfontloader:46}],2:[function(t,e,s){/**
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// identity function for calling harmony imports with the correct context
+/******/ 	__webpack_require__.i = function(value) { return value; };
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, {
+/******/ 				configurable: false,
+/******/ 				enumerable: true,
+/******/ 				get: getter
+/******/ 			});
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "/ToneEditor/";
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = 11);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(17), __webpack_require__(18), __webpack_require__(19)], __WEBPACK_AMD_DEFINE_RESULT__ = function(classify, getMeta, isSignal){
+  // ADD / REMOVE / HAS CLASS ========================================================
+  Node.prototype.hasClass = function (className) {
+      if (this.classList) {
+          return this.classList.contains(className);
+      } else {
+          return (-1 < this.className.indexOf(className));
+      }
+  };
+
+  Node.prototype.addClass = function (className) {
+      if (this.classList) {
+          this.classList.add(className);
+      } else if (!this.hasClass(className)) {
+          var classes = this.className.split(" ");
+          classes.push(className);
+          this.className = classes.join(" ");
+      }
+      return this;
+  };
+
+  Node.prototype.removeClass = function (className) {
+      if (this.classList) {
+          this.classList.remove(className);
+      } else {
+          var classes = this.className.split(" ");
+          classes.splice(classes.indexOf(className), 1);
+          this.className = classes.join(" ");
+      }
+      return this;
+  };
+
+  String.prototype.capitalize = function() {
+      return this.charAt(0).toUpperCase() + this.slice(1);
+  }
+
+  function extend(obj, props) {
+      for(var prop in props) {
+          if(props.hasOwnProperty(prop)) {
+              obj[prop] = props[prop];
+          }
+      }
+  }
+
+  function remap(x, in_min , in_max , out_min , out_max ) {
+    if (x < in_min) { x = in_min }
+    if (x > in_max) { x = in_max }
+      return ( x - in_min ) * ( out_max - out_min ) / ( in_max - in_min ) + out_min;
+  }
+
+  function iterate(obj, func) {
+    for (var key in obj) {
+      if ( obj.hasOwnProperty(key) ) {
+        func(key, obj[key])
+      }
+    }
+  }
+
+  function getWindowSize() {
+    var w = window,
+    d = document,
+    e = d.documentElement,
+    g = d.getElementsByTagName('body')[0],
+    x = w.innerWidth || e.clientWidth || g.clientWidth,
+    y = w.innerHeight|| e.clientHeight|| g.clientHeight;
+
+    return {width: x, height: y}
+  }
+
+
+  function getComponent(element) {
+
+    // return component
+  }
+
+  module.exports = {
+    extend: extend,
+    remap: remap,
+    iterate: iterate,
+    classify: classify,
+    getMeta: getMeta,
+    isSignal: isSignal,
+    getComponent: getComponent,
+    getWindowSize: getWindowSize
+  }
+
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__))
+
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+  !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils) {
+    var ToneEditor = function() {
+      // See README for documentation
+      this._options = {
+        minify: false,
+        useSettingsObjects: true,
+        showKeyboard: false,
+        align: 'left',
+        copyLog: false
+      }
+      this.components = []
+      this.componentsById = {}
+      var _this = this
+      this._updateEditCount = function() {
+        if (this._editedParameters.length === 1) {
+          _this._copyAllButton.classList.add('visible')
+          // _this._copyAllButton.innerHTML = 'copy '+_this._editedParameters.length+' change'
+        } else {
+          // _this._copyAllButton.innerHTML = 'copy '+_this._editedParameters.length+' changes'
+        }
+      }
+
+      this._copyAllButton = null // defined later _this.element.querySelector('div.copy-all')
+      this.element = document.querySelectorAll('div.tone-editor_container')[0]
+
+      //BUILD HTML
+      var tempContainer = document.createElement('div')
+      tempContainer.innerHTML = __webpack_require__(29)
+
+      this.element = tempContainer.firstElementChild
+
+      this.componentContainer = this.element.querySelector('.component-container')
+
+      // inject css
+      __webpack_require__(36)
+
+      this.draw = function() {
+        document.body.appendChild(this.element)
+        _this._copyAllButton = _this.element.querySelector('div.copy-all')
+
+        return _this.element
+      }
+    }
+
+    ToneEditor.prototype._focusValueElement = function(element) {
+      element.setAttribute('data-previous-value', element.innerHTML)
+      element.setAttribute('contenteditable', true)
+      element.focus()
+      document.execCommand('selectAll',false,null)
+    }
+
+    // window.ToneEditor = ToneEditor
+    module.exports = new ToneEditor()
+  }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__))
+
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0),__webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, ToneEditor){
+  var Keyboard = {
+    target: undefined,
+    element: ToneEditor.element.querySelector('svg.keyboard'),
+    isVisible: false,
+    show: function() {
+      this.element.classList.remove('collapsed')
+      this.isVisible = true
+      // this._saveState('keyboardVisible', this.isVisible)
+    },
+    hide: function() {
+      this.element.classList.add('collapsed')
+      this.isVisible = false
+      this._saveState('keyboardVisible', this.isVisible)
+    },
+    toggle: function toggle(){
+      this.element.classList.toggle('collapsed')
+      this.isVisible = !this.isVisible
+    },
+    setTarget: function(target) {
+      if (!this.isVisible) this.show()
+
+      if (this.target) this.target.keyboardTargetButton.classList.remove('active')
+
+      this.target = target
+
+      target.keyboardTargetButton.classList.add('active')
+
+    }
+  }
+
+  var keymap = {
+    65: 0,
+    87: 1,
+    83: 2,
+    69: 3,
+    68: 4,
+    70: 5,
+    84: 6,
+    71: 7,
+    89: 8,
+    72: 9,
+    85: 10,
+    74: 11,
+    73: 12,
+    75: 13
+  }
+
+  Keyboard.octave = 4 // middle c
+
+  // keys that are down
+  var currentNotes = {}
+
+  // LISTEN FOR KEY PRESSES (KEYBOARD AND MODIFIERS)
+  document.addEventListener('keydown', function(e) {
+    var noteIndex = keymap[e.keyCode]
+
+    switch (e.keyCode) {
+      case 16:
+        Keyboard.shiftIsDown = true
+        break
+      case 18:
+        Keyboard.optionIsDown = true
+        break
+      case 90:
+        currentOctave --
+        break
+      case 88:
+        currentOctave ++
+        break
+      default:
+        // play keyboard if active and has target instrument
+        if (Keyboard.isVisible && Keyboard.target !== undefined && noteIndex !== undefined ) {
+          var note = Tone.Frequency().midiToFrequency((Keyboard.octave*12)+noteIndex)
+
+          if (currentNotes[note] === undefined) {
+            console.log('should start')
+            console.log(currentNotes[note])
+            currentNotes[note] = true
+            Keyboard.target.toneComponent.triggerAttack( note )
+          }
+        }
+    }
+  })
+  document.addEventListener('keyup', function(e) {
+    var noteIndex = keymap[e.keyCode]
+
+
+    switch (e.keyCode) {
+      case 16:
+        Keyboard.shiftIsDown = false
+        break
+      case 18:
+        Keyboard.optionIsDown = false
+        break
+      default:
+        if (Keyboard.isVisible && Keyboard.target !== undefined && noteIndex !== undefined) {
+          var note = Tone.Frequency().midiToFrequency((Keyboard.octave*12)+noteIndex)
+
+          if (currentNotes[note] === true) {
+            console.log('should end')
+
+            Keyboard.target.toneComponent.triggerRelease( note, '+0' ).triggerRelease()
+            currentNotes[note] = undefined
+          }
+
+        }
+    }
+  })
+
+  module.exports = Keyboard
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__))
+
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(20),__webpack_require__(0),__webpack_require__(1), __webpack_require__(4)], __WEBPACK_AMD_DEFINE_RESULT__ = function (Clipboard, utils, ToneEditor, Component) {
+
+  Component.prototype.toString = function(minify, useRefObjects) {
+    var minify = minify || ToneEditor._options.minify
+    var useSettingsObjects = useSettingsObjects || ToneEditor._options.useSettingsObjects
+
+    // MINIFY (default: false)
+    // Minify/collapse copied text
+    if (minify) {
+      var result = JSON.stringify(this.toneComponent.get())
+    } else {
+      var result = JSON.stringify(this.toneComponent.get(), null, '\t')
+    }
+
+    // USE REF OBJECTS (default: false)
+    // Make copying and pasting more convenient by returning the settings as an object that you can reference elsewhere in your code.
+    if (useSettingsObjects) {
+      result = 'var '+this.name+'Settings=\n'+result
+    }
+
+    return result
+  }
+
+  // RETURNS FLATTENED PROPERTIES OF TONECOMPONENT
+  new Clipboard( '.tone-editor_container .copy-button', {
+    text: function(trigger) {
+      var text = ''
+
+      if (trigger.classList.contains('copy-all')) { // it's the copy-all button
+        ToneEditor.components.forEach( function(component) {
+          text+=component.toString(true, true)+';\n'
+        })
+
+      } else { // It's a component copy button
+        var id = trigger.getAttribute('data-component-id')
+        var component = ToneEditor.componentsById[id]
+
+        text+=component.toString()
+      }
+
+      if (ToneEditor._options.copyLog) console.log(text)
+      return text
+    }
+  })
+
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__))
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0),__webpack_require__(1),__webpack_require__(16),__webpack_require__(2)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, ToneEditor, UIElement, Keyboard){
+  function Component(name, toneComponent, options) {
+    var options = options || {}
+    this.name = name
+    // this.id = 'tone-component-'+Date.now()
+    this.id = this.name
+    this.heritage = utils.classify(toneComponent)
+
+    this.class = this.heritage[1] || this.heritage[0] || ''
+
+    this.isSubcomponent = options.isSubcomponent || false
+    this.parentComponent = options.parentComponent || undefined
+
+    this.toneComponent = toneComponent
+
+    var _this = this
+    this.deferred = []
+
+    //BUILD HTML
+    var tempContainer = document.createElement('div')
+
+    // import html template
+    if (this.isSubcomponent) {
+      this.expanded = false
+
+      tempContainer.innerHTML = __webpack_require__(28)
+
+      this.element = tempContainer.firstElementChild
+
+    } else {
+      this.expanded = true
+
+      if (this.name === "Master") {
+        tempContainer.innerHTML = __webpack_require__(27)
+      } else {
+        tempContainer.innerHTML = __webpack_require__(26)
+      }
+
+      this.element = tempContainer.firstElementChild
+
+      this.keyboardTargetButton = this.element.querySelector('.keyboard-target-button')
+
+
+
+      if (this.heritage[0] === 'Instrument') {
+
+      } else {
+        this.keyboardTargetButton.remove()
+      }
+
+      // ADD HOOK FOR CLIPBOARD.js
+      this.element.querySelector('.copy-button').setAttribute('data-component-id', this.id)
+    }
+
+    this.expandTriangle = this.element.querySelector('.expand-triangle')
+
+    this.element.addEventListener('click', function(e) {
+      var classList = e.target.classList
+      if (classList.contains('keyboardTargetButton')) {
+        Keyboard.setTarget(_this)
+      } else if (classList.contains('expand-triangle') && e.target === _this.expandTriangle) {
+
+        if (_this.expanded) {
+          _this.collapse()
+        } else {
+          _this.expand()
+        }
+      }
+    })
+
+    // this.expandTriangle.setAttribute('data-component-id', _this.id)
+
+    // inject values into html template
+    tempContainer.querySelector('.component-name').innerHTML = this.name
+    tempContainer.querySelector('.component-class').innerHTML = this.class
+
+    this.parameterGroupElement = this.element.querySelector('.parameter-group')
+
+    this.components = [] //fill
+    var _this = this
+
+    var flattenedProps = toneComponent.get()
+
+    // sort properties into parameters and subComponents
+    var parameters = {}
+    var subComponents = {}
+
+    this.parameters = {}
+    this.subComponents = {}
+
+    utils.iterate( flattenedProps, function(key, prop) {
+      if (typeof prop === 'object' && _this.isSubcomponent === false) {
+        var options = {
+          isSubcomponent: true,
+          parentComponent: _this
+        }
+
+        _this.subComponents[key] = new Component( key, _this.toneComponent[key], options )
+
+      } else if (typeof prop === 'array') {
+
+      } else if (typeof prop === 'number') {
+        var newUIElement = new UIElement( key, _this, options )
+
+        if (newUIElement.hidden) {
+          newUIElement = undefined
+        } else {
+          _this.parameters[key] = newUIElement
+        }
+
+      } else if (typeof prop === 'boolean') {
+        var options = {
+          uiType: 'toggle'
+        }
+        var newUIElement = new UIElement( key, _this, options )
+
+        if (newUIElement.hidden) {
+          newUIElement = undefined
+        } else {
+          _this.parameters[key] = newUIElement
+        }
+      }
+    })
+  }
+
+
+  Component.prototype.deferUntilDrawn = function(callback) {
+    this.deferred.push(callback)
+  }
+
+  Component.prototype.expand = function() {
+    this.element.classList.add('expanded')
+    this.expandTriangle.classList.add('expanded')
+    this.expanded = true
+
+    ToneEditor.saveState()
+  }
+
+  Component.prototype.collapse = function() {
+    this.element.classList.remove('expanded')
+    this.expandTriangle.classList.remove('expanded')
+    this.expanded = false
+
+    ToneEditor.saveState()
+  }
+
+  // draws to dom
+  Component.prototype.draw = function() {
+    var _this = this
+    // call draw on all child parameters, append their html to parameter container
+    utils.iterate(this.parameters, function(key, parameter) {
+      _this.parameterGroupElement.appendChild( parameter.draw() )
+    })
+
+    // call draw on all child components
+    utils.iterate(this.subComponents, function(key, subComponent) {
+      _this.parameterGroupElement.appendChild( subComponent.draw() )
+    })
+
+    if (ToneEditor.masterShown) {
+      ToneEditor.componentContainer.insertBefore(this.element, ToneEditor.componentsById['Master'].element )
+    } else {
+      ToneEditor.componentContainer.appendChild(this.element)
+    }
+
+    //call deferred functions
+    this.deferred.forEach(function(callback) {
+      callback()
+    })
+
+    return this.element
+  }
+
+  // updates all nexusUI widget values
+  Component.prototype.update = function() {
+    utils.iterate(this.parameters, function(name,parameter) {
+      parameter.applyValue( parameter.getValue() )
+    })
+
+    utils.iterate(this.subComponents, function(name, subComponent) {
+      // call update on subComponents
+      subComponent.update()
+    })
+  }
+  module.exports = Component
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__))
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports) {
+
+var g;
+
+// This works in non-strict mode
+g = (function() {
+	return this;
+})();
+
+try {
+	// This works if eval is allowed (see CSP)
+	g = g || Function("return this")() || (1,eval)("this");
+} catch(e) {
+	// This works if the window reference is available
+	if(typeof window === "object")
+		g = window;
+}
+
+// g can still be undefined, but nothing to do about it...
+// We return undefined, instead of nothing here, so it's
+// easier to handle this case. if(!global) { ...}
+
+module.exports = g;
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// API
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0),__webpack_require__(1),__webpack_require__(4), __webpack_require__(2),__webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, ToneEditor, Component, Keyboard, Copy) {
+
+  ToneEditor.add = function(name, component) {
+    if (ToneEditor.initialized === false) ToneEditor.init()
+
+    // PARSE ARGUMENTS
+    // check if an object
+    if (name !== null && typeof name === 'object' ) {
+      // check if name is a Tone object, not a string
+      if ( name instanceof Tone) {
+        addComponent(name)
+      } else { // it's an object of names and components
+        for (var key in name) {
+          addComponent(name[key], key)
+        }
+      }
+    } else { // it's a name
+      addComponent(component, name)
+    }
+
+    function addComponent(component, name) {
+      // if (component instanceof Tone.Instrument || component instanceof Tone.Effect || component instanceof Tone.Player || component === Tone.Master) {
+        var name = name || generateName()
+
+        // ADD PARAMETERS TO OBJECT
+        var newComponent = new Component( name, component)
+        ToneEditor.components.push(newComponent)
+        ToneEditor.componentsById[name] = newComponent
+
+        //DRAW ELEMENT TO DOM
+        newComponent.draw()
+
+        if (component === Tone.Master) {
+          ToneEditor.masterShown = true
+        }
+      // } else { // UNSUPPORTED TONE OBJECT
+      //   console.log('%cIgnored unsupported Tone object', 'color: DarkOrange', component)
+      //   console.log('%cTone-Editor only supports Tone.Instrument, Tone.Effect, Tone.Player', 'color: DarkOrange')
+      // }
+
+    }
+
+    function generateName() {
+      return 'component-'+ToneEditor.components.length
+    }
+    return ToneEditor
+  }
+
+  ToneEditor.show = function() {
+    if (!ToneEditor.initialized) ToneEditor.init()
+
+    ToneEditor.element.classList.remove('hidden')
+    return ToneEditor
+  }
+
+  ToneEditor.hide = function() {
+    if (!ToneEditor.initialized) ToneEditor.init()
+
+    ToneEditor.element.classList.add('hidden')
+    return ToneEditor
+  }
+
+  //REMOVE
+
+  // ToneEditor.keyboard = function() {
+  //   if (ToneEditor.initialized === false) ToneEditor.init()
+  //
+  //   Keyboard.show()
+  //
+  //   // try and target an instrument in ToneEditor.components
+  //   ToneEditor.components.forEach( function(element) {
+  //     if (element.heritage[0] === 'Instrument') Keyboard.setTarget(element)
+  //   })
+  //   return ToneEditor
+  // }
+
+  // Shortcut for adding Tone.Master, and always keeps it at the bottom
+  ToneEditor.master = function() {
+    ToneEditor.add('Master', Tone.Master)
+    return ToneEditor
+  }
+
+  // Shows transport controls, and optionally a scrubber
+  ToneEditor.transport = function(timeIn, timeOut) {
+    ToneEditor.add('Transport', Tone.Transport)
+    return ToneEditor
+  }
+
+  ToneEditor.options = function(options) {
+    utils.extend(this._options, options)
+
+    // alignment
+    if (options.align === 'right') {
+      ToneEditor.element.classList.add('align-right')
+    } else if (options.align === 'left'){
+      ToneEditor.element.classList.remove('align-right')
+    }
+
+    return ToneEditor
+  }
+
+  module.exports = ToneEditor
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__))
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0),__webpack_require__(1),__webpack_require__(2)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, ToneEditor, Keyboard) {
+  startListeners = function() {
+
+    // DELEGATED CLICK LISTENERS
+    ToneEditor.element.addEventListener('click', function(e){
+      if (e.target.hasClass('component-class')) {
+        // OPEN PAGE IN DOCS
+        window.open('https://tonejs.github.io/docs/#'+e.target.innerHTML, '_blank')
+      } else if (e.target.hasClass('copy-all')) {
+        e.target.style.animation = 'tone-editor_copied 1s'
+
+        //COPY CHANGES
+        // PSSST YOU CAN check e.g. Tone.MonoSynth.defaults and see what has changed
+      } else if (e.target.hasClass('value')) {
+        if (e.target.getAttribute('contenteditable') === 'false') {
+          ToneEditor._focusValueElement(e.target)
+          document.execCommand('selectAll',false,null)
+        }
+      } else if (e.target.hasClass('keyboard-button')) {
+        Keyboard.toggle()
+      }
+    })
+    ToneEditor.element.addEventListener('dblclick', function(e) {
+      if (e.target.parentNode.hasClass('parameter')) {
+        ToneEditor._focusValueElement(e.target.parentNode.querySelectorAll('div.value')[0])
+      }
+    })
+    ToneEditor.element.addEventListener('mousedown', function(e) {
+      ToneEditor.element.addClass('mouse-down')
+      ToneEditor._mouseIsDown = true
+    })
+    ToneEditor.element.addEventListener('mouseup', function(e) {
+      ToneEditor.element.removeClass('mouse-down')
+      ToneEditor._mouseIsDown = false
+    })
+
+  } // end startListeners() { }
+
+  module.exports = startListeners
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__))
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1),__webpack_require__(0)], __WEBPACK_AMD_DEFINE_RESULT__ = function(ToneEditor, utils) {
+
+  var resizeHandle = document.createElement('div')
+  resizeHandle.classList.add('resize-handle')
+  ToneEditor.element.appendChild(resizeHandle)
+
+  var resizing = false
+  var mouseX
+  var width
+
+  document.addEventListener('mousemove', function(e) {
+    if (resizing) {
+      mouseX = e.clientX
+
+      var windowWidth = utils.getWindowSize().width
+
+      if (ToneEditor._options.align === 'right') {
+
+        width = windowWidth - mouseX
+
+        if (width <= 272) width = 272
+
+      } else if (ToneEditor._options.align === 'left') {
+
+        // min width
+        if (mouseX <= 272) mouseX = 272
+
+        width = mouseX
+      }
+
+      ToneEditor.element.style.width = width + 'px'
+
+      // store panel width ratio
+      localStorage.panelWidthRatio = width / windowWidth
+
+      // var canvases = ToneEditor.element.querySelectorAll('canvas.nx')
+      //
+      // for (var i=0; i<canvases.length; i++) {
+      //   canvases[i].width = canvases[i].parentElement.offsetWidth
+      // }
+      //
+      // // resize all components
+      // ToneEditor.components.forEach(function(component) {
+      //   component.update()
+      // })
+
+    }
+  }, false)
+  document.addEventListener('mousedown', function(e) {
+    if (e.target.classList.contains('resize-handle')) {
+      resizing = true
+
+    }
+  }, false)
+  document.addEventListener('mouseup', function() {
+    if (resizing) {
+      resizing = false
+    }
+  }, false)
+
+  module.exports = ToneEditor
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__))
+
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(1),__webpack_require__(2)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, ToneEditor, Keyboard) {
+
+  ToneEditor.saveState = function() {
+    //global
+      //keyboard target
+      //for each component
+        //isCollapsed
+
+
+    var componentsById = {}
+    utils.iterate(ToneEditor.componentsById, function(key, component) {
+
+      componentsById[key] = {
+        id: component.id,
+        collapsed: component.expanded,
+        subComponents: {}
+      }
+
+      //subcomponents
+      utils.iterate(component.subComponents, function(key2, subComponent) {
+        componentsById[key].subComponents[key2] = JSON.stringify({
+          id: subComponent.id,
+          collapsed: subComponent.expanded
+        })
+      })
+
+
+    })
+
+    localStorage.ToneEditor = {
+      componentsById: JSON.stringify(componentsById)
+    }
+
+    if (Keyboard.target) {
+      var keyboard = {
+        targetID: Keyboard.target.id,
+        octave: Keyboard.octave
+      }
+      localStorage.Keyboard = JSON.stringify(keyboard)
+    }
+  }
+
+  ToneEditor.retrieveState = function() {
+
+    //keyboard
+
+
+    return localStorage.getItem('ToneEditor')
+  }
+
+
+
+  return ToneEditor
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__))
+
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(global) {var require;var require;var __WEBPACK_AMD_DEFINE_RESULT__;(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return require(o,!0);if(i)return require(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+var manager = require('./lib/core/manager');
+var domUtils = require('./lib/utils/dom');
+var drawingUtils = require('./lib/utils/drawing');
+var mathUtils = require('./lib/utils/math');
+var extend = require('extend');
+var WebFont = require('webfontloader');
+
+/************************************************
+*  INSTANTIATE NX MANAGER AND CREATE ELEMENTS   *
+************************************************/
+
+window.nx = new manager();
+window.nx.onload = function() {};
+window.nx = extend(window.nx,domUtils)
+window.nx = extend(window.nx,drawingUtils)
+window.nx = extend(window.nx,mathUtils)
+
+/* this onload function turns canvases into nexus elements,
+ * using the canvas's id as its var name */
+
+window.onload = function() {
+  try {
+    WebFont.load({
+      google: {
+        families: ['Open Sans']
+      }
+    });
+  } catch(e) {
+    console.log("font not loaded")
+  }
+
+  nx.addStylesheet();
+
+  // get all canvases on the page and add them to the manager
+  var allcanvi = document.getElementsByTagName("canvas");
+  for (i=0;i<allcanvi.length;i++) nx.transform(allcanvi[i]);
+
+  if (nx.isTouchDevice) {
+    document.addEventListener("touchmove", nx.blockMove, true);
+    document.addEventListener("touchstart", nx.blockMove, true);
+  }
+
+  nx.onload();
+
+  nx.startPulse();
+
+};
+},{"./lib/core/manager":2,"./lib/utils/dom":4,"./lib/utils/drawing":5,"./lib/utils/math":6,"extend":45,"webfontloader":46}],2:[function(require,module,exports){
+
+/**
   @title NexusUI API
   @overview NexusUI is a JavaScript toolkit for easily creating musical interfaces in web browsers. Interfaces are rendered on HTML5 canvases and are ideal for web audio projects, mobile apps, or for sending OSC to external audio applications like Max.
   @author Ben Taylor, Jesse Allison, Yemin Oh, Sébastien Piquemal
   @copyright &copy; 2011-2014
   @license MIT
  */
-var n=(t("../utils/timing"),t("../utils/drawing")),o=t("events").EventEmitter,r=t("util"),h=t("../utils/transmit"),a=e.exports=function(){o.apply(this),this.widgets=new Object,this.elemTypeArr=new Array,this.aniItems=new Array,this.showLabels=!1,this.starttime=(new Date).getTime(),h&&(this.sendsTo=h.setGlobalTransmit,this.setAjaxPath=h.setAjaxPath,this.destination="js",this.ajaxPath="lib/nexusOSCRelay.php"),this.isTouchDevice="ontouchstart"in document.documentElement,this.metas=document.getElementsByTagName("meta"),this.globalWidgets=!0,this.font="'open sans'",this.fontSize=14,this.fontWeight="normal";var t=window.AudioContext||window.webkitAudioContext;this.context=new t,this.sys=navigator.userAgent.toLowerCase(),this.isAndroid=this.sys.indexOf("android")>-1,this.isMobile=this.sys.indexOf("mobile")>-1,this.throttlePeriod=20,this.colors.borderhl=n.shadeBlendConvert(-.5,this.colors.border),this.colors.accenthl=n.shadeBlendConvert(.15,this.colors.accent)};r.inherits(a,o),a.prototype.add=function(t,i){if(t){var e=document.createElement("canvas");if(e.setAttribute("nx",t),i){if((i.x||i.y)&&(e.style.position="absolute"),i.x&&(e.style.left=i.x+"px"),i.y&&(e.style.top=i.y+"px"),i.w&&(e.style.width=i.w,"string"!=typeof i.w&&(e.width=i.w)),i.h&&(e.style.height=i.h,"string"!=typeof i.h&&(e.height=i.h)),i.parent){var s;"string"==typeof i.parent?s=document.getElementById(i.parent):i.parent instanceof HTMLElement?s=i.parent:i.parent instanceof jQuery&&(s=i.parent[0])}i.name&&(e.id=i.name)}if(!s)var s=document.body;return s.appendChild(e),this.transform(e)}},a.prototype.transform=function(i,e){for(var s in nx.widgets)if(nx.widgets[s].canvasID==i.id)return;if(e)var n=e;else var n=i.getAttribute("nx");if(n){var o,r=0;for(j=0;j<this.elemTypeArr.length;j++)this.elemTypeArr[j]===n&&r++;if(this.elemTypeArr.push(n),!i.id){var h=r+1;i.id=n+h}if(n)try{var o=new(t("../widgets")[n])(i.id)}catch(t){return void console.log("creation of "+n+" failed")}return o.type=n,this.widgets[o.canvasID]=o,this.globalWidgets&&(window[o.canvasID]=this.widgets[o.canvasID]),o.init(),o}},a.prototype.transmit=function(t,i){this.makeOSC(this.emit,t,i),this.emit("*",t,i)},a.prototype.colorize=function(t,i){i||(i=t,t="accent"),this.colors[t]=i,this.colors.borderhl=n.shadeBlendConvert(.1,this.colors.border,this.colors.black),this.colors.accenthl=n.shadeBlendConvert(.3,this.colors.accent);for(var e in this.widgets)this.widgets[e].colors[t]=i,this.widgets[e].colors.borderhl=this.colors.borderhl,this.widgets[e].colors.accenthl=this.colors.accenthl,this.widgets[e].draw()},a.prototype.setThrottlePeriod=function(t){this.throttlePeriod=t;for(var i in this.widgets)this.widgets[i].throttlePeriod=this.throttlePeriod},a.prototype.colors={accent:"#ff5500",fill:"#eeeeee",border:"#e3e3e3",mid:"#1af",black:"#000000",white:"#FFFFFF"},a.prototype.startPulse=function(){this.pulseInt=setInterval("nx.pulse()",30)},a.prototype.stopPulse=function(){clearInterval(this.pulseInt)},a.prototype.pulse=function(){for(var t=0;t<this.aniItems.length;t++)this.aniItems[t]()},a.prototype.addAni=function(t){},a.prototype.removeAni=function(t){this.aniItems.splice(this.aniItems.indexOf(t))},a.prototype.addStylesheet=function(){var t='select {width: 150px;padding: 5px 5px;font-size: 16px;color:#666666;border: solid 2px #e4e4e4;border-radius: 0;-webkit-appearance: none;outline: none;cursor:pointer;background-color:#EEE;font-family:"open sans";}input[type=text]::-moz-selection { background: transparent; }input[type=text]::selection { background: transparent; }input[type=text]::-webkit-selection { background: transparent; }canvas { cursor:pointer;border-radius:0px;moz-border-radius:0px;webkit-border-radius:0px;box-sizing:border-box;-moz-box-sizing:border-box;-webkit-box-sizing:border-box;}input[type=text] { border-radius:5px;moz-border-radius:5px;webkit-border-radius:5px;box-sizing:border-box;-moz-box-sizing:border-box;-webkit-box-sizing:border-box;}',i=document.head,e=document.createElement("style");e.type="text/css",e.styleSheet?e.styleSheet.cssText=t:e.appendChild(document.createTextNode(t)),i.appendChild(e)},a.prototype.setViewport=function(t){for(i=0;i<this.metas.length;i++)"viewport"==this.metas[i].name&&(this.metas[i].content="minimum-scale="+t+", maximum-scale="+t)},a.prototype.setLabels=function(t){this.showLabels="on"==t;for(var i in this.widgets)this.widgets[i].draw()},a.prototype.setProp=function(t,i){if(t&&i){nx[t]=i;for(var e in this.widgets)this.widgets[e][t]=i,this.widgets[e].draw()}},a.prototype.blockMove=function(t){t.target.attributes.nx&&(t.preventDefault(),this.isAndroid&&!!t.stopPropagation&&t.stopPropagation())},a.prototype.calculateDigits=function(t){var i=this.max?Math.floor(this.max).toString().length:1;if(i<this.maxdigits)var e=3-i;else var e=0;return{wholes:i,decimals:e,total:i+e}},a.prototype.themes={light:{fill:"#DDDDDD",border:"#DADADA",black:"#000000",white:"#FFFFFF",body:"#F3F3F3"},dark:{fill:"#222",border:"#292929",black:"#FFFFFF",white:"#000000",body:"#111"},red:"#f24",orange:"#f50",yellow:"#ec1",green:"#1c9",blue:"#09d",purple:"#40a"},a.prototype.skin=function(t){var i=t.split("-");nx.colorize("fill",nx.themes[i[0]].fill),nx.colorize("border",nx.themes[i[0]].border),nx.colorize("black",nx.themes[i[0]].black),nx.colorize("white",nx.themes[i[0]].white),nx.colorize("accent",nx.themes[i[1]]),document.body.style.backgroundColor=nx.themes[i[0]].body},a.prototype.labelSize=function(t){for(var i in this.widgets){var e=this.widgets[i];if(e.label){var s=e.GUI.h+t;e.labelSize=t,["select","number","text"].indexOf(e.type)<0&&e.resize(!1,s)}}var n=document.querySelectorAll(".nxlabel");console.log(n);for(var o=0;o<n.length;o++)console.log(n[o]),n[o].style.fontSize=t/2.8+"px",console.log(n[o].style.fontSize)}},{"../utils/drawing":5,"../utils/timing":7,"../utils/transmit":8,"../widgets":16,events:40,util:44}],3:[function(require,module,exports){var EventEmitter=require("events").EventEmitter,util=require("util"),domUtils=require("../utils/dom"),drawingUtils=require("../utils/drawing"),timingUtils=require("../utils/timing"),transmit=require("../utils/transmit"),widget=module.exports=function(t){if(EventEmitter.apply(this),this.preClick=this.preClick.bind(this),this.preMove=this.preMove.bind(this),this.preRelease=this.preRelease.bind(this),this.preTouch=this.preTouch.bind(this),this.preTouchMove=this.preTouchMove.bind(this),this.preTouchRelease=this.preTouchRelease.bind(this),this.canvasID=t,this.oscPath="/"+t,!document.getElementById(t)){var i=document.createElement("canvas");i.id=t,document.body.appendChild(i)}if(this.type=void 0,this.canvas=document.getElementById(t),this.context=this.canvas.getContext("2d"),this.checkPercentage(),this.canvas.className=this.canvas.className?this.canvas.className+=" nx":"nx",this.canvas.height=window.getComputedStyle(document.getElementById(t),null).getPropertyValue("height").replace("px",""),this.canvas.width=window.getComputedStyle(document.getElementById(t),null).getPropertyValue("width").replace("px",""),this.height=parseInt(window.getComputedStyle(document.getElementById(t),null).getPropertyValue("height").replace("px","")),this.width=parseInt(window.getComputedStyle(document.getElementById(t),null).getPropertyValue("width").replace("px","")),this.defaultSize||(this.defaultSize={width:100,height:100}),this.label=!1,this.labelSize=30,this.labelAlign="center",this.labelFont="'Open Sans'",null!=this.canvas.getAttribute("label")&&(this.label=this.canvas.getAttribute("label"),this.origDefaultHeight=this.defaultSize.height),this.label&&(this.defaultSize.height+=this.labelSize),300==this.width&&150==this.height)this.canvas.width=2*this.defaultSize.width,this.canvas.height=2*this.defaultSize.height,this.width=this.defaultSize.width,this.height=this.defaultSize.height;else{var e=this.width,s=this.height;this.canvas.width=2*e,this.canvas.height=2*s,this.width=e,this.height=s}this.canvas.style.width=this.canvas.width/2+"px",this.canvas.style.height=this.canvas.height/2+"px",this.context.scale(2,2),this.makeRoomForLabel(),this.offset=domUtils.findPosition(this.canvas),this.center={x:this.GUI.w/2,y:this.GUI.h/2},this.lineWidth=2,this.context.lineWidth=this.lineWidth,this.colors=new Object;for(var n in nx.colors)this.colors[n]=nx.colors[n];this.clickPos={x:0,y:0},this.clickPos.touches=new Array,this.clicked=!1,this.value=0,this.val=new Object,this.pval=new Object,this.nodePos=new Array,this.deltaMove=new Object,this.throttlePeriod=nx.throttlePeriod,this.throttle=timingUtils.throttle,this.hasMoved=!1,this.isRecording=!1,this.tapeNum=0,this.recorder=null,transmit&&(this.sendsTo=transmit.setWidgetTransmit,this.destination="js"),this.events=new Object,nx.isTouchDevice?(this.canvas.ontouchstart=this.preTouch,this.canvas.ontouchmove=this.preTouchMove,this.canvas.ontouchend=this.preTouchRelease):this.canvas.addEventListener("mousedown",this.preClick,!1),this.fontSize=nx.fontSize,this.fontWeight=nx.fontWeight,this.font=nx.font,this.clickCB=!1,this.releaseCB=!1,this.actuated=!0};util.inherits(widget,EventEmitter),widget.prototype.transmit=nx.transmit,widget.prototype.makeOSC=function(t,i){if(this.action=t,"object"==typeof i&&null!==i)for(var e in i)if("object"==typeof i[e]&&null!==i[e])for(var s in i[e])this.action(e+"/"+s,i[e][s]);else this.action(e,i[e]);else"number"!=typeof i&&"string"!=typeof i||this.action("value",i)},widget.prototype.getOffset=function(){this.offset=domUtils.findPosition(this.canvas)},widget.prototype.preClick=function(t){this.actuated=!0,this.offset=domUtils.findPosition(this.canvas),this.clickPos=domUtils.getCursorPosition(t,this.offset),document.addEventListener("mousemove",this.preMove,!1),document.addEventListener("mouseup",this.preRelease,!1),this.clicked=!0,this.deltaMove.x=0,this.deltaMove.y=0,this.hasMoved=!1,this.clickCB&&this.clickCB(),this.click(t),document.body.style.userSelect="none",document.body.style.mozUserSelect="none",document.body.style.webkitUserSelect="none",document.body.style.cursor="pointer"},widget.prototype.preMove=function(t){this.actuated=!0;var i=domUtils.getCursorPosition(t,this.offset);this.deltaMove.y=i.y-this.clickPos.y,this.deltaMove.x=i.x-this.clickPos.x,this.clickPos=i,this.hasMoved=!0,this.move(t)},widget.prototype.preRelease=function(t){this.actuated=!0,document.removeEventListener("mousemove",this.preMove,!1),document.removeEventListener("mouseup",this.preRelease,!1),this.clicked=!1,this.releaseCB&&this.releaseCB(),this.release(),document.body.style.userSelect="text",document.body.style.mozUserSelect="text",document.body.style.webkitUserSelect="text",document.body.style.cursor="default"},widget.prototype.preTouch=function(t){this.actuated=!0,this.clickPos=domUtils.getTouchPosition(t,this.offset),this.clicked=!0,this.deltaMove.x=0,this.deltaMove.y=0,this.hasMoved=!1,this.touch(t)},widget.prototype.preTouchMove=function(t){if(this.clicked){this.actuated=!0;var i=domUtils.getTouchPosition(t,this.offset);this.deltaMove.y=i.y-this.clickPos.y,this.deltaMove.x=i.x-this.clickPos.x,this.clickPos=i,this.hasMoved=!0,this.touchMove(t)}},widget.prototype.preTouchRelease=function(t){if(this.actuated=!0,t.targetTouches.length>=1){var i=domUtils.getTouchPosition(t,this.offset);this.clickPos=i}else this.clicked=!1;this.touchRelease()},widget.prototype.draw=function(){},widget.prototype.click=function(){},widget.prototype.move=function(){},widget.prototype.release=function(){},widget.prototype.touch=function(){this.click()},widget.prototype.touchMove=function(){this.move()},widget.prototype.touchRelease=function(){this.release()},widget.prototype.adjustSizeIfDefault=function(){300==this.width&&150==this.height&&(this.canvas.width=this.defaultSize.width,this.canvas.height=this.defaultSize.height,this.width=this.defaultSize.width,this.height=this.defaultSize.height)},widget.prototype.makeRoundedBG=function(){this.bgLeft=this.lineWidth,this.bgRight=this.width-this.lineWidth,this.bgTop=this.lineWidth,this.bgBottom=this.height-this.lineWidth,this.bgHeight=this.bgBottom-this.lineWidth,this.bgWidth=this.bgRight-this.lineWidth,drawingUtils.makeRoundRect(this.context,this.bgLeft,this.bgTop,this.bgWidth,this.bgHeight)},widget.prototype.erase=function(){this.context.clearRect(0,0,this.width,this.height)},widget.prototype.hideCursor=function(){this.canvas.style.cursor="none"},widget.prototype.showCursor=function(){this.canvas.style.cursor="auto"},widget.prototype.getName=function(){return"deprecated -- use widget.type instead"},widget.prototype.set=function(t,i){if(this.actuated=!1,"object"==typeof this.val&&"null"!==this.val){if("object"==typeof t&&"null"!==t)for(var e in t)this.val[e]=t[e]}else"string"!=typeof this.val&&"number"!=typeof this.val||("object"==typeof t&&"null"!==t?(this.val=t.value,this.draw()):"string"!=typeof t&&"number"!=typeof t||(this.val=t));this.draw(),i&&this.transmit(this.val,!0)},widget.prototype.destroy=function(){var t=nx.elemTypeArr.indexOf(this.getName());nx.elemTypeArr.splice(t,1),this.canvas.ontouchmove=null,this.canvas.ontouchend=null,this.canvas.onclick=null,this.canvas.onmousemove=null,this.canvas.onmouseoff=null,document.removeEventListener("mousemove",this.preMove,!1),document.removeEventListener("mouseup",this.preRelease,!1);var i=document.getElementById(this.canvasID);i&&i.parentNode.removeChild(i),this.customDestroy();var e=this.canvasID;delete nx.widgets[e],delete window[e]},widget.prototype.customDestroy=function(){},widget.prototype.wrapText=function(t,i,e,s,n){if(t){for(var o=t.split(" "),r="",h=0;h<o.length;h++){var a=r+o[h]+" ";this.context.measureText(a).width>s&&h>0?(this.context.fillText(r,i,e),r=o[h]+" ",e+=n):r=a}this.context.fillText(r,i,e)}},widget.prototype.drawLabel=function(){if(this.label)with(this.context)fillStyle=this.colors.black,textAlign="center",textBaseline="middle",font=this.labelSize/2.8+"px "+this.labelFont+" normal",fillText(this.label,this.width/2,this.labelY)},widget.prototype.saveCanv=function(){var t=this.canvas.toDataURL("image/png").replace("image/png","image/octet-stream");window.location.href=t},widget.prototype.setFont=function(){with(this.context)textAlign="center",font=this.fontWeight+" "+this.fontSize+"px "+this.font,fillStyle=this.colors.black,globalAlpha=1},widget.prototype.checkPercentage=function(){var t=this.canvas.style.width,i=this.canvas.style.height;(t.indexOf("%")>=0||i.indexOf("%")>=0)&&(this.percent={w:t.indexOf("%")>=0&&t.replace("%",""),h:i.indexOf("%")>=0&&i.replace("%","")},this.stretch())},widget.prototype.stretch=function(){window.addEventListener("resize",function(t){if(this.percent.w){var i=window.getComputedStyle(this.canvas.parentNode,null).getPropertyValue("width").replace("px","");i*=this.percent.w/100}else var i=!1;if(this.percent.h){var e=window.getComputedStyle(this.canvas.parentNode,null).getPropertyValue("height").replace("px","");e*=this.percent.h/100}else var e=!1;this.resize(i,e)}.bind(this))},widget.prototype.resize=function(t,i){this.canvas.width=t?2*t:this.canvas.width,this.canvas.height=i?2*i:this.canvas.height,this.width=t||this.width,this.height=i||this.height,this.canvas.style.width=this.width+"px",this.canvas.style.height=this.height+"px",this.context.scale(2,2),this.center={x:this.GUI.w/2,y:this.GUI.h/2},this.makeRoomForLabel(),this.init(),this.draw()},widget.prototype.normalize=function(t){return nx.scale(t,this.min,this.max,0,1)},widget.prototype.rangify=function(t){return nx.scale(t,0,1,this.min,this.max)},widget.prototype.makeRoomForLabel=function(){this.GUI={w:this.width,h:this.label?this.height-this.labelSize:this.height},this.labelY=this.height-this.labelSize/2}},{"../utils/dom":4,"../utils/drawing":5,"../utils/timing":7,"../utils/transmit":8,events:40,util:44}],4:[function(t,i,e){e.findPosition=function(t){var i=document.body,e=document.defaultView,s=document.documentElement,n=document.createElement("div");n.style.paddingLeft=n.style.width="1px",i.appendChild(n);var o=2==n.offsetWidth;i.removeChild(n),n=t.getBoundingClientRect();var r=s.clientTop||i.clientTop||0,h=s.clientLeft||i.clientLeft||0,a=e.pageYOffset||o&&s.scrollTop||i.scrollTop,g=e.pageXOffset||o&&s.scrollLeft||i.scrollLeft;return{top:n.top+a-r,left:n.left+g-h}},e.getCursorPosition=function(t,i){var e,s;void 0!=t.pageX&&void 0!=t.pageY?(e=t.pageX,s=t.pageY):(e=t.clientX+document.body.scrollLeft+document.documentElement.scrollLeft,s=t.clientY+document.body.scrollTop+document.documentElement.scrollTop),e-=i.left,s-=i.top;var n={x:e,y:s};return n.touches=[{x:e,y:s}],n},e.getTouchPosition=function(t,i){var e,s;e=t.targetTouches[0].pageX,s=t.targetTouches[0].pageY,e-=i.left,s-=i.top;var n={x:e,y:s};n.touches=new Array;for(var o=0;o<t.targetTouches.length;o++)n.touches.push({x:t.targetTouches[o].pageX-i.left,y:t.targetTouches[o].pageY-i.top});n.changed=new Array;for(var o=0;o<t.changedTouches.length;o++)n.changed.push({x:t.changedTouches[o].pageX-i.left,y:t.changedTouches[o].pageY-i.top});return n}},{}],5:[function(require,module,exports){var math=require("./math");exports.randomColor=function(){return"rgb("+math.random(250)+","+math.random(250)+","+math.random(250)+")"},exports.hexToRgb=function(t,i){t=t.replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i,function(t,i,e,s){return i+i+e+e+s+s});var e=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(t);return i||(i=.5),"rgba("+parseInt(e[1],16)+","+parseInt(e[2],16)+","+parseInt(e[3],16)+","+i+")"},exports.isInside=function(t,i){return t.x>i.x&&t.x<i.x+i.w&&t.y>i.y&&t.y<i.y+i.h},exports.makeRoundRect=function(t,i,e,s,n,o){var r=i,h=e,a=s+r,g=n+h;o||(o=2),t.beginPath(),t.moveTo(r+o,h),t.lineTo(a-o,h),t.quadraticCurveTo(a,h,a,h+o),t.lineTo(a,g-o),t.quadraticCurveTo(a,g,a-o,g),t.lineTo(r+o,g),t.quadraticCurveTo(r,g,r,g-o),t.lineTo(r,h+o),t.quadraticCurveTo(r,h,r+o,h),t.closePath()},exports.text=function(context,text,position){with(position||(position=[10,10]),context)beginPath(),font="bold 12px sans-serif",fillText(text,position[0],position[1]),closePath()},exports.shadeBlendConvert=function(t,i,e){if("number"!=typeof t||t<-1||t>1||"string"!=typeof i||"r"!=i[0]&&"#"!=i[0]||"string"!=typeof e&&void 0!==e)return null;this.sbcRip=function(t){var i=t.length,e=new Object;if(i>9){if(t=t.split(","),t.length<3||t.length>4)return null;e[0]=s(t[0].slice(4)),e[1]=s(t[1]),e[2]=s(t[2]),e[3]=t[3]?parseFloat(t[3]):-1}else{switch(i){case 8:case 6:case 3:case 2:case 1:return null}i<6&&(t="#"+t[1]+t[1]+t[2]+t[2]+t[3]+t[3]+(i>4?t[4]+""+t[4]:"")),t=s(t.slice(1),16),e[0]=t>>16&255,e[1]=t>>8&255,e[2]=255&t,e[3]=9==i||5==i?n((t>>24&255)/255*1e4)/1e4:-1}return e};var s=parseInt,n=Math.round,o=i.length>9,o="string"==typeof e?e.length>9||"c"==e&&!o:o,r=t<0,t=r?-1*t:t,e=e&&"c"!=e?e:r?"#000000":"#FFFFFF",h=this.sbcRip(i),a=this.sbcRip(e);return h&&a?o?"rgb("+n((a[0]-h[0])*t+h[0])+","+n((a[1]-h[1])*t+h[1])+","+n((a[2]-h[2])*t+h[2])+(h[3]<0&&a[3]<0?")":","+(h[3]>-1&&a[3]>-1?n(1e4*((a[3]-h[3])*t+h[3]))/1e4:a[3]<0?h[3]:a[3])+")"):"#"+(4294967296+16777216*(h[3]>-1&&a[3]>-1?n(255*((a[3]-h[3])*t+h[3])):a[3]>-1?n(255*a[3]):h[3]>-1?n(255*h[3]):255)+65536*n((a[0]-h[0])*t+h[0])+256*n((a[1]-h[1])*t+h[1])+n((a[2]-h[2])*t+h[2])).toString(16).slice(h[3]>-1||a[3]>-1?1:3):null}},{"./math":6}],6:[function(t,i,e){e.toPolar=function(t,i){var e=Math.sqrt(t*t+i*i),s=Math.atan2(i,t);return s<0&&(s+=2*Math.PI),{radius:e,angle:s}},e.toCartesian=function(t,i){return{x:t*Math.cos(i),y:t*Math.sin(i)*-1}},e.clip=function(t,i,e){return Math.min(e,Math.max(i,t))},e.prune=function(t,i){if("number"==typeof t)t=parseFloat(t.toFixed(i));else if(t instanceof Array)for(var e=0;e<t.length;e++)"number"==typeof t[e]&&(t[e]=parseFloat(t[e].toFixed(i)));return t},e.scale=function(t,i,e,s,n){return(t-i)*(n-s)/(e-i)+s},e.invert=function(t){return e.scale(t,1,0,0,1)},e.bounce=function(t,i,e,s){return t>i&&t<e?s:t<=i?Math.abs(s):t>=e?-1*Math.abs(s):void 0},e.mtof=function(t){return 440*Math.pow(2,(t-69)/12)},e.random=function(t){return Math.floor(Math.random()*t)},e.interp=function(t,i,e){return t*(e-i)+i},e.lphistory={},e.lp=function(t,i,e){this.lphistory[t]||(this.lphistory[t]=[]);var s=0;this.lphistory[t].push(i),this.lphistory[t].length>e&&this.lphistory[t].splice(0,1);for(var n=0;n<this.lphistory[t].length;n++)s+=this.lphistory[t][n];return s/this.lphistory[t].length},e.lp2=function(t,i){for(var e=0,s=0;s<this.lphistory.length;s++)e+=this.lphistory[s];e+=t;var n=e/(this.lphistory.length+1);return this.lphistory.push(n),this.lphistory.length>i&&this.lphistory.splice(0,1),n},e.lp3=function(t,i,e){var s=t+i*e;return newvalue=s/(e+1),newvalue}},{}],7:[function(t,i,e){e.throttle=function(t,i){var e;return function(){var s=this,n=arguments;e||(e=setTimeout(function(){e=null;try{t.apply(s,n)}catch(t){console.log(t)}},i))}}},{}],8:[function(t,i,e){e.defineTransmit=function(t){if("function"==typeof t)return t;switch(t){case"js":return function(t,i){this.makeOSC(this.emit,t,i),this.emit("*",t,i)};case"ajax":return function(t){this.makeOSC(e.ajaxTransmit,t)};case"node":return function(t){this.makeOSC(e.nodeTransmit,t)};case"ios":return function(t){};case"max":return function(t){this.makeOSC(e.maxTransmit,t)};case"wc":return function(t,i){this.emit("internal",t,i)}}},e.setGlobalTransmit=function(t){var i=e.defineTransmit(t);this.transmit=i,this.destination=t;for(var s in nx.widgets)this.widgets[s].transmit=i,this.widgets[s].destination=t},e.setWidgetTransmit=function(t){var i=e.defineTransmit(t);this.transmit=i,this.destination=t},e.ajaxTransmit=function(t,i){var e="value"==t?this.oscPath:this.oscPath+"/"+t;xmlhttp=new XMLHttpRequest,xmlhttp.open("POST",nx.ajaxPath,!0),xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded"),xmlhttp.send("oscName="+e+"&data="+i)},e.setAjaxPath=function(t){this.ajaxPath=t},e.nodeTransmit=function(t,i){var e={oscName:"value"==t?this.oscPath:this.oscPath+"/"+t,value:i};socket.emit("nx",e)},e.maxTransmit=function(t,i){var e="value"==t?this.oscPath:this.oscPath+"/"+t;window.max.outlet(e+" "+i)}},{}],9:[function(require,module,exports){var util=require("util"),widget=require("../core/widget"),banner=module.exports=function(t){this.defaultSize={width:100,height:40},widget.call(this,t),this.message1="Powered By",this.message2="NexusUI",this.link="http://www.nexusosc.com",this.isLink=!0};util.inherits(banner,widget),banner.prototype.init=function(){this.draw()},banner.prototype.draw=function(){with(this.context)globalAlpha=.1,fillStyle=this.colors.accent,beginPath(),moveTo(0,10),lineTo(10,this.GUI.h/2+5),lineTo(0,this.GUI.h),lineTo(30,this.GUI.h),lineTo(30,10),fill(),moveTo(this.GUI.w-30,10),lineTo(this.GUI.w-30,this.GUI.h),lineTo(this.GUI.w,this.GUI.h),lineTo(this.GUI.w-10,this.GUI.h/2+5),lineTo(this.GUI.w,10),fill(),closePath(),globalAlpha=1,fillStyle=this.colors.accent,fillRect(15,0,this.GUI.w-30,this.GUI.h-10),fillStyle=this.colors.white,font=this.fontWeight+" "+this.GUI.h/5+"px "+this.font,textAlign="center",fillText(this.message1,this.GUI.w/2,this.GUI.h/3.3),fillText(this.message2,this.GUI.w/2,this.GUI.h/3.3*2),fillStyle=this.colors.black,beginPath(),moveTo(15,this.GUI.h-10),lineTo(30,this.GUI.h),lineTo(30,this.GUI.h-10),lineTo(15,this.GUI.h-10),fill(),moveTo(this.GUI.w-15,this.GUI.h-10),lineTo(this.GUI.w-30,this.GUI.h),lineTo(this.GUI.w-30,this.GUI.h-10),lineTo(this.GUI.w-15,this.GUI.h-10),fill(),closePath()},banner.prototype.click=function(){this.isLink&&(window.location=this.link)}},{"../core/widget":3,util:44}],10:[function(require,module,exports){var util=require("util"),widget=require("../core/widget"),drawing=require("../utils/drawing"),button=module.exports=function(t){this.defaultSize={width:50,height:50},widget.call(this,t),this.val={press:0},this.mode="aftertouch",this.lockResize=!0,this.image=null,this.imageHover=null,this.imageTouch=null,this.subval=new Object,this.init()};util.inherits(button,widget),button.prototype.init=function(){this.center={x:this.GUI.w/2,y:this.GUI.h/2},this.strokeWidth=this.GUI.w/20,this.radius=Math.min(this.center.x,this.center.y),this.draw()},button.prototype.draw=function(){with(this.erase(),this.context){if(null!==this.image)this.val.press?this.imageTouch?drawImage(this.imageTouch,0,0):(drawImage(this.image,0,0),globalAlpha=.5,fillStyle=this.colors.accent,fillRect(0,0,this.GUI.w,this.GUI.h),globalAlpha=1):drawImage(this.image,0,0);else if(this.val.press?this.val.press&&(fillStyle=this.colors.accent,strokeStyle=this.colors.accenthl):(fillStyle=this.colors.fill,strokeStyle=this.colors.border),lineWidth=this.strokeWidth,beginPath(),arc(this.center.x,this.center.y,this.radius,0,2*Math.PI,!0),fill(),closePath(),beginPath(),arc(this.center.x,this.center.y,this.radius-lineWidth/2,0,2*Math.PI,!0),stroke(),globalAlpha=1,closePath(),this.val.press&&"aftertouch"==this.mode){var x=nx.clip(this.clickPos.x,.2*this.GUI.w,this.GUI.w/1.3),y=nx.clip(this.clickPos.y,.2*this.GUI.h,this.GUI.h/1.3),gradient=this.context.createRadialGradient(x,y,this.GUI.w/6,this.center.x,this.center.y,1.3*this.radius);gradient.addColorStop(0,this.colors.accent),gradient.addColorStop(1,"white"),strokeStyle=gradient,lineWidth=this.GUI.w/20,beginPath(),arc(this.center.x,this.center.y,this.radius-this.GUI.w/40,0,2*Math.PI,!0),stroke(),closePath()}this.drawLabel()}},button.prototype.click=function(t){drawing.isInside(this.clickPos,{x:this.center.x-this.radius,y:this.center.y-this.radius,w:2*this.radius,h:2*this.radius})&&(this.val.press=1,"aftertouch"==this.mode&&(this.val.x=this.clickPos.x,this.val.y=this.clickPos.y),this.transmit(this.val),this.draw())},button.prototype.move=function(){"aftertouch"==this.mode&&(this.val.x=this.clickPos.x,this.val.y=this.clickPos.y,this.subval.x=this.clickPos.x,this.subval.y=this.clickPos.y,this.transmit(this.subval),this.draw())},button.prototype.release=function(){this.val.press=0,"toggle"!=this.mode&&"aftertouch"!=this.mode||this.transmit(this.val),this.draw()},button.prototype.setImage=function(t){this.image=new Image,this.image.onload=this.draw.bind(this),this.image.src=t},button.prototype.setHoverImage=function(t){this.imageHover=new Image,this.imageHover.onload=this.draw.bind(this),this.imageHover.src=t},button.prototype.setTouchImage=function(t){this.imageTouch=new Image,this.imageTouch.onload=this.draw.bind(this),this.imageTouch.src=t}},{"../core/widget":3,"../utils/drawing":5,util:44}],11:[function(require,module,exports){var util=require("util"),widget=require("../core/widget"),colors=module.exports=function(t){this.defaultSize={width:100,height:100},widget.call(this,t),this.init()};util.inherits(colors,widget),colors.prototype.init=function(){this.gradient1=this.context.createLinearGradient(0,0,this.GUI.w,0),this.gradient1.addColorStop(0,"#F00"),this.gradient1.addColorStop(.17,"#FF0"),this.gradient1.addColorStop(.34,"#0F0"),this.gradient1.addColorStop(.51,"#0FF"),this.gradient1.addColorStop(.68,"#00F"),this.gradient1.addColorStop(.85,"#F0F"),this.gradient1.addColorStop(1,"#F00"),this.gradient2=this.context.createLinearGradient(0,0,0,this.GUI.h),this.gradient2.addColorStop(0,"rgba(0,0,0,255)"),this.gradient2.addColorStop(.49,"rgba(0,0,0,0)"),this.gradient2.addColorStop(.51,"rgba(255,255,255,0)"),this.gradient2.addColorStop(.95,"rgba(255,255,255,255)"),this.draw()},colors.prototype.draw=function(){with(this.erase(),this.context)fillStyle=this.gradient1,fillRect(0,0,this.GUI.w,this.GUI.h),fillStyle=this.gradient2,fillRect(0,0,this.GUI.w,this.GUI.h);this.drawLabel()},colors.prototype.drawColor=function(){with(this.context)fillStyle="rgb("+this.val.r+","+this.val.g+","+this.val.b+")",fillRect(0,.95*this.GUI.h,this.GUI.w,.05*this.GUI.h)},colors.prototype.click=function(t){if(this.clickPos.x>0&&this.clickPos.y>0&&this.clickPos.x<this.GUI.w&&this.clickPos.y<this.GUI.h){var i=this.context.getImageData(2*this.clickPos.x,2*this.clickPos.y,1,1);this.val={r:i.data[0],g:i.data[1],b:i.data[2]},this.transmit(this.val),this.drawColor()}},colors.prototype.move=function(t){this.click(t)}},{"../core/widget":3,util:44}],12:[function(require,module,exports){var util=require("util"),widget=require("../core/widget"),comment=module.exports=function(t){this.defaultSize={width:100,height:20},widget.call(this,t),this.val={text:"comment"},this.sizeSet=!1,this.init()};util.inherits(comment,widget),comment.prototype.setSize=function(t){this.size=t,this.sizeSet=!0,this.draw()},comment.prototype.init=function(){this.draw()},comment.prototype.draw=function(){with(this.sizeSet||(this.size=Math.sqrt(this.GUI.w*this.GUI.h/(2*this.val.text.length))),this.erase(),this.context)fillStyle=this.colors.fill,fillRect(0,0,this.GUI.w,this.GUI.h),fillStyle=this.colors.black,textAlign="left",font=this.size+"px 'Open Sans'";this.wrapText(this.val.text,6,3+this.size,this.GUI.w-6,this.size)}},{"../core/widget":3,util:44}],13:[function(require,module,exports){var math=require("../utils/math"),util=require("util"),widget=require("../core/widget"),crossfade=module.exports=function(t){this.defaultSize={width:100,height:30},widget.call(this,t),this.val={R:.75,L:.75},this.location=.5,this.init()};util.inherits(crossfade,widget),crossfade.prototype.init=function(){this.draw()},crossfade.prototype.draw=function(){with(this.erase(),this.location=Math.pow(this.val.R,2),this.context){fillStyle=this.colors.fill,fillRect(0,0,this.GUI.w,this.GUI.h);var y1=0,y2=this.GUI.h,x1=this.location*this.GUI.w;fillStyle=this.colors.accent,fillRect(x1,0,this.GUI.w-x1,y2),textBaseline="middle",font=this.GUI.h/3+"px 'Open Sans'",fillStyle=this.colors.accent,textAlign="right",fillText(this.val.R.toFixed(2),x1-2,this.GUI.h/4),fillStyle=this.colors.fill,textAlign="left",fillText(this.val.L.toFixed(2),x1+2,.75*this.GUI.h)}this.drawLabel()},crossfade.prototype.click=function(){this.move()},crossfade.prototype.move=function(){var t=math.clip(this.clickPos.x/this.GUI.w,0,1),i=1-t;this.location=t,this.val.R=math.prune(Math.sqrt(t),3),this.val.L=math.prune(Math.sqrt(i),3),this.draw(),this.transmit(this.val)}},{"../core/widget":3,"../utils/math":6,util:44}],14:[function(require,module,exports){var math=require("../utils/math"),util=require("util"),widget=require("../core/widget"),dial=module.exports=function(t){this.defaultSize={width:100,height:100},widget.call(this,t),this.circleSize,this.handleLength,this.val={value:0},this.responsivity=.004,this.aniStart=0,this.aniStop=1,this.aniMove=.01,this.lockResize=!0,null!=this.canvas.getAttribute("min")?this.min=parseFloat(this.canvas.getAttribute("min")):this.min=0,null!=this.canvas.getAttribute("max")?this.max=parseFloat(this.canvas.getAttribute("max")):this.max=1,null!=this.canvas.getAttribute("step")?this.step=parseFloat(this.canvas.getAttribute("step")):this.step=.001,this.maxdigits=3,this.calculateDigits=nx.calculateDigits,this.init()};util.inherits(dial,widget),dial.prototype.init=function(){this.circleSize=Math.min(this.center.x,this.center.y),this.handleLength=this.circleSize,this.mindim=Math.min(this.GUI.w,this.GUI.h),this.mindim<101||this.mindim<101?this.accentWidth=1*this.lineWidth:this.accentWidth=2*this.lineWidth,this.draw()},dial.prototype.draw=function(){var normalval=this.normalize(this.val.value),dial_position=2*(normalval+.25)*Math.PI;with(this.erase(),this.context)if(lineCap="butt",beginPath(),lineWidth=this.circleSize/2,arc(this.center.x,this.center.y,this.circleSize-lineWidth/2,0*Math.PI,2*Math.PI,!1),strokeStyle=this.colors.fill,stroke(),closePath(),lineCap="butt",beginPath(),lineWidth=this.circleSize/2,arc(this.center.x,this.center.y,this.circleSize-lineWidth/2,.5*Math.PI,dial_position,!1),strokeStyle=this.colors.accent,stroke(),closePath(),clearRect(this.center.x-this.GUI.w/40,this.center.y,this.GUI.w/20,this.GUI.h/2),normalval>0&&(beginPath(),lineWidth=1.5,moveTo(this.center.x-this.GUI.w/40,this.center.y+this.circleSize/2),lineTo(this.center.x-this.GUI.w/40,this.center.y+this.circleSize),strokeStyle=this.colors.accent,stroke(),closePath()),this.val.value=math.prune(this.rangify(normalval),3),this.digits=this.calculateDigits(),valtextsize=this.mindim/this.digits.total*.55,valtextsize>7){var valtext=this.val.value.toFixed(this.digits.decimals);fillStyle=this.colors.borderhl,textAlign="center",textBaseline="middle",font=valtextsize+"px 'Open Sans'",fillText(valtext,this.GUI.w/2,this.GUI.h/2)}this.drawLabel()},dial.prototype.click=function(t){this.val.value=math.prune(this.val.value,4),this.transmit(this.val),this.draw(),this.aniStart=this.val.value},dial.prototype.move=function(){var t=this.normalize(this.val.value);t=math.clip(t-this.deltaMove.y*this.responsivity,0,1),this.val.value=math.prune(this.rangify(t),4),this.transmit(this.val),this.draw()},dial.prototype.release=function(){this.aniStop=this.val.value},dial.prototype.animate=function(t){switch(t){case"bounce":nx.aniItems.push(this.aniBounce.bind(this));break;case"none":nx.aniItems.splice(nx.aniItems.indexOf(this.aniBounce))}},dial.prototype.aniBounce=function(){this.clicked||(this.val.value+=this.aniMove,this.aniStop<this.aniStart&&(this.stopPlaceholder=this.aniStop,this.aniStop=this.aniStart,this.aniStart=this.stopPlaceholder),this.aniMove=math.bounce(this.val.value,this.aniStart,this.aniStop,this.aniMove),this.draw(),this.val.value=math.prune(this.val.value,4),this.transmit(this.val))}},{"../core/widget":3,"../utils/math":6,util:44}],15:[function(require,module,exports){var startTime=0,math=require("../utils/math"),util=require("util"),widget=require("../core/widget"),envelope=module.exports=function(t){this.defaultSize={width:200,height:100},widget.call(this,t),this.nodeSize=1,this.active=!1,this.duration=1e3,this.looping=!1,this.scanIndex=0,this.val={index:0,amp:0,points:[{x:.1,y:.4},{x:.35,y:.6},{x:.65,y:.2},{x:.9,y:.4}]},this.selectedNode=null,nx.aniItems.push(this.pulse.bind(this)),this.init()};util.inherits(envelope,widget),envelope.prototype.init=function(){this.mindim=this.GUI.w<this.GUI.h?this.GUI.w:this.GUI.h,this.draw()},envelope.prototype.draw=function(){with(this.erase(),this.context){fillStyle=this.colors.fill,fillRect(0,0,this.GUI.w,this.GUI.h),fillStyle=this.colors.accent;var centerx=this.mindim/10,centery=this.GUI.h-this.mindim/10;beginPath(),moveTo(centerx,centery),arc(centerx,centery,this.mindim/10,1.5*Math.PI,2*Math.PI*this.val.index+1.5*Math.PI,!1),fill(),closePath();for(var drawingX=[],drawingY=[],i=0;i<this.val.points.length;i++)drawingX[i]=this.val.points[i].x*this.GUI.w,drawingY[i]=(1-this.val.points[i].y)*this.GUI.h,drawingX[i]<this.bgLeft+this.nodeSize?drawingX[i]=this.bgLeft+this.nodeSize:drawingX[i]>this.bgRight-this.nodeSize&&(drawingX[i]=this.bgRight-this.nodeSize),drawingY[i]<this.bgTop+this.nodeSize?drawingY[i]=this.bgTop+this.nodeSize:drawingY[i]>this.bgBottom-this.nodeSize&&(drawingY[i]=this.bgBottom-this.nodeSize);for(var j=0;j<drawingX.length;j++){var size=this.mindim/35+2;beginPath(),arc(drawingX[j],drawingY[j],size,0,2*Math.PI,!1),fillStyle=this.colors.accent,fill(),closePath()}beginPath(),strokeStyle=this.colors.accent,moveTo(-5,this.GUI.h),lineTo(-5,(1-this.val.points[0].y)*this.GUI.h);for(var j=0;j<drawingX.length;j++)lineTo(drawingX[j],drawingY[j]);lineTo(this.GUI.w+5,(1-this.val.points[this.val.points.length-1].y)*this.GUI.h),lineTo(this.GUI.w+5,this.GUI.h),stroke(),globalAlpha=.2,fillStyle=this.colors.accent,fill(),globalAlpha=1,closePath()}this.drawLabel()},envelope.prototype.scaleNode=function(t){var i=t,e=0,s=this.GUI.w,n=this.val.points[i].x,o=this.GUI.h-this.val.points[i].y,r=math.clip(n/this.GUI.w,0,1),h=math.clip(o/this.GUI.h,0,1);this.val.points[i].x=math.prune(r,3),this.val.points[i].y=math.prune(h,3),i>0&&(e=this.val.points[i-1].x),this.val.points.length>i+1&&(s=this.val.points[i+1].x),this.val.points[i].x<e&&(this.val.points.splice(i-1,0,this.val.points.splice(i,1)[0]),i-=1,this.selectedNode=i),this.val.points[i].x>s&&(this.val.points.splice(i+1,0,this.val.points.splice(i,1)[0]),i+=1,this.selectedNode=i)},envelope.prototype.click=function(){this.selectedNode=this.findNearestNode(this.clickPos.x/this.GUI.w,this.clickPos.y/this.GUI.h,this.val.points),this.transmit(this.val),this.draw()},envelope.prototype.move=function(){this.clicked&&(this.val.points[this.selectedNode].x=this.clickPos.x,this.val.points[this.selectedNode].y=this.clickPos.y,this.scaleNode(this.selectedNode),this.transmit(this.val),this.draw())},envelope.prototype.release=function(){this.hasMoved||this.val.points.splice(this.selectedNode,1),this.draw(),this.selectedNode=null},envelope.prototype.pulse=function(){if(this.active){var t=(nx.context.currentTime-startTime)/(this.duration/1e3);if(t>=1&&(this.looping?(t-=1,startTime+=this.duration/1e3,this.val.index=0,this.scanIndex=0):this.stop()),this.val.index=t,this.val.index>this.val.points[this.val.points.length-1].x)this.val.amp=this.val.points[this.val.points.length-1].y;else if(this.val.index<this.val.points[0].x)this.val.amp=this.val.points[0].y;else{for(this.scanIndex=0;this.val.index>this.val.points[this.scanIndex].x;)this.scanIndex++;var i=this.val.points[this.scanIndex].x,e=this.val.points[this.scanIndex-1].x,s=this.val.points[this.scanIndex].y,n=this.val.points[this.scanIndex-1].y;this.val.amp=math.interp((this.val.index-e)/(i-e),n,s)}this.transmit(this.val),this.draw()}},envelope.prototype.start=function(){this.active=!0,this.val.index=0,startTime=nx.context.currentTime},envelope.prototype.stop=function(){this.active=!1,this.val.index=0,this.draw()},envelope.prototype.findNearestNode=function(t,i,e){var s=null,n=1e3,o=!1;i=1-i;for(var r=0;r<e.length;r++){var h=Math.sqrt(Math.pow(e[r].x-t,2),Math.pow(e[r].y- -i,2));h<n&&(n=h,s=r,o=t>e[r].x)}return n>.1&&(o&&s++,this.val.points.splice(s,0,{x:this.clickPos.x/this.GUI.w,y:(this.GUI.h-this.clickPos.y)/this.GUI.h})),s}},{"../core/widget":3,"../utils/math":6,util:44}],16:[function(t,i,e){i.exports={banner:t("./banner"),button:t("./button"),colors:t("./colors"),comment:t("./comment"),crossfade:t("./crossfade"),dial:t("./dial"),envelope:t("./envelope"),joints:t("./joints"),keyboard:t("./keyboard"),matrix:t("./matrix"),message:t("./message"),meter:t("./meter"),metro:t("./metro"),motion:t("./motion"),mouse:t("./mouse"),multislider:t("./multislider"),multitouch:t("./multitouch"),number:t("./number"),position:t("./position"),range:t("./range"),select:t("./select"),slider:t("./slider"),string:t("./string"),tabs:t("./tabs"),text:t("./text"),tilt:t("./tilt"),toggle:t("./toggle"),typewriter:t("./typewriter"),vinyl:t("./vinyl"),waveform:t("./waveform")}},{"./banner":9,"./button":10,"./colors":11,"./comment":12,"./crossfade":13,"./dial":14,"./envelope":15,"./joints":17,"./keyboard":18,"./matrix":19,"./message":20,"./meter":21,"./metro":22,"./motion":23,"./mouse":24,"./multislider":25,"./multitouch":26,"./number":27,"./position":28,"./range":29,"./select":30,"./slider":31,"./string":32,"./tabs":33,"./text":34,"./tilt":35,"./toggle":36,"./typewriter":37,"./vinyl":38,"./waveform":39}],17:[function(require,module,exports){var math=require("../utils/math"),util=require("util"),widget=require("../core/widget"),joints=module.exports=function(t){this.defaultSize={width:150,height:150},widget.call(this,t),this.nodeSize=this.GUI.w/14,this.values=[0,0],this.val={x:.35,y:.35,node1:0},this.joints=[{x:.1,y:.2},{x:.2,y:.1},{x:.3,y:.7},{x:.4,y:.4},{x:.5,y:.9},{x:.6,y:.15},{x:.7,y:.3},{x:.8,y:.8}],this.threshold=this.GUI.w/3};util.inherits(joints,widget),joints.prototype.init=function(){this.nodeSize=this.GUI.w/14,this.threshold=this.GUI.w/3,this.draw()},joints.prototype.draw=function(){with(this.erase(),this.drawingX=this.val.x*this.GUI.w,this.drawingY=this.val.y*this.GUI.h,this.context){fillStyle=this.colors.fill,fillRect(0,0,this.GUI.w,this.GUI.h),null!=this.val.x?this.drawNode():(fillStyle=this.colors.border,font="14px courier",fillText(this.default_text,10,20)),fillStyle=this.colors.accent,strokeStyle=this.colors.border;for(var i in this.joints){beginPath(),arc(this.joints[i].x*this.GUI.w,this.joints[i].y*this.GUI.h,this.nodeSize/2,0,2*Math.PI,!0),fill(),closePath();var cnctX=Math.abs(this.joints[i].x*this.GUI.w-this.drawingX),cnctY=Math.abs(this.joints[i].y*this.GUI.h-this.drawingY),strength=cnctX+cnctY;if(strength<this.threshold){beginPath(),moveTo(this.joints[i].x*this.GUI.w,this.joints[i].y*this.GUI.h),lineTo(this.drawingX,this.drawingY),strokeStyle=this.colors.accent,lineWidth=math.scale(strength,0,this.threshold,this.nodeSize/2,5),stroke(),closePath();var scaledstrength=math.scale(strength,0,this.threshold,1,0);this.val["node"+i]=scaledstrength}}}this.drawLabel()},joints.prototype.drawNode=function(){with(this.drawingX<this.nodeSize?this.drawingX=this.nodeSize:this.drawingX>this.GUI.w-this.nodeSize&&(this.drawingX=this.GUI.w-this.nodeSize),this.drawingY<this.nodeSize?this.drawingY=this.nodeSize:this.drawingY>this.GUI.h-this.nodeSize&&(this.drawingY=this.GUI.h-this.nodeSize),this.context)globalAlpha=1,beginPath(),fillStyle=this.colors.accent,strokeStyle=this.colors.border,lineWidth=this.lineWidth,arc(this.drawingX,this.drawingY,this.nodeSize,0,2*Math.PI,!0),fill(),closePath()},joints.prototype.click=function(){this.val=new Object,this.val.x=this.clickPos.x/this.GUI.w,this.val.y=this.clickPos.y/this.GUI.h,this.draw(),this.transmit(this.val),this.connections=new Array},joints.prototype.move=function(){this.val=new Object,this.clicked&&(this.val.x=this.clickPos.x/this.GUI.w,this.val.y=this.clickPos.y/this.GUI.h,this.draw(),this.transmit(this.val),this.connections=new Array)},joints.prototype.release=function(){this.anix=this.deltaMove.x/this.GUI.w,this.aniy=this.deltaMove.y/this.GUI.h},joints.prototype.animate=function(t){switch(t){case"bounce":nx.aniItems.push(this.aniBounce.bind(this));break;case"none":nx.aniItems.splice(nx.aniItems.indexOf(this.aniBounce))}},joints.prototype.anix=0,joints.prototype.aniy=0,joints.prototype.aniBounce=function(){!this.clicked&&this.val.x&&(this.val.x+=this.anix,this.val.y+=this.aniy,this.anix=math.bounce(this.val.x,.1,.9,this.anix),this.aniy=math.bounce(this.val.y,.1,.9,this.aniy),this.draw(),this.transmit(this.val))}},{"../core/widget":3,"../utils/math":6,util:44}],18:[function(require,module,exports){var util=require("util"),widget=require("../core/widget"),drawing=require("../utils/drawing"),math=require("../utils/math"),keyboard=module.exports=function(t){this.defaultSize={width:300,height:75},widget.call(this,t),this.octaves=3,this.white={width:0,height:0},this.black={width:0,height:0},this.wkeys=new Array,this.bkeys=new Array,this.keypattern=["w","b","w","b","w","w","b","w","b","w","b","w"],this.keys=new Array,this.midibase=48,this.lineWidth=1,this.fingers=[{key:-1,pkey:-1}],this.multitouch=!1,this.oneleft=!1,this.mode="button",this.val={on:0,note:0,midi:"0 0"},this.init()};util.inherits(keyboard,widget),keyboard.prototype.init=function(){this.white={width:0,height:0},this.black={width:0,height:0},this.wkeys=new Array,this.bkeys=new Array,this.keys=new Array,this.white.num=0;for(var t=0;t<this.keypattern.length;t++)"w"==this.keypattern[t]&&this.white.num++;this.white.num*=this.octaves,this.white.width=this.GUI.w/this.white.num,this.white.height=this.GUI.h,this.black.width=.6*this.white.width,this.black.height=.6*this.GUI.h;for(var t=0;t<this.keypattern.length*this.octaves;t++)switch(this.keys[t]={note:t+this.midibase,on:!1},this.keypattern[t%this.keypattern.length]){case"w":this.keys[t].x=this.wkeys.length*this.white.width,this.keys[t].y=0,this.keys[t].w=this.white.width,this.keys[t].h=this.white.height,this.keys[t].type="w",this.keys[t].index=t,this.wkeys.push(this.keys[t]);break;case"b":this.keys[t].x=this.wkeys.length*this.white.width-this.black.width/2,this.keys[t].y=0,this.keys[t].w=this.black.width,this.keys[t].h=this.black.height,this.keys[t].type="b",this.keys[t].index=t,this.bkeys.push(this.keys[t])}this.draw()},keyboard.prototype.draw=function(){with(this.context){strokeStyle=this.colors.borderhl,lineWidth=1;for(var i in this.wkeys)fillStyle=this.wkeys[i].on?this.colors.borderhl:this.colors.fill,strokeRect(this.wkeys[i].x,0,this.white.width,this.white.height),fillRect(this.wkeys[i].x,0,this.white.width,this.white.height);for(var i in this.bkeys)fillStyle=this.bkeys[i].on?this.colors.borderhl:this.colors.black,fillRect(this.bkeys[i].x,0,this.black.width,this.black.height)}this.drawLabel()},keyboard.prototype.toggle=function(t,i){if("button"==this.mode){if(t){t.on=i||!1===i?i:!t.on;var e=t.on?1:0,s=128*math.invert(this.clickPos.y/this.GUI.h);s=math.prune(math.clip(s,5,128),0),this.val={on:e*s,note:t.note,midi:t.note+" "+e},this.transmit(this.val),this.draw()}}else if("sustain"==this.mode&&t){t.on=i||!t.on;var e=t.on?1:0,s=128*math.invert(this.clickPos.y/this.GUI.h);s=math.prune(math.clip(s,5,128),0),this.val={on:e*s,note:t.note,midi:t.note+" "+e},this.transmit(this.val),this.draw()}},keyboard.prototype.whichKey=function(t,i){for(var e in this.bkeys)if(drawing.isInside({x:t,y:i},this.bkeys[e]))return this.bkeys[e];var s=~~(t/this.white.width);return s>=this.wkeys.length&&(s=this.wkeys.length-1),s<0&&(s=0),this.wkeys[s]},keyboard.prototype.click=function(t){if(this.clickPos.touches.length>1||this.multitouch){this.multitouch=!0,this.clickPos.touches.length>=2&&this.oneleft&&(this.oneleft=!1),this.keysinuse=new Array;for(var i=0;i<this.clickPos.touches.length;i++)this.fingers[i]={key:this.whichKey(this.clickPos.touches[i].x,this.clickPos.touches[i].y)},this.fingers[i].key.on||this.toggle(this.fingers[i].key,!0),this.keysinuse.push(this.fingers[i].key.index);for(var i=0;i<this.keys.length;i++)this.keys[i].on&&this.keysinuse.indexOf(this.keys[i].index)<0&&this.toggle(this.keys[i],!1)}else this.fingers[0].pkey=this.fingers[0].key,this.fingers[0].key=this.whichKey(this.clickPos.x,this.clickPos.y),this.toggle(this.fingers[0].key)},keyboard.prototype.move=function(t){if(this.clickPos.touches.length>1||this.multitouch){this.keysinuse=new Array;for(var i=0;i<this.clickPos.touches.length;i++)this.fingers[i]={key:this.whichKey(this.clickPos.touches[i].x,this.clickPos.touches[i].y)},this.fingers[i].key.on||this.toggle(this.fingers[i].key,!0),this.keysinuse.push(this.fingers[i].key.index);for(var i=0;i<this.keys.length;i++)this.keys[i].on&&this.keysinuse.indexOf(this.keys[i].index)<0&&this.toggle(this.keys[i],!1)}else this.fingers[0].pkey=this.fingers[0].key,this.fingers[0].key=this.whichKey(this.clickPos.x,this.clickPos.y),this.fingers[0].key&&this.fingers[0].key.index!=this.fingers[0].pkey.index&&(this.toggle(this.fingers[0].pkey,!1),this.toggle(this.fingers[0].key,!0))},keyboard.prototype.release=function(t){if(this.clickPos.touches.length>1||this.multitouch){this.keysinuse=new Array;for(var i=0;i<this.clickPos.touches.length&&(!this.oneleft||1!=this.clickPos.touches.length);i++)this.fingers[i]={key:this.whichKey(this.clickPos.touches[i].x,this.clickPos.touches[i].y)},this.keysinuse.push(this.fingers[i].key.index);for(var i=0;i<this.keys.length;i++)this.keys[i].on&&this.keysinuse.indexOf(this.keys[i].index)<0&&this.toggle(this.keys[i],!1);1==this.clickPos.touches.length&&(this.oneleft=!0)}else"button"==this.mode&&this.toggle(this.fingers[0].key,!1)}},{"../core/widget":3,"../utils/drawing":5,"../utils/math":6,util:44}],19:[function(require,module,exports){var math=require("../utils/math"),drawing=require("../utils/drawing"),util=require("util"),widget=require("../core/widget"),matrix=module.exports=function(t){this.defaultSize={width:100,height:100},widget.call(this,t),this.row=4,this.col=4,this.cellHgt,this.cellWid,this.matrix,this.val={row:0,col:0,level:0,list:new Array},this.cur,this.prev,this.erasing=!1,this.place=null,this.starttime,this.lastbeat,this.thisframe=0,this.lastframe=0,this.context.lineWidth=1,this.sequencing=!1,this.cellBuffer=4,this.sequenceMode="linear",this.bpm=120,this.pbpm=this.bpm,this.starttime=nx.starttime,this.init()};util.inherits(matrix,widget),matrix.prototype.init=function(){this.pmatrix=!!this.matrix&&this.matrix,this.matrix=null,this.matrix=new Array(this.col);for(var t=0;t<this.col;t++){this.matrix[t]=new Array(this.row);for(var i=0;i<this.row;i++)this.matrix[t][i]=this.pmatrix&&this.pmatrix[t]?this.pmatrix[t][i]:0}this.draw(),this.life=this.unboundlife.bind(this)},matrix.prototype.draw=function(){with(this.erase(),this.cellWid=this.GUI.w/this.col,this.cellHgt=this.GUI.h/this.row,this.context)strokeStyle=this.colors.fill;for(var i=0;i<this.row;i++)for(var j=0;j<this.col;j++){var st_x=j*this.cellWid;0==j&&(st_x+=0);var st_y=i*this.cellHgt;0==i&&(st_y+=0);var boxwid=this.cellWid,boxhgt=this.cellHgt;with(this.context)strokeStyle=this.colors.border,lineWidth=this.cellBuffer,this.matrix[j][i]>0?fillStyle=this.colors.accent:fillStyle=this.colors.fill,fillRect(st_x+this.cellBuffer/2,st_y+this.cellBuffer/2,boxwid-this.cellBuffer,boxhgt-this.cellBuffer),this.place==j&&(globalAlpha=.4,fillStyle=this.colors.border,fillRect(st_x,st_y,boxwid,boxhgt),globalAlpha=1)}this.drawLabel()},matrix.prototype.click=function(t){this.cur={col:~~(this.clickPos.x/this.cellWid),row:~~(this.clickPos.y/this.cellHgt)},this.matrix[this.cur.col][this.cur.row]?(this.matrix[this.cur.col][this.cur.row]=0,this.erasing=!0):(this.matrix[this.cur.col][this.cur.row]=1,this.erasing=!1),this.cur.value=this.matrix[this.cur.col][this.cur.row],this.prev=this.cur,this.val={row:this.cur.row,col:this.cur.col,level:this.cur.value},this.transmit(this.val),this.draw()},matrix.prototype.move=function(t){this.clicked&&(this.cur={col:~~(this.clickPos.x/this.cellWid),row:~~(this.clickPos.y/this.cellHgt)},this.cur.row<this.row&&this.cur.col<this.col&&this.cur.row>=0&&this.cur.col>=0&&(this.cur.col==this.prev.col&&this.cur.row==this.prev.row||(this.erasing?this.matrix[this.cur.col][this.cur.row]=0:this.matrix[this.cur.col][this.cur.row]=1,this.cur.value=this.matrix[this.cur.col][this.cur.row],this.prev=this.cur,this.val={row:this.cur.row,col:this.cur.col,level:this.cur.value},this.transmit(this.val),this.draw())))},matrix.prototype.setCell=function(t,i,e){var s=e?1:0;this.matrix[t][i]=s,this.val={row:i,col:t,level:s},this.transmit(this.val),this.draw()},matrix.prototype.sequence=function(t){t&&(this.bpm=t),this.sequencing=!0,requestAnimationFrame(this.seqStep.bind(this))},matrix.prototype.setBPM=function(t){this.bpm=t},matrix.prototype.stop=function(){this.sequencing=!1},matrix.prototype.seqStep=function(){0==this.bpm&&(this.bpm=1);var t=(new Date).getTime(),i=t-this.starttime;if(this.bpm!=this.pbpm){i=i/(6e4/this.pbpm)*(6e4/this.bpm),this.starttime=t-i,this.thisframe=~~(i/(6e4/this.bpm))}else this.thisframe=~~(i/(6e4/this.bpm));this.pbpm=this.bpm,this.thisframe!=this.lastframe&&(this.lastbeat=t,"linear"==this.sequenceMode?this.place++:"random"==this.sequenceMode&&(this.place=math.random(this.col)),this.place>=this.col&&(this.place=0),null==this.place&&(this.place=0),this.jumpToCol(this.place)),this.lastframe=this.thisframe,this.sequencing&&requestAnimationFrame(this.seqStep.bind(this))},matrix.prototype.jumpToCol=function(t){this.place=t,this.val={list:this.matrix[this.place]},this.transmit(this.val),this.draw()},matrix.prototype.customDestroy=function(){this.stop()},matrix.prototype.unboundlife=function(){if(!this.clicked){this.newmatrix=[];for(var t=0;t<this.col;t++){this.newmatrix[t]=[];for(var i=0;i<this.row;i++){var e=0;t-1>=0&&(e+=this.matrix[t-1][i-1]?this.matrix[t-1][i-1]:0,e+=this.matrix[t-1][i]?this.matrix[t-1][i]:0,e+=this.matrix[t-1][i+1]?this.matrix[t-1][i+1]:0),e+=this.matrix[t][i-1]?this.matrix[t][i-1]:0,e+=this.matrix[t][i+1]?this.matrix[t][i+1]:0,t+1<this.col&&(e+=this.matrix[t+1][i-1]?this.matrix[t+1][i-1]:0,e+=this.matrix[t+1][i]?this.matrix[t+1][i]:0,e+=this.matrix[t+1][i+1]?this.matrix[t+1][i+1]:0),this.matrix[t][i]?e<2?this.newmatrix[t][i]=0:2==e||3==e?this.newmatrix[t][i]=1:e>3&&(this.newmatrix[t][i]=0):this.matrix[t][i]||3!=e?this.newmatrix[t][i]=this.matrix[t][i]:this.newmatrix[t][i]=1}}this.matrix=this.newmatrix}this.transmit({grid:this.matrix}),this.draw()},matrix.prototype.life=function(){return!1}},{"../core/widget":3,"../utils/drawing":5,"../utils/math":6,util:44}],20:[function(require,module,exports){var util=require("util"),widget=require("../core/widget"),message=module.exports=function(t){this.defaultSize={width:100,height:30},widget.call(this,t),this.val={value:"send a message"},this.size=14};util.inherits(message,widget),message.prototype.init=function(){this.canvas.getAttribute("label")&&(this.val.value=this.canvas.getAttribute("label")),this.draw()},message.prototype.draw=function(){with(this.erase(),this.context)this.clicked?fillStyle=this.colors.border:fillStyle=this.colors.fill,fillRect(0,0,this.GUI.w,this.GUI.h),this.clicked,fillStyle=this.colors.black,textAlign="left",font=this.size+"px "+nx.font;this.wrapText(this.val.value,5,1+this.size,this.GUI.w-6,this.size)},message.prototype.click=function(t){this.draw(),this.transmit(this.val)},message.prototype.release=function(t){this.draw()}},{"../core/widget":3,util:44}],21:[function(require,module,exports){var util=require("util"),drawing=require("../utils/drawing"),widget=require("../core/widget"),meter=module.exports=function(t){this.defaultSize={width:20,height:50},widget.call(this,t),this.val={level:0},this.dataArray,this.bars=8,this.init()};util.inherits(meter,widget),meter.prototype.init=function(){with(this.bar={x:0,y:0,w:this.GUI.w,h:this.GUI.h/this.bars},this.context)fillStyle=this.colors.fill,fillRect(0,0,this.GUI.w,this.GUI.h)},meter.prototype.setup=function(t,i){this.actx=t,this.source=i,this.analyser=this.actx.createAnalyser(),this.analyser.smoothingTimeConstant=.85,this.analyser.fftsize=1024,this.bufferLength=this.analyser.frequencyBinCount,this.dataArray=new Uint8Array(this.bufferLength),this.source.connect(this.analyser),this.draw()},meter.prototype.draw=function(){if(this.dataArray){this.analyser.getByteTimeDomainData(this.dataArray);var max=Math.max.apply(null,this.dataArray),min=Math.min.apply(null,this.dataArray),amp=max-min;amp/=240;var db=Math.log(amp)/Math.log(10)*20;with(this.context){fillStyle=this.colors.fill,fillRect(0,0,this.GUI.w,this.GUI.h);for(var dboffset=Math.floor((db+40)/(50/this.bars)),i=0;i<this.bars;i++)i>=.8*this.bars?fillStyle="rgb(255,0,0)":i<.8*this.bars&&i>=.69*this.bars?fillStyle="rgb(255,255,0)":i<.69*this.bars&&(fillStyle="rgb(0,255,0)"),i<dboffset&&fillRect(1,this.GUI.h-this.bar.h*i,this.GUI.w-2,this.bar.h-2)}}setTimeout(function(){window.requestAnimationFrame(this.draw.bind(this))}.bind(this),80)}},{"../core/widget":3,"../utils/drawing":5,util:44}],22:[function(require,module,exports){var math=require("../utils/math"),util=require("util"),widget=require("../core/widget"),metro=module.exports=function(t){this.defaultSize={width:100,height:20},widget.call(this,t),this.val={beat:0},this.x=10,this.y=10,this.loc=10,this.nodeSize=10,this.speed=1,this.direction=1,this.orientation="horizontal",this.boundary=this.GUI.w,nx.aniItems.push(this.advance.bind(this)),this.active=!0,this.init()};util.inherits(metro,widget),metro.prototype.init=function(){this.nodeSize=Math.min(this.GUI.w,this.GUI.h)/2,this.GUI.w<this.GUI.h?(this.orientation="vertical",this.boundary=this.GUI.h):(this.orientation="horizontal",this.boundary=this.GUI.w),this.x=this.nodeSize,this.y=this.nodeSize,this.loc=this.nodeSize,this.draw()},metro.prototype.draw=function(){with(this.erase(),this.context)fillStyle=this.colors.fill,fillRect(0,0,this.GUI.w,this.GUI.h),beginPath(),fillStyle=this.colors.accent,arc(this.x,this.y,this.nodeSize,0,2*Math.PI,!0),fill(),closePath();this.drawLabel()},metro.prototype.click=function(){},metro.prototype.move=function(){this.clicked&&(this.speed-=this.deltaMove.y/50)},metro.prototype.release=function(){},metro.prototype.advance=function(){this.speed,this.loc+=this.speed*this.direction,(this.loc-this.nodeSize<0||this.loc+this.nodeSize>this.boundary)&&(this.val.beat=math.scale(this.direction,-1,1,0,1),this.transmit(this.val),this.direction*=-1),"vertical"==this.orientation?this.y=this.loc:this.x=this.loc,this.draw()},metro.prototype.customDestroy=function(){nx.removeAni(this.advance.bind(this))}},{"../core/widget":3,"../utils/math":6,util:44}],23:[function(require,module,exports){var math=require("../utils/math"),util=require("util"),widget=require("../core/widget"),motion=module.exports=function(target){if(this.defaultSize={width:75,height:75},widget.call(this,target),this.motionLR,this.motionFB,this.z,this.active=!0,this.px=0,this.py=0,this.pz=0,this.val={x:0,y:0,z:0},this.text="Motion",this.init(),this.boundMotion=this.motionlistener.bind(this),window.DeviceMotionEvent)window.addEventListener("devicemotion",this.boundMotion,!1);else with(this.context)fillText("incompatible",0,0),this.active=!1};util.inherits(motion,widget),motion.prototype.deviceMotionHandler=function(){this.val={x:math.prune(this.motionLR/10,4),y:math.prune(this.motionFB/10,4),z:math.prune(this.z/10,4)},this.transmit(this.val)},motion.prototype.motionlistener=function(e){var data=e.acceleration;if(this.active&&(this.motionLR=nx.lp(this.canvasID+"motionx",data.x,20),this.motionFB=nx.lp(this.canvasID+"motiony",data.y,20),this.z=nx.lp(this.canvasID+"motionz",data.z,20),this.deviceMotionHandler(),this.draw(),null===data.x||void 0===data.x)){with(this.erase(),this.context)fillStyle=this.colors.fill,fillRect(0,0,this.GUI.w,this.GUI.h),fillStyle=this.colors.black,font="12px courier",textAlign="center",fillText("no data",this.GUI.w/2,this.GUI.h/2);this.active=!1}},motion.prototype.init=function(){this.draw()},motion.prototype.draw=function(){with(this.erase(),this.context){fillStyle=this.colors.fill,fillRect(0,0,this.GUI.w,this.GUI.h),fillStyle=this.colors.accent;var eighth=Math.PI/4;this.motionFB<0?(beginPath(),moveTo(this.GUI.w/2,this.GUI.h/2),arc(this.GUI.w/2,this.GUI.h/2,this.GUI.w/2,5*eighth,7*eighth,!1),globalAlpha=Math.pow(this.motionFB,2),fill(),closePath()):(beginPath(),moveTo(this.GUI.w/2,this.GUI.h/2),arc(this.GUI.w/2,this.GUI.h/2,this.GUI.w/2,1*eighth,3*eighth,!1),globalAlpha=Math.pow(this.motionFB,2),fill(),closePath()),this.motionLR<0?(beginPath(),moveTo(this.GUI.w/2,this.GUI.h/2),arc(this.GUI.w/2,this.GUI.h/2,this.GUI.w/2,7*eighth,1*eighth,!1),globalAlpha=Math.pow(this.motionLR,2),fill(),closePath()):(beginPath(),moveTo(this.GUI.w/2,this.GUI.h/2),arc(this.GUI.w/2,this.GUI.h/2,this.GUI.w/2,3*eighth,5*eighth,!1),globalAlpha=Math.pow(this.motionLR,2),fill(),closePath()),beginPath(),moveTo(this.GUI.w/2,this.GUI.h/2),arc(this.GUI.w/2,this.GUI.h/2,this.GUI.w/6,0,2*Math.PI,!1),globalAlpha=Math.pow(this.z,2),fill(),closePath(),globalAlpha=1}this.drawLabel()},motion.prototype.click=function(){this.active=!this.active,this.draw()},motion.prototype.customDestroy=function(){this.active=!1,window.removeEventListener("devicemotion",this.motionlistener,!1)}},{"../core/widget":3,"../utils/math":6,util:44}],24:[function(require,module,exports){var util=require("util"),widget=require("../core/widget"),math=require("../utils/math"),mouse=module.exports=function(t){this.defaultSize={width:98,height:100},widget.call(this,t),this.val={x:0,y:0,deltax:0,deltay:0},this.inside=new Object,this.boundmove=this.preMove.bind(this),this.mousing=window.addEventListener("mousemove",this.boundmove,!1),this.init()};util.inherits(mouse,widget),mouse.prototype.init=function(){this.inside.height=this.GUI.h,this.inside.width=this.GUI.w,this.inside.left=0,this.inside.top=0,this.inside.quarterwid=this.inside.width/4,this.draw()},mouse.prototype.draw=function(){with(this.erase(),this.context){fillStyle=this.colors.fill,fillRect(0,0,this.GUI.w,this.GUI.h);var scaledx=-this.val.x*this.GUI.h,scaledy=-this.val.y*this.GUI.h,scaleddx=-this.val.deltax*this.GUI.h-this.GUI.h/2,scaleddy=-this.val.deltay*this.GUI.h-this.GUI.h/2;fillStyle=this.colors.accent,fillRect(this.inside.left,this.inside.height,this.inside.quarterwid,scaledx),fillRect(this.inside.quarterwid,this.inside.height,this.inside.quarterwid,scaledy),fillRect(2*this.inside.quarterwid,this.inside.height,this.inside.quarterwid,scaleddx),fillRect(3*this.inside.quarterwid,this.inside.height,this.inside.quarterwid,scaleddy),globalAlpha=1,fillStyle=this.colors.fill,textAlign="center",font=this.GUI.w/7+"px "+this.font,globalAlpha=1}this.drawLabel()},mouse.prototype.move=function(t){this.val={deltax:t.clientX/window.innerWidth-this.val.x,deltay:math.invert(t.clientY/window.innerHeight)-this.val.y,x:t.clientX/window.innerWidth,y:math.invert(t.clientY/window.innerHeight)},this.draw(),this.transmit(this.val)},mouse.prototype.customDestroy=function(){window.removeEventListener("mousemove",this.boundmove,!1)}},{"../core/widget":3,"../utils/math":6,util:44}],25:[function(require,module,exports){var math=require("../utils/math"),util=require("util"),widget=require("../core/widget"),multislider=module.exports=function(t){this.defaultSize={width:100,height:75},widget.call(this,t),this.sliders=15,this.sliderClicked=0,this.oldSliderToMove,this.init()};util.inherits(multislider,widget),multislider.prototype.init=function(){this.val=new Array;for(var t=0;t<this.sliders;t++)this.val[t]=.7;this.realSpace={x:this.GUI.w,y:this.GUI.h},this.sliderWidth=this.realSpace.x/this.sliders,this.draw()},multislider.prototype.draw=function(){with(this.erase(),this.context){fillStyle=this.colors.fill,fillRect(0,0,this.GUI.w,this.GUI.h),strokeStyle=this.colors.accent,fillStyle=this.colors.accent,lineWidth=5;for(var i=0;i<this.sliders;i++)beginPath(),moveTo(i*this.sliderWidth,this.GUI.h-this.val[i]*this.GUI.h),lineTo(i*this.sliderWidth+this.sliderWidth,this.GUI.h-this.val[i]*this.GUI.h),stroke(),lineTo(i*this.sliderWidth+this.sliderWidth,this.GUI.h),lineTo(i*this.sliderWidth,this.GUI.h),globalAlpha=.3-i%3*.1,fill(),closePath(),globalAlpha=1}this.drawLabel()},multislider.prototype.click=function(){this.oldSliderToMove=!1,this.move(!0)},multislider.prototype.move=function(t){if(this.clicked){if(this.clickPos.touches.length>1)for(var i=0;i<this.clickPos.touches.length;i++){var e=Math.floor(this.clickPos.touches[i].x/this.sliderWidth);e=math.clip(e,0,this.sliders-1),this.val[e]=math.clip(math.invert(this.clickPos.touches[i].y/this.GUI.h),0,1)}else{var e=Math.floor(this.clickPos.x/this.sliderWidth);if(e=math.clip(e,0,this.sliders-1),this.val[e]=math.clip(math.invert(this.clickPos.y/this.GUI.h),0,1),this.oldSliderToMove&&this.oldSliderToMove>e+1)for(var s=this.oldSliderToMove-e-1,i=1;i<=s;i++)this.val[e+i]=this.val[e]+(this.val[this.oldSliderToMove]-this.val[e])*(i/(s+1));else if(this.oldSliderToMove&&e>this.oldSliderToMove+1)for(var s=e-this.oldSliderToMove-1,i=1;i<=s;i++)this.val[this.oldSliderToMove+i]=this.val[this.oldSliderToMove]+(this.val[e]-this.val[this.oldSliderToMove])*(i/(s+1))}this.draw()}var n=new Object;if(n[e]=this.val[e],"js"==this.destination||"node"==this.destination)n.list=this.val;else{n.list=new String;for(var o in this.val)n.list+=this.val[o]+" "}this.transmit(n),this.oldSliderToMove=e},multislider.prototype.setNumberOfSliders=function(t){this.sliders=t,this.val=new Array;for(var i=0;i<this.sliders;i++)this.val.push(.7);this.sliderWidth=this.realSpace.x/this.sliders,this.init()},multislider.prototype.setSliderValue=function(t,i){this.val[t]=i,this.draw();var e=new Object;if(e[t]=this.val[t],"js"==this.destination||"node"==this.destination)e.list=this.val;else{e.list=new String;for(var s in this.val)e.list+=this.val[s]+" "}this.transmit(e)}},{"../core/widget":3,"../utils/math":6,util:44}],26:[function(require,module,exports){var math=require("../utils/math"),drawing=require("../utils/drawing"),util=require("util"),widget=require("../core/widget"),multitouch=module.exports=function(t){this.defaultSize={width:200,height:200},widget.call(this,t),this.nodeSize=this.GUI.w/10,this.val={touch1:{x:0,y:0}},this.nodes=new Array,this.text="multitouch",this.rainbow=["#00f","#04f","#08F","0AF","0FF"],this.mode="normal",this.rows=10,this.cols=10,this.matrixLabels=!1,this.init()};util.inherits(multitouch,widget),multitouch.prototype.init=function(){this.nodeSize=this.GUI.w/10,this.draw()},multitouch.prototype.draw=function(){with(this.erase(),this.context){fillStyle=this.colors.fill,fillRect(0,0,this.GUI.w,this.GUI.h);var count=0;if("matrix"==this.mode)for(var j=0;j<this.rows;j++)for(var i=0;i<this.cols;i++)with(this.context){beginPath(),fillStyle=this.colors.accent,strokeStyle=this.colors.border,lineWidth=1;var circx=i*this.GUI.w/this.cols+this.GUI.w/this.cols/2,circy=j*this.GUI.h/this.rows+this.GUI.h/this.rows/2;arc(circx,circy,this.GUI.h/this.rows/2,0,2*Math.PI,!0),stroke(),fillStyle=this.colors.border,textAlign="center",textBaseline="middle",this.matrixLabels&&(fillText(this.matrixLabels[count%this.matrixLabels.length],circx,circy),count++);var thisarea={x:i*this.GUI.w/this.cols,y:j*this.GUI.h/this.rows,w:this.GUI.w/this.cols,h:this.GUI.h/this.rows};if(this.clickPos.touches.length>=1)for(var k=0;k<this.clickPos.touches.length;k++)drawing.isInside(this.clickPos.touches[k],thisarea)&&(globalAlpha=.5,fillStyle=this.colors.accent,fill(),globalAlpha=.3,fillStyle=this.rainbow[k],fill(),globalAlpha=1);closePath()}else if(this.clickPos.touches.length>=1){for(var i=0;i<this.clickPos.touches.length;i++)with(this.context)globalAlpha=.5,beginPath(),fillStyle=this.colors.accent,strokeStyle=this.colors.border,lineWidth=this.lineWidth,arc(this.clickPos.touches[i].x,this.clickPos.touches[i].y,this.nodeSize,0,2*Math.PI,!0),fill(),closePath(),globalAlpha=.3,beginPath(),fillStyle=this.rainbow[i],strokeStyle=this.colors.border,lineWidth=this.lineWidth,arc(this.clickPos.touches[i].x,this.clickPos.touches[i].y,this.nodeSize,0,2*Math.PI,!0),fill(),closePath(),globalAlpha=1;clearRect(0,this.GUI.h,this.GUI.w,this.height-this.GUI.h)}else this.setFont(),fillStyle=this.colors.border,fillText(this.text,this.GUI.w/2,this.GUI.h/2),globalAlpha=1}this.drawLabel()},multitouch.prototype.click=function(){this.draw(),this.sendit()},multitouch.prototype.move=function(){this.clicked&&(this.draw(),this.sendit())},multitouch.prototype.release=function(){if(!this.clicked){this.clickPos.touches=new Array;for(var t=0;t<5;t++)this.val["touch"+t]={x:0,y:0};this.transmit(this.val)}this.draw(),this.sendit()},multitouch.prototype.sendit=function(){this.val=new Object;for(var t=0;t<this.clickPos.touches.length;t++)this.val["touch"+t]={x:this.clickPos.touches[t].x/this.canvas.width,y:math.invert(this.clickPos.touches[t].y/this.canvas.height)};this.transmit(this.val)}},{"../core/widget":3,"../utils/drawing":5,"../utils/math":6,util:44}],27:[function(t,i,e){var s=t("../utils/math"),n=t("util"),o=t("../core/widget"),r=i.exports=function(t){this.defaultSize={width:50,height:20},o.call(this,t),this.val={value:0},this.min=-2e4,this.max=2e4,this.step=1,this.rate=.25,this.decimalPlaces=3,this.lostdata=0,this.actual=0,this.canvas.ontouchstart=null,this.canvas.ontouchmove=null,this.canvas.ontouchend=null;var i='<input type="text" nx="number" id="'+this.canvasID+'" style="height:'+this.GUI.h+"px;width:"+this.GUI.w+"px;font-size:"+this.GUI.h/2+'px;"></input><canvas height="1px" width="1px" style="display:none"></canvas>',e=this.canvas,n=this.canvas.style,r=e.parentNode,h=document.createElement("span");h.innerHTML=i,h.className="nx",r.replaceChild(h,e),this.el=document.getElementById(this.canvasID);for(var a in n)"height"!=a&&"width"!=a&&(this.el.style[a]=n[a]);if(this.label){var g=document.createElement("div");g.innerHTML=this.label,g.style.fontSize=this.labelSize/2.8+"px",g.style.fontFamily=this.labelFont,g.style.textAlign=this.labelAlign,g.style.lineHeight=this.labelSize+"px",g.style.width=this.GUI.w+"px",g.style.color=nx.colors.black,g.className="nxlabel",h.appendChild(g)}this.canvas=document.getElementById(this.canvasID),this.canvas.style.height=this.GUI.h+"px",this.canvas.style.fontSize=.6*this.GUI.h+"px",this.canvas.style.textAlign="left",this.canvas.style.backgroundColor=this.colors.fill,this.canvas.style.highlight=this.colors.fill,this.canvas.style.border="none",this.canvas.style.outline="none",this.canvas.style.padding="4px 10px",this.canvas.style.cursor="pointer",this.canvas.style.display="block",this.canvas.className="",this.canvas.addEventListener("blur",function(){this.canvas.style.backgroundColor=this.colors.fill,this.canvas.style.color=this.colors.black,this.canvas.value!=this.val.value&&(this.actual=parseFloat(this.canvas.value),this.actual=s.clip(this.actual,this.min,this.max),this.actual=s.prune(this.actual,this.decimalPlaces),this.set({value:this.actual},!0))}.bind(this)),this.canvas.addEventListener("keydown",function(t){(t.which<48||t.which>57)&&189!=t.which&&190!=t.which&&8!=t.which&&t.preventDefault(),13==t.which&&this.canvas.blur()}.bind(this)),nx.isTouchDevice?(this.canvas.ontouchstart=this.preTouch,this.canvas.ontouchmove=this.preTouchMove,this.canvas.ontouchend=this.preTouchRelease):this.canvas.addEventListener("mousedown",this.preClick,!1),this.canvas.style.userSelect="none !important",this.canvas.style.mozUserSelect="none !important",this.canvas.style.webkitUserSelect="none !important",this.init()};n.inherits(r,o),r.prototype.init=function(){this.draw()},r.prototype.draw=function(){this.canvas.value=this.val.value},r.prototype.click=function(t){this.canvas.readOnly=!0,this.actual=this.val.value},r.prototype.move=function(t){this.clicked&&(this.canvas.style.border="none",this.actual-=this.deltaMove.y*(this.rate*this.step),this.actual=s.clip(this.actual,this.min,this.max),this.val.value=Math.floor(this.actual/this.step)*this.step,this.val.value=s.prune(this.val.value,this.decimalPlaces),this.draw(),this.transmit(this.val))},r.prototype.release=function(t){!this.hasMoved&&this.canvas.readOnly&&(this.canvas.readOnly=!1,this.canvas.focus(),this.canvas.setSelectionRange(0,this.canvas.value.length),this.canvas.style.backgroundColor=this.colors.accent,this.canvas.style.color=this.colors.fill)}},{"../core/widget":3,"../utils/math":6,util:44}],28:[function(require,module,exports){var math=require("../utils/math"),util=require("util"),widget=require("../core/widget"),position=module.exports=function(t){this.defaultSize={width:150,height:100},widget.call(this,t),this.nodeSize=15,this.val={x:.5,y:.5},this.init()};util.inherits(position,widget),position.prototype.init=function(){this.nodeSize=Math.min(this.GUI.h,this.GUI.w)/10,this.nodeSize=Math.max(this.nodeSize,10),this.actualWid=this.GUI.w-2*this.nodeSize,this.actualHgt=this.GUI.h-2*this.nodeSize,this.draw()},position.prototype.draw=function(){with(this.erase(),this.context){fillStyle=this.colors.fill,fillRect(0,0,this.GUI.w,this.GUI.h);var drawingX=this.val.x*this.actualWid+this.nodeSize,drawingY=math.invert(this.val.y)*this.actualHgt+this.nodeSize;with(drawingX<this.nodeSize?drawingX=this.nodeSize:drawingX>this.GUI.w-this.nodeSize&&(drawingX=this.GUI.w-this.nodeSize),drawingY<this.nodeSize?drawingY=this.nodeSize:drawingY>this.GUI.h-this.nodeSize&&(drawingY=this.GUI.h-this.nodeSize),this.context)beginPath(),fillStyle=this.colors.accent,arc(drawingX,drawingY,this.nodeSize,0,2*Math.PI,!0),fill(),closePath(),this.clicked&&(beginPath(),fillStyle=this.colors.accent,arc(drawingX,drawingY,2*this.nodeSize,0,2*Math.PI,!0),fill(),closePath(),clearRect(0,this.GUI.h,this.GUI.w,this.height-this.GUI.h))}this.drawLabel()},position.prototype.click=function(){this.val.x=this.clickPos.x,this.val.y=this.clickPos.y,this.scaleNode(),this.val.state="click",this.transmit(this.val),this.draw()},position.prototype.move=function(){this.val.x=this.clickPos.x,this.val.y=this.clickPos.y,this.scaleNode(),this.val.state="move",this.transmit(this.val),this.draw()},position.prototype.release=function(){this.val.x=this.clickPos.x,this.val.y=this.clickPos.y,this.scaleNode(),this.val.state="release",this.transmit(this.val),this.draw()},position.prototype.scaleNode=function(){var t=this.val.x-this.nodeSize,i=this.val.y-this.nodeSize,e=math.clip(t/this.actualWid,0,1),s=math.clip(i/this.actualHgt,0,1);this.val.x=math.prune(e,3),this.val.y=math.prune(s,3),this.val.y=math.invert(this.val.y)},position.prototype.animate=function(t){switch(t){case"bounce":nx.aniItems.push(this.aniBounce.bind(this));break;case"none":nx.aniItems.splice(nx.aniItems.indexOf(this.aniBounce))}},position.prototype.aniBounce=function(){!this.clicked&&this.val.x&&(this.val.x+=this.deltaMove.x/2/this.GUI.w,this.val.y-=this.deltaMove.y/2/this.GUI.h,this.val.state="animated",math.bounce(this.val.x,0,1,this.deltaMove.x)!=this.deltaMove.x&&(this.deltaMove.x=math.bounce(this.val.x,0,1,this.deltaMove.x),this.val.state="bounce"),(this.val.y>=1||this.val.y<=0)&&(this.deltaMove.y=-1*math.bounce(this.val.y,0,1,this.deltaMove.y),this.val.state="bounce"),this.transmit(this.val),this.draw())},position.prototype.customDestroy=function(){nx.removeAni(this.aniBounce)}},{"../core/widget":3,"../utils/math":6,util:44}],29:[function(require,module,exports){var util=require("util"),widget=require("../core/widget"),math=require("../utils/math"),range=module.exports=function(t){this.defaultSize={width:110,height:35},widget.call(this,t),this.val={start:.3,stop:.7,size:.4},this.hslider=!1,this.handle,this.relhandle,this.cap,this.firsttouch="start",this.mode="area",this.touchdown=new Object,this.init()};util.inherits(range,widget),range.prototype.init=function(){this.GUI.h>=this.GUI.w?this.hslider=!1:this.hslider=!0,null!=this.canvas.getAttribute("label")&&(this.label=this.canvas.getAttribute("label")),this.draw()},range.prototype.draw=function(){with(this.erase(),this.context)if(fillStyle=this.colors.fill,fillRect(0,0,this.GUI.w,this.GUI.h),this.hslider){var x1=this.val.start*this.GUI.w,y1=0,x2=this.val.stop*this.GUI.w,y2=this.GUI.h;fillStyle=this.colors.accent,fillRect(x1,y1,x2-x1,y2-y1)}else{var x1=0,y1=this.GUI.h-this.val.stop*this.GUI.h,x2=this.GUI.w,y2=this.GUI.h-this.val.start*this.GUI.h;fillStyle=this.colors.accent,fillRect(x1,y1,x2-x1,y2-y1)}this.drawLabel()},range.prototype.click=function(){"edge"==this.mode?this.hslider?Math.abs(this.clickPos.x-this.val.start*this.GUI.w)<Math.abs(this.clickPos.x-this.val.stop*this.GUI.w)?this.firsttouch="start":this.firsttouch="stop":Math.abs(Math.abs(this.clickPos.y-this.GUI.h)-this.val.start*this.GUI.h)<Math.abs(Math.abs(this.clickPos.y-this.GUI.h)-this.val.stop*this.GUI.h)?this.firsttouch="start":this.firsttouch="stop":"area"==this.mode&&(this.touchdown={x:this.clickPos.x,y:this.clickPos.y},this.startval=new Object,this.startval.size=this.val.stop-this.val.start,this.startval.loc=this.val.start+this.startval.size/2),this.move()},range.prototype.move=function(){if("edge"==this.mode)this.hslider?"start"==this.firsttouch?(this.val.start=this.clickPos.x/this.GUI.w,this.clickPos.touches.length>1&&(this.val.stop=this.clickPos.touches[1].x/this.GUI.w)):(this.val.stop=this.clickPos.x/this.GUI.w,this.clickPos.touches.length>1&&(this.val.start=this.clickPos.touches[1].x/this.GUI.w)):"start"==this.firsttouch?(this.val.start=math.invert(this.clickPos.y/this.GUI.h),this.clickPos.touches.length>1&&(this.val.stop=math.invert(this.clickPos.touches[1].y/this.GUI.h))):(this.val.stop=math.invert(this.clickPos.y/this.GUI.h),this.clickPos.touches.length>1&&(this.val.start=math.invert(this.clickPos.touches[1].y/this.GUI.h))),this.val.stop<this.val.start&&(this.tempstart=this.val.start,this.val.start=this.val.stop,this.val.stop=this.tempstart,"start"==this.firsttouch?this.firsttouch="stop":this.firsttouch="start"),this.val={start:math.clip(this.val.start,0,1),stop:math.clip(this.val.stop,0,1)},this.val.size=math.prune(math.clip(Math.abs(this.val.stop-this.val.start),0,1),3),this.draw(),this.transmit(this.val);else if("area"==this.mode){if(this.hslider)var t=this.clickPos.x/this.GUI.w,i=(this.touchdown.y-this.clickPos.y)/this.GUI.h;else{var t=nx.invert(this.clickPos.y/this.GUI.h),i=(this.touchdown.x-this.clickPos.x)/this.GUI.w;i*=-1}i/=3;var e=this.startval.size+i;e=math.clip(e,.001,1),this.val={start:t-e/2,stop:t+e/2},this.val.start=math.clip(this.val.start,0,1),this.val.stop=math.clip(this.val.stop,0,1),this.draw(),this.transmit(this.val)}}},{"../core/widget":3,"../utils/math":6,util:44}],30:[function(t,i,e){var s=t("util"),n=t("../core/widget"),o=i.exports=function(t){this.defaultSize={width:200,height:30},n.call(this,t),this.choices=[],this.val=new Object,this.canvas.ontouchstart=null,this.canvas.ontouchmove=null,this.canvas.ontouchend=null,this.canvas.getAttribute("choices")&&(this.choices=this.canvas.getAttribute("choices"),this.choices=this.choices.split(","));var i='<select id="'+this.canvasID+'" class="nx" nx="select" style="height:'+this.GUI.h+"px;width:"+this.GUI.w+'px;" onchange="'+this.canvasID+'.change(this)"></select><canvas height="1px" width="1px" style="display:none"></canvas>',e=this.canvas,s=this.canvas.style,o=e.parentNode,r=document.createElement("span");r.innerHTML=i,r.className="nx",o.replaceChild(r,e),this.sel=document.getElementById(this.canvasID);for(var h in s)this.sel.style[h]=s[h];this.canvas=document.getElementById(this.canvasID),this.canvas.style.backgroundColor=this.colors.fill,this.canvas.style.border="solid 2px "+this.colors.border,this.canvas.style.color=this.colors.black,this.canvas.style.fontSize=Math.round(this.GUI.h/2.3)+"px",this.canvas.className=""};s.inherits(o,n),o.prototype.init=function(){this.canvas.style.backgroundColor=this.colors.fill,this.canvas.style.border="solid 2px "+this.colors.border,this.canvas.style.color=this.colors.black;var t=this.canvas.options.length;for(i=0;i<t;i++)this.canvas.options[i]=null;for(var i=0;i<this.choices.length;i++){var e=document.createElement("option");e.text=this.choices[i],e.value=this.choices[i],this.canvas.add(e,null)}this.val.text=this.choices[0]},o.prototype.change=function(t){this.val.text=t.value,this.val.value=t.selectedIndex,this.transmit(this.val)},o.prototype.draw=function(){this.canvas.value=this.val.text,this.canvas.style.backgroundColor=this.colors.fill,this.canvas.style.color=this.colors.black,this.canvas.style.border="solid 2px "+this.colors.border}},{"../core/widget":3,util:44}],31:[function(require,module,exports){var math=require("../utils/math"),util=require("util"),widget=require("../core/widget"),slider=module.exports=function(t){this.defaultSize={width:35,height:110},widget.call(this,t),null!=this.canvas.getAttribute("min")?this.min=parseFloat(this.canvas.getAttribute("min")):this.min=0,null!=this.canvas.getAttribute("max")?this.max=parseFloat(this.canvas.getAttribute("max")):this.max=1,null!=this.canvas.getAttribute("step")?this.step=parseFloat(this.canvas.getAttribute("step")):this.step=.001,this.val.value=nx.scale(.7,0,1,this.min,this.max),this.mode="absolute",this.hslider=!1,this.handle,this.relhandle,this.cap,this.maxdigits=3,this.calculateDigits=nx.calculateDigits,this.init()};util.inherits(slider,widget),slider.prototype.init=function(){this.GUI.h>=this.GUI.w?this.hslider=!1:this.hslider=!0,this.draw()},slider.prototype.draw=function(){var normalval=this.normalize(this.val.value);with(this.digits=this.calculateDigits(),this.erase(),this.context){if(fillStyle=this.colors.fill,fillRect(0,0,this.GUI.w,this.GUI.h),this.hslider){var x1=0,y1=0,x2=normalval*this.GUI.w,y2=this.GUI.h;fillStyle=this.colors.accent,fillRect(x1,y1,x2-x1,y2-y1);var valtextsize=this.GUI.h/2;if(valtextsize>6){if(x2>this.digits.total*valtextsize/2){fillStyle=this.colors.white;var textx=5}else{fillStyle=this.colors.accent;var textx=x2+5}var texty=this.GUI.h/2,valtextAlign="left",valtextBaseline="middle"}}else{var x1=0,y1=this.GUI.h-normalval*this.GUI.h,x2=this.GUI.w,y2=this.GUI.h;fillStyle=this.colors.accent,fillRect(x1,y1,x2-x1,y2-y1);var valtextsize=this.GUI.w/this.digits.total*1.2;if(valtextsize>6){if(y1<this.GUI.h-valtextsize/2-5){fillStyle=this.colors.white;var texty=this.GUI.h-valtextsize/2-5}else{fillStyle=this.colors.accent;var texty=y1-valtextsize/2-5}var textx=this.GUI.w/2,valtextAlign="center",valtextBaseline="middle"}}this.label&&this.drawLabel()}},slider.prototype.click=function(){this.move()},slider.prototype.move=function(){var t=this.normalize(this.val.value);this.hslider?(this.handle=this.clickPos.x,this.relhandle=this.deltaMove.x,this.cap=this.GUI.w):(this.handle=this.clickPos.y,this.relhandle=-1*this.deltaMove.y,this.cap=this.GUI.h),"absolute"==this.mode?this.clicked&&(t=this.hslider?math.clip(this.clickPos.x/this.GUI.w,0,1):Math.abs(math.clip(this.clickPos.y/this.GUI.h,0,1)-1),this.draw()):"relative"==this.mode&&this.clicked&&(t=this.hslider?math.clip(t+this.deltaMove.x/this.GUI.w,0,1):math.clip(t+-1*this.deltaMove.y/this.GUI.h,0,1),this.draw()),this.val.value=math.prune(this.rangify(t),3),this.transmit(this.val)}},{"../core/widget":3,"../utils/math":6,util:44}],32:[function(require,module,exports){var util=require("util"),widget=require("../core/widget"),string=module.exports=function(t){this.defaultSize={width:150,height:75},widget.call(this,t),this.val={string:0,x:0},this.numberOfStrings=10,this.strings=new Array,this.abovestring=new Array,this.friction=1;this.init(),nx.aniItems.push(this.draw.bind(this))};util.inherits(string,widget),string.prototype.init=function(){stringdiv=this.GUI.h/(this.numberOfStrings+1);for(var t=0;t<this.numberOfStrings;t++)this.strings[t]={x1:this.lineWidth,y1:stringdiv*(1+t),x2:this.GUI.w-this.lineWidth,y2:stringdiv*(t+1),held:!1,vibrating:!1,force:0,maxstretch:0,stretch:0,direction:0,above:!1};this.draw()},string.prototype.pulse=function(){this.draw()},string.prototype.setStrings=function(t){this.numberOfStrings=t,this.strings=new Array,this.init()},string.prototype.draw=function(){with(this.erase(),this.context){strokeStyle=this.colors.border,fillStyle=this.colors.fill,lineWidth=this.lineWidth,fillRect(0,0,this.GUI.w,this.GUI.h),strokeStyle=this.colors.accent;for(var i=0;i<this.strings.length;i++){var st=this.strings[i];st.vibrating?(st.maxstretch<0&&(st.vibrating=!1,st.held=!1),st.stretch=st.stretch+st.direction,Math.abs(st.stretch)>st.maxstretch&&(st.direction*=-1,st.stretch=st.stretch+st.direction,st.maxstretch=st.maxstretch-this.friction,st.direction=st.direction/Math.abs(st.direction)*(st.maxstretch/1)),beginPath(),moveTo(st.x1,st.y1),quadraticCurveTo(this.GUI.w/2,st.y1+st.stretch,st.x2,st.y2),stroke(),closePath(),st.on=!0):st.held?(beginPath(),moveTo(st.x1,st.y1),quadraticCurveTo(this.clickPos.x,this.clickPos.y,st.x2,st.y2),stroke(),closePath(),st.on=!0):(beginPath(),moveTo(st.x1,st.y1),lineTo(st.x2,st.y2),stroke(),closePath(),st.on&&(st.on=!1))}}this.drawLabel()},string.prototype.click=function(){for(var t=0;t<this.numberOfStrings;t++)this.strings[t].above=this.clickPos.y<this.strings[t].y1;this.draw()},string.prototype.move=function(){if(this.clicked)for(var t=0;t<this.strings.length;t++)this.strings[t].above!=this.clickPos.y<this.strings[t].y1&&(this.strings[t].held=!0,this.strings[t].above^=!0),this.strings[t].held&&Math.abs(this.clickPos.y-this.strings[t].y1)>this.GUI.h/(3*this.strings.length)&&this.pluck(t)},string.prototype.release=function(){for(var t=0;t<this.strings.length;t++)this.strings[t].held&&this.pluck(t)},string.prototype.pluck=function(t){var i=t;this.val={string:i,x:this.clickPos.x/this.GUI.w},this.transmit(this.val),this.strings[i].held=!1,this.strings[i].force=this.clickPos.y-this.strings[i].y1,this.strings[i].maxstretch=Math.abs(this.clickPos.y-this.strings[i].y1),this.strings[i].stretch=this.clickPos.y-this.strings[i].y1,this.strings[i].vibrating=!0,this.strings[i].direction=(this.clickPos.y-this.strings[i].y1)/Math.abs(this.clickPos.y-this.strings[i].y1)*((this.clickPos.y-this.strings[i].y1)/-1.2)},string.prototype.customDestroy=function(){nx.removeAni(this.draw.bind(this))}},{"../core/widget":3,util:44}],33:[function(require,module,exports){var math=require("../utils/math"),util=require("util"),widget=require("../core/widget"),tabs=module.exports=function(t){this.defaultSize={width:150,height:50},widget.call(this,t),this.choice=0,this.val={index:0,text:""},this.tabwid=0,this.options=["one","two","three"],this.init()};util.inherits(tabs,widget),tabs.prototype.init=function(){this.draw()},tabs.prototype.draw=function(){with(this.context)fillStyle=this.colors.fill,fillRect(0,0,this.GUI.w,this.GUI.h),textAlign="center",textBaseline="middle",font="normal "+this.GUI.h/5+"px courier";this.tabwid=this.GUI.w/this.options.length;for(var i=0;i<this.options.length;i++){if(i==this.choice)var tabcol=this.colors.accent,textcol=this.colors.white;else{var tabcol=this.colors.fill,textcol=this.colors.black;globalAlpha=.7}with(this.context)fillStyle=tabcol,fillRect(this.tabwid*i,0,this.tabwid,this.GUI.h),i!=this.options.length-1&&(beginPath(),moveTo(this.tabwid*(i+1),0),lineTo(this.tabwid*(i+1),this.GUI.h),lineWidth=1,strokeStyle=this.colors.border,stroke(),closePath()),fillStyle=textcol,font=this.fontSize+"px "+this.font,fillText(this.options[i],this.tabwid*i+this.tabwid/2,this.GUI.h/2)}},tabs.prototype.click=function(){this.choice=~~(this.clickPos.x/this.tabwid),this.val={index:this.choice,text:this.options[this.choice]},this.transmit(this.val),this.draw()}},{"../core/widget":3,"../utils/math":6,util:44}],34:[function(t,i,e){var s=t("util"),n=t("../core/widget"),o=i.exports=function(t){this.defaultSize={width:200,height:100},n.call(this,t),this.val={text:""};var i='<textarea id="'+this.canvasID+'" style="height:'+this.GUI.h+"px;width:"+this.GUI.w+'px;" onkeydown="'+this.canvasID+'.change(event,this)"></textarea><canvas height="1px" width="1px" style="display:none"></canvas>',e=this.canvas,s=this.canvas.style,o=e.parentNode,r=document.createElement("span");r.innerHTML=i,r.className="nx",o.replaceChild(r,e),this.el=document.getElementById(this.canvasID);for(var h in s)this.el.style[h]=s[h];this.el.style.display="block",this.el.style.backgroundColor=this.colors.fill,this.el.style.border="none",this.el.style.color=this.colors.black,this.el.style.outline="none",this.el.style.resize="none",this.el.style.boxSizing="border-box",this.el.style.padding="5px",this.el.style.fontFamily=nx.font,this.el.style.fontSize="16px",this.el.className="",this.canvas=document.getElementById(this.canvasID)};s.inherits(o,n),o.prototype.init=function(){this.canvas.ontouchstart=null,this.canvas.ontouchmove=null,this.canvas.ontouchend=null,this.canvas.style.backgroundColor=this.colors.fill,this.canvas.style.color=this.colors.black},o.prototype.change=function(t,i){this.val.text=i.value,"13"==t.which&&(this.transmit(this.val),this.val.text="",this.draw(),t.preventDefault())},o.prototype.draw=function(){this.el.value=this.val.text,this.canvas.style.backgroundColor=this.colors.fill,this.canvas.style.color=this.colors.black}},{"../core/widget":3,util:44}],35:[function(require,module,exports){var math=require("../utils/math"),util=require("util"),widget=require("../core/widget"),tilt=module.exports=function(t){this.defaultSize={width:50,height:50},widget.call(this,t),this.tiltLR,this.tiltFB,this.z,this.active=!0,this.val={x:0,y:0,z:0},this.text="TILT",this.init(),this.boundChromeTilt=this.chromeTilt.bind(this),this.boundMozTilt=this.mozTilt.bind(this),window.DeviceOrientationEvent?window.addEventListener("deviceorientation",this.boundChromeTilt,!1):window.OrientationEvent?window.addEventListener("MozOrientation",this.boundMozTilt,!1):console.log("Not supported on your device or browser.")};util.inherits(tilt,widget),tilt.prototype.deviceOrientationHandler=function(){this.val={x:math.prune(this.tiltLR/90,3),y:math.prune(this.tiltFB/90,3),z:math.prune(this.z,3)},this.active&&this.transmit(this.val)},tilt.prototype.chromeTilt=function(t){this.tiltLR=t.gamma,this.tiltFB=t.beta,this.z=t.alpha,this.deviceOrientationHandler(),this.draw()},tilt.prototype.mozTilt=function(t){this.tiltLR=90*t.x,this.tiltFB=-90*t.y,this.z=t.z,this.deviceOrientationHandler(),this.draw()},tilt.prototype.init=function(){this.draw()},tilt.prototype.draw=function(){with(this.erase(),this.context)fillStyle=this.colors.fill,fillRect(0,0,this.GUI.w,this.GUI.h),save(),translate(this.GUI.w/2,this.GUI.h/2),rotate(-this.val.x*Math.PI/2),translate(-this.GUI.w/2,-this.GUI.h/2),globalAlpha=.4,this.active?fillStyle=this.colors.accent:fillStyle=this.colors.border,fillRect(-this.GUI.w,this.GUI.h*(this.val.y/2)+this.GUI.h/2,3*this.GUI.w,2*this.GUI.h),font="bold "+this.GUI.h/5+"px "+this.font,textAlign="center",textBaseline="middle",fillText(this.text,this.GUI.w/2,this.GUI.h*(this.val.y/2)+this.GUI.h/2-this.GUI.h/15),globalAlpha=1,restore(),clearRect(0,this.GUI.h,this.GUI.w,this.height-this.GUI.h);this.drawLabel()},tilt.prototype.click=function(){this.active=!this.active},tilt.prototype.customDestroy=function(){this.active=!1,window.removeEventListener("deviceorientation",this.boundChromeTilt,!1),window.removeEventListener("mozOrientation",this.boundMozTilt,!1)}},{"../core/widget":3,"../utils/math":6,util:44}],36:[function(require,module,exports){var drawing=require("../utils/drawing"),util=require("util"),widget=require("../core/widget"),toggle=module.exports=function(t){this.defaultSize={width:50,height:50},widget.call(this,t),this.val={value:0},this.init()};util.inherits(toggle,widget),toggle.prototype.init=function(){this.draw()},toggle.prototype.draw=function(){with(this.erase(),this.context)this.val.value?(fillStyle=this.colors.accent,strokeStyle=this.colors.accenthl,strokeAlpha=1):(fillStyle=this.colors.fill,strokeStyle=this.colors.border,strokeAlpha=1),lineWidth=Math.sqrt(this.GUI.w)/2,fillRect(0,0,this.GUI.w,this.GUI.h),globalAlpha=strokeAlpha,strokeRect(lineWidth/2,lineWidth/2,this.GUI.w-lineWidth,this.GUI.h-lineWidth),globalAlpha=1;this.drawLabel()},toggle.prototype.click=function(){this.val.value?this.val.value=0:this.val.value=1,this.draw(),this.transmit(this.val)}},{"../core/widget":3,"../utils/drawing":5,util:44}],37:[function(require,module,exports){var drawing=require("../utils/drawing"),util=require("util"),widget=require("../core/widget"),typewriter=module.exports=function(t){this.defaultSize={width:300,height:100},widget.call(this,t),this.letter="",this.keywid=this.GUI.w/14.5,this.keyhgt=this.GUI.h/5,this.active=!0,this.val={key:"",ascii:0,on:0},this.rows=[[{symbol:"`",value:192,width:1,on:!1},{symbol:"1",value:49,width:1,on:!1},{symbol:"2",value:50,width:1,on:!1},{symbol:"3",value:51,width:1,on:!1},{symbol:"4",value:52,width:1,on:!1},{symbol:"5",value:53,width:1,on:!1},{symbol:"6",value:54,width:1,on:!1},{symbol:"7",value:55,width:1,on:!1},{symbol:"8",value:56,width:1,on:!1},{symbol:"9",value:57,width:1,on:!1},{symbol:"0",value:48,width:1,on:!1},{symbol:"-",value:189,width:1,on:!1},{symbol:"=",value:187,width:1,on:!1},{symbol:"delete",value:46,width:1.5,on:!1}],[{symbol:"tab",value:9,width:1.5,on:!1},{symbol:"q",value:81,width:1,on:!1},{symbol:"w",value:87,width:1,on:!1},{symbol:"e",value:69,width:1,on:!1},{symbol:"r",value:82,width:1,on:!1},{symbol:"t",value:84,width:1,on:!1},{symbol:"y",value:89,width:1,on:!1},{symbol:"u",value:85,width:1,on:!1},{symbol:"i",value:73,width:1,on:!1},{symbol:"o",value:79,width:1,on:!1},{symbol:"p",value:80,width:1,on:!1},{symbol:"[",value:219,width:1,on:!1},{symbol:"]",value:221,width:1,on:!1},{symbol:"\\",value:220,width:1,on:!1}],[{symbol:"caps",value:20,width:1.75,on:!1},{symbol:"a",value:65,width:1,on:!1},{symbol:"s",value:83,width:1,on:!1},{symbol:"d",value:68,width:1,on:!1},{symbol:"f",value:70,width:1,on:!1},{symbol:"g",value:71,width:1,on:!1},{symbol:"h",value:72,width:1,on:!1},{symbol:"j",value:74,width:1,on:!1},{symbol:"k",value:75,width:1,on:!1},{symbol:"l",value:76,width:1,on:!1},{symbol:";",value:186,width:1,on:!1},{symbol:"'",value:222,width:1,on:!1},{symbol:"enter",value:13,width:1.75,on:!1}],[{symbol:"shift",value:16,width:2.25,on:!1},{symbol:"z",value:90,width:1,on:!1},{symbol:"x",value:88,width:1,on:!1},{symbol:"c",value:67,width:1,on:!1},{symbol:"v",value:86,width:1,on:!1},{symbol:"b",value:66,width:1,on:!1},{symbol:"n",value:78,width:1,on:!1},{symbol:"m",value:77,width:1,on:!1},{symbol:",",value:188,width:1,on:!1},{symbol:".",value:190,width:1,on:!1},{symbol:"/",value:191,width:1,on:!1},{symbol:"shift",value:16,width:2.25,on:!1}],[{symbol:"fn",value:10,width:1,on:!1},{symbol:"ctrl",value:17,width:1,on:!1},{symbol:"opt",value:10,width:1,on:!1},{symbol:"cmd",value:10,width:1.25,on:!1},{symbol:"space",value:32,width:5,on:!1},{symbol:"cmd",value:10,width:1,on:!1},{symbol:"opt",value:10,width:1,on:!1},{symbol:"left",value:37,width:.81,on:!1},{symbol:"up",value:38,width:.81,on:!1},{symbol:"down",value:40,width:.81,on:!1},{symbol:"right",value:39,width:.81,on:!1}]],this.boundType=this.typekey.bind(this),this.boundUntype=this.untype.bind(this),window.addEventListener("keydown",this.boundType),window.addEventListener("keyup",this.boundUntype),this.init()};util.inherits(typewriter,widget),typewriter.prototype.init=function(){this.keywid=this.GUI.w/14.5,this.keyhgt=this.GUI.h/5,this.draw()},typewriter.prototype.draw=function(){with(this.erase(),this.active?this.context.globalAlpha=1:this.context.globalAlpha=.4,this.context){strokeStyle=this.colors.borderhl,fillStyle=this.colors.accent,lineWidth=1;for(var i=0;i<this.rows.length;i++)for(var currkeyL=0,j=0;j<this.rows[i].length;j++)this.val.key==this.rows[i][j].symbol&&(this.val.on?this.rows[i][j].on=!0:this.rows[i][j].on=!1),drawing.makeRoundRect(this.context,currkeyL,i*this.keyhgt,this.keywid*this.rows[i][j].width,this.keyhgt,4),this.rows[i][j].on?(fillStyle=this.colors.accent,strokeStyle=this.colors.accent,fill(),stroke()):(fillStyle=this.colors.fill,strokeStyle=this.colors.borderhl,fill(),stroke()),currkeyL+=this.keywid*this.rows[i][j].width;this.val.on&&(this.setFont(),fillStyle=this.colors.borderhl,font=this.GUI.h+"px "+this.font,fillText(this.val.key,this.GUI.w/2,this.GUI.h/2),globalAlpha=1),this.active||(globalAlpha=.7,fillStyle=this.colors.borderhl,font=this.GUI.h/2+"px courier",textAlign="center",textBaseline="middle",fillText("inactive",this.GUI.w/2,this.GUI.h/2))}this.drawLabel()},typewriter.prototype.click=function(t){this.active=!this.active,this.draw()},typewriter.prototype.typekey=function(t){if(this.active){for(var i=t.which,e=0;e<this.rows.length;e++)for(var s=0;s<this.rows[e].length;s++)if(i==this.rows[e][s].value){this.val.key=this.rows[e][s].symbol,this.val.on=1,this.val.ascii=t.which,this.transmit(this.val);break}this.draw()}},typewriter.prototype.untype=function(t){if(this.active){for(var i=t.which,e=0;e<this.rows.length;e++)for(var s=0;s<this.rows[e].length;s++)if(i==this.rows[e][s].value){this.val.key=this.rows[e][s].symbol,this.val.on=0,this.val.ascii=t.which,this.transmit(this.val);break}this.draw()}},typewriter.prototype.customDestroy=function(){window.removeEventListener("keydown",this.boundType),window.removeEventListener("keyup",this.boundUntype)}},{"../core/widget":3,"../utils/drawing":5,util:44}],38:[function(require,module,exports){var math=require("../utils/math"),util=require("util"),widget=require("../core/widget"),vinyl=module.exports=function(t){this.defaultSize={width:100,height:100},widget.call(this,t),this.circleSize,this.speed=.05,this.defaultspeed=.05,this.rotation=0,this.hasMovedOnce=!1,this.lockResize=!0,this.val={speed:0},this.init(),nx.aniItems.push(this.spin.bind(this))};util.inherits(vinyl,widget),vinyl.prototype.init=function(){this.circleSize=Math.min(this.center.x,this.center.y)-this.lineWidth,this.draw()},vinyl.prototype.draw=function(){with(this.erase(),this.context)strokeStyle=this.colors.border,fillStyle=this.colors.fill,fillRect(0,0,this.GUI.w,this.GUI.h),beginPath(),fillStyle=this.colors.black,arc(this.center.x,this.center.y,this.circleSize-5,0,2*Math.PI,!0),fill(),closePath(),beginPath(),fillStyle=this.colors.accent,arc(this.center.x,1*this.center.y,this.circleSize/4,0,2*Math.PI,!1),fill(),closePath(),beginPath(),globalAlpha=.5,fillStyle=this.colors.fill,arc(this.center.x,this.center.y,this.circleSize,this.rotation,this.rotation+.4,!1),lineTo(this.center.x,this.center.y),arc(this.center.x,this.center.y,this.circleSize,this.rotation+Math.PI,this.rotation+Math.PI+.4,!1),lineTo(this.center.x,this.center.y),fill(),globalAlpha=1,closePath(),beginPath(),fillStyle=this.colors.white,arc(this.center.x,1*this.center.y,this.circleSize/16,0,2*Math.PI,!1),fill(),closePath();this.drawLabel()},vinyl.prototype.click=function(t){this.hasMovedOnce=!1,this.lastRotation=this.rotation,this.grabAngle=this.rotation%(2*Math.PI),this.grabPos=math.toPolar(this.clickPos.x-this.center.x,this.clickPos.y-this.center.y).angle},vinyl.prototype.move=function(){this.hasMovedOnce||(this.hasMovedOnce=!0,this.grabAngle=this.rotation%(2*Math.PI),this.grabPos=math.toPolar(this.clickPos.x-this.center.x,this.clickPos.y-this.center.y).angle),this.rotation=math.toPolar(this.clickPos.x-this.center.x,this.clickPos.y-this.center.y).angle+this.grabAngle-this.grabPos},vinyl.prototype.release=function(){this.speed=(this.rotation-this.lastRotation+(this.lastRotation-this.lastRotation2))/2},vinyl.prototype.spin=function(){this.clicked?this.speed/=1.1:this.speed=.9*this.speed+.1*this.defaultspeed,this.val.speed=20*(this.rotation-this.lastRotation),this.lastRotation2=this.lastRotation,this.lastRotation=this.rotation,this.rotation+=this.speed,this.draw(),this.transmit(this.val)},vinyl.prototype.customDestroy=function(){nx.removeAni(this.spin.bind(this))}},{"../core/widget":3,"../utils/math":6,util:44}],39:[function(require,module,exports){var util=require("util"),widget=require("../core/widget"),math=require("../utils/math"),waveform=module.exports=function(t){this.defaultSize={width:400,height:125},widget.call(this,t),this.val={start:0,stop:0,size:0,starttime:0,stoptime:0,looptime:0},this.handle,this.relhandle,this.cap,this.firsttouch="start",this.buffer=[],nx.isMobile?this.definition=3:this.definition=1,this.pieces=!1,this.channels=1,this.rawbuffer=[],this.times=[{dur:10,format:1},{dur:50,format:1},{dur:100,format:1},{dur:200,format:1},{dur:500,format:1},{dur:1e3,format:1},{dur:2e3,format:1},{dur:5e3,format:1},{dur:1e4,format:3},{dur:15e3,format:3},{dur:6e4,format:3},{dur:12e4,format:3},{dur:3e5,format:3},{dur:6e5,format:3}],this.timescale=!1,this.mode="area",this.touchdown=new Object,this.init()};util.inherits(waveform,widget),waveform.prototype.init=function(){this.pieces=~~(this.GUI.w/this.definition),this.draw()},waveform.prototype.setBuffer=function(t){for(this.channels=t.numberOfChannels,this.duration=t.duration,this.sampleRate=t.sampleRate,this.waveHeight=this.GUI.h/this.channels,this.durationMS=1e3*this.duration,this.timescale=0;~~(this.durationMS/this.times[this.timescale].dur)>7&&this.timescale<this.times.length;)this.timescale++;this.timescale=this.times[this.timescale],this.rawbuffer=[],this.buffer=[];for(var i=0;i<this.channels;i++){this.rawbuffer.push(t.getChannelData(0)),this.buffer.push([]);for(var e=1+~~(this.rawbuffer[0].length/(5*this.sampleRate)),s=~~(this.rawbuffer[i].length/this.pieces),n=0,o=0,r=0,h=0;h<this.rawbuffer[i].length;h+=e)this.rawbuffer[i][h]>0?n=Math.max(n,this.rawbuffer[i][h]):o=Math.min(o,this.rawbuffer[i][h]),h>r*s&&(this.buffer[i].push([n,o]),r++,o=0,n=0)}this.val.start&&this.val.stop,this.val.starttime=Math.round(this.val.start*this.durationMS),this.val.stoptime=Math.round(this.val.stop*this.durationMS),this.val.looptime=Math.round(this.val.size*this.durationMS),this.draw()},waveform.prototype.select=function(t,i){this.val.start=math.clip(t/this.durationMS,0,1),this.val.stop=math.clip(i/this.durationMS,0,1),this.val.size=this.val.stop-this.val.start,this.val.starttime=t,this.val.stoptime=i,this.val.looptime=t-i,this.transmit(this.val),this.draw()},waveform.prototype.draw=function(){with(this.context){fillStyle=this.colors.fill,fillRect(0,0,this.GUI.w,this.GUI.h);for(var i=0;i<this.buffer.length;i++){fillStyle=this.colors.black,this.waveTop=i*this.waveHeight,this.waveCenter=this.waveTop+this.waveHeight/2;for(var j=0;j<this.buffer[i].length;j++){var ht1=this.waveCenter-this.buffer[i][j][0]*this.waveHeight,ht2=this.waveCenter+Math.abs(this.buffer[i][j][1]*this.waveHeight);ht2-=ht1,fillRect(j*this.definition,ht1,this.definition,ht2)}this.buffer[i]}if(globalAlpha=.3,fillStyle=this.colors.border,fillRect(0,0,this.GUI.w,16),globalAlpha=1,textBaseline="middle",textAlign="left",fontSize="8px",this.timescale)for(var i=1;i<this.durationMS/this.timescale.dur;i++){var x=i*this.timescale.dur/this.durationMS;x*=this.GUI.w,fillStyle=this.colors.border,fillRect(x,0,1,this.GUI.h),fillStyle=this.colors.black,globalAlpha=.6,fillText(this.msToTime(i*this.timescale.dur,this.timescale.format),x+5,8),globalAlpha=1}var x1=this.val.start*this.GUI.w,y1=0,x2=this.val.stop*this.GUI.w,y2=this.GUI.h;if(fillStyle=this.colors.accent,strokeStyle=this.colors.accent,lineWidth=2,globalAlpha=.3,fillRect(x1,0,x2-x1,y2-0),globalAlpha=.7,strokeRect(x1,-2,x2-x1,y2-0+4),this.durationMS&&this.val.looptime){this.val.size=this.val.stop-this.val.start,textAlign="center";var dur=this.val.looptime;dur>1e3?(dur/=1e3,math.prune(dur,2),dur+=" s"):(math.prune(dur,0),dur+=" ms"),fillText(dur,x1+(x2-x1)/2,this.GUI.h/2)}globalAlpha=1}},waveform.prototype.msToTime=function(t,i){var i=i||2,e=~~(t/1e3),s=e%60;e=(e-s)/60;var n=e%60,o=t%1e3;return s=s<10&&n?s+"0":s,1==i?s+"."+o:2==i?n+":"+s+"."+o:3==i?n+":"+s:void 0},waveform.prototype.click=function(){"edge"==this.mode?Math.abs(this.clickPos.x-this.val.start*this.GUI.w)<Math.abs(this.clickPos.x-this.val.stop*this.GUI.w)?this.firsttouch="start":this.firsttouch="stop":"area"==this.mode&&(this.touchdown={x:this.clickPos.x,y:this.clickPos.y},this.startval=new Object,this.startval.size=this.val.stop-this.val.start,this.startval.loc=this.val.start+this.startval.size/2),this.move()},waveform.prototype.move=function(){if("edge"==this.mode)"start"==this.firsttouch?(this.val.start=this.clickPos.x/this.GUI.w,this.clickPos.touches.length>1&&(this.val.stop=this.clickPos.touches[1].x/this.GUI.w)):(this.val.stop=this.clickPos.x/this.GUI.w,this.clickPos.touches.length>1&&(this.val.start=this.clickPos.touches[1].x/this.GUI.w)),this.val.stop<this.val.start&&(this.tempstart=this.val.start,this.val.start=this.val.stop,this.val.stop=this.tempstart,"start"==this.firsttouch?this.firsttouch="stop":this.firsttouch="start");else if("area"==this.mode){var t=this.clickPos.x/this.GUI.w,i=(this.touchdown.y-this.clickPos.y)/this.GUI.h;i/=4;var e=this.startval.size+i;e=math.clip(e,.001,1),this.val={start:t-e/2,stop:t+e/2}}this.val.start=math.clip(this.val.start,0,1),this.val.stop=math.clip(this.val.stop,0,1),this.val.size=math.clip(Math.abs(this.val.stop-this.val.start),0,1),this.durationMS&&(this.val.starttime=Math.round(this.val.start*this.durationMS),this.val.stoptime=Math.round(this.val.stop*this.durationMS),this.val.looptime=Math.round(this.val.size*this.durationMS)),this.transmit(this.val),this.draw()}},{"../core/widget":3,"../utils/math":6,util:44}],40:[function(t,i,e){function s(){this._events=this._events||{},this._maxListeners=this._maxListeners||void 0}function n(t){return"function"==typeof t}function o(t){return"number"==typeof t}function r(t){return"object"==typeof t&&null!==t}function h(t){return void 0===t}i.exports=s,s.EventEmitter=s,s.prototype._events=void 0,s.prototype._maxListeners=void 0,s.defaultMaxListeners=10,s.prototype.setMaxListeners=function(t){if(!o(t)||t<0||isNaN(t))throw TypeError("n must be a positive number");return this._maxListeners=t,this},s.prototype.emit=function(t){var i,e,s,o,a,g;if(this._events||(this._events={}),"error"===t&&(!this._events.error||r(this._events.error)&&!this._events.error.length)){if((i=arguments[1])instanceof Error)throw i;throw TypeError('Uncaught, unspecified "error" event.')}if(e=this._events[t],h(e))return!1;if(n(e))switch(arguments.length){case 1:e.call(this);break;case 2:e.call(this,arguments[1]);break;case 3:e.call(this,arguments[1],arguments[2]);break;default:for(s=arguments.length,o=new Array(s-1),a=1;a<s;a++)o[a-1]=arguments[a];e.apply(this,o)}else if(r(e)){for(s=arguments.length,o=new Array(s-1),a=1;a<s;a++)o[a-1]=arguments[a];for(g=e.slice(),s=g.length,a=0;a<s;a++)g[a].apply(this,o)}return!0},s.prototype.addListener=function(t,i){var e;if(!n(i))throw TypeError("listener must be a function");if(this._events||(this._events={}),this._events.newListener&&this.emit("newListener",t,n(i.listener)?i.listener:i),this._events[t]?r(this._events[t])?this._events[t].push(i):this._events[t]=[this._events[t],i]:this._events[t]=i,r(this._events[t])&&!this._events[t].warned){var e;e=h(this._maxListeners)?s.defaultMaxListeners:this._maxListeners,e&&e>0&&this._events[t].length>e&&(this._events[t].warned=!0,console.error("(node) warning: possible EventEmitter memory leak detected. %d listeners added. Use emitter.setMaxListeners() to increase limit.",this._events[t].length),"function"==typeof console.trace&&console.trace())}return this},s.prototype.on=s.prototype.addListener,s.prototype.once=function(t,i){function e(){this.removeListener(t,e),s||(s=!0,i.apply(this,arguments))}if(!n(i))throw TypeError("listener must be a function");var s=!1;return e.listener=i,this.on(t,e),this},s.prototype.removeListener=function(t,i){var e,s,o,h;if(!n(i))throw TypeError("listener must be a function");if(!this._events||!this._events[t])return this;if(e=this._events[t],o=e.length,s=-1,e===i||n(e.listener)&&e.listener===i)delete this._events[t],this._events.removeListener&&this.emit("removeListener",t,i);else if(r(e)){for(h=o;h-- >0;)if(e[h]===i||e[h].listener&&e[h].listener===i){s=h;break}if(s<0)return this;1===e.length?(e.length=0,delete this._events[t]):e.splice(s,1),this._events.removeListener&&this.emit("removeListener",t,i)}return this},s.prototype.removeAllListeners=function(t){var i,e;if(!this._events)return this;if(!this._events.removeListener)return 0===arguments.length?this._events={}:this._events[t]&&delete this._events[t],this;if(0===arguments.length){for(i in this._events)"removeListener"!==i&&this.removeAllListeners(i);return this.removeAllListeners("removeListener"),this._events={},this}if(e=this._events[t],n(e))this.removeListener(t,e);else for(;e.length;)this.removeListener(t,e[e.length-1]);return delete this._events[t],this},s.prototype.listeners=function(t){return this._events&&this._events[t]?n(this._events[t])?[this._events[t]]:this._events[t].slice():[]},s.listenerCount=function(t,i){return t._events&&t._events[i]?n(t._events[i])?1:t._events[i].length:0}},{}],41:[function(t,i,e){"function"==typeof Object.create?i.exports=function(t,i){t.super_=i,t.prototype=Object.create(i.prototype,{constructor:{value:t,enumerable:!1,writable:!0,configurable:!0}})}:i.exports=function(t,i){t.super_=i;var e=function(){};e.prototype=i.prototype,t.prototype=new e,t.prototype.constructor=t}},{}],42:[function(t,i,e){function s(){}var n=i.exports={};n.nextTick=function(){var t="undefined"!=typeof window&&window.setImmediate,i="undefined"!=typeof window&&window.postMessage&&window.addEventListener;if(t)return function(t){return window.setImmediate(t)};if(i){var e=[];return window.addEventListener("message",function(t){var i=t.source;if((i===window||null===i)&&"process-tick"===t.data&&(t.stopPropagation(),e.length>0)){e.shift()()}},!0),function(t){e.push(t),window.postMessage("process-tick","*")}}return function(t){setTimeout(t,0)}}(),n.title="browser",n.browser=!0,n.env={},n.argv=[],n.on=s,n.addListener=s,n.once=s,n.off=s,n.removeListener=s,n.removeAllListeners=s,n.emit=s,n.binding=function(t){throw new Error("process.binding is not supported")},n.cwd=function(){return"/"},n.chdir=function(t){throw new Error("process.chdir is not supported")}},{}],43:[function(t,i,e){i.exports=function(t){return t&&"object"==typeof t&&"function"==typeof t.copy&&"function"==typeof t.fill&&"function"==typeof t.readUInt8}},{}],44:[function(t,i,e){(function(i,s){function n(t,i){var s={seen:[],stylize:r};return arguments.length>=3&&(s.depth=arguments[2]),arguments.length>=4&&(s.colors=arguments[3]),u(i)?s.showHidden=i:i&&e._extend(s,i),y(s.showHidden)&&(s.showHidden=!1),y(s.depth)&&(s.depth=2),y(s.colors)&&(s.colors=!1),y(s.customInspect)&&(s.customInspect=!0),s.colors&&(s.stylize=o),a(s,t,s.depth)}function o(t,i){var e=n.styles[i];return e?"["+n.colors[e][0]+"m"+t+"["+n.colors[e][1]+"m":t}function r(t,i){return t}function h(t){var i={};return t.forEach(function(t,e){i[t]=!0}),i}function a(t,i,s){if(t.customInspect&&i&&S(i.inspect)&&i.inspect!==e.inspect&&(!i.constructor||i.constructor.prototype!==i)){var n=i.inspect(s,t);return v(n)||(n=a(t,n,s)),n}var o=g(t,i);if(o)return o;var r=Object.keys(i),u=h(r);if(t.showHidden&&(r=Object.getOwnPropertyNames(i)),k(i)&&(r.indexOf("message")>=0||r.indexOf("description")>=0))return l(i);if(0===r.length){if(S(i)){var d=i.name?": "+i.name:"";return t.stylize("[Function"+d+"]","special")}if(w(i))return t.stylize(RegExp.prototype.toString.call(i),"regexp");if(x(i))return t.stylize(Date.prototype.toString.call(i),"date");if(k(i))return l(i)}var p="",f=!1,m=["{","}"];if(C(i)&&(f=!0,m=["[","]"]),S(i)){p=" [Function"+(i.name?": "+i.name:"")+"]"}if(w(i)&&(p=" "+RegExp.prototype.toString.call(i)),x(i)&&(p=" "+Date.prototype.toUTCString.call(i)),k(i)&&(p=" "+l(i)),0===r.length&&(!f||0==i.length))return m[0]+p+m[1];if(s<0)return w(i)?t.stylize(RegExp.prototype.toString.call(i),"regexp"):t.stylize("[Object]","special");t.seen.push(i);var y;return y=f?I(t,i,s,u,r):r.map(function(e){return A(t,i,s,u,e,f)}),t.seen.pop(),c(y,p,m)}function g(t,i){if(y(i))return t.stylize("undefined","undefined");if(v(i)){var e="'"+JSON.stringify(i).replace(/^"|"$/g,"").replace(/'/g,"\\'").replace(/\\"/g,'"')+"'";return t.stylize(e,"string")}return f(i)?t.stylize(""+i,"number"):u(i)?t.stylize(""+i,"boolean"):d(i)?t.stylize("null","null"):void 0}function l(t){return"["+Error.prototype.toString.call(t)+"]"}function I(t,i,e,s,n){for(var o=[],r=0,h=i.length;r<h;++r)E(i,String(r))?o.push(A(t,i,e,s,String(r),!0)):o.push("");return n.forEach(function(n){n.match(/^\d+$/)||o.push(A(t,i,e,s,n,!0))}),o}function A(t,i,e,s,n,o){var r,h,g;if(g=Object.getOwnPropertyDescriptor(i,n)||{value:i[n]},g.get?h=g.set?t.stylize("[Getter/Setter]","special"):t.stylize("[Getter]","special"):g.set&&(h=t.stylize("[Setter]","special")),E(s,n)||(r="["+n+"]"),h||(t.seen.indexOf(g.value)<0?(h=d(e)?a(t,g.value,null):a(t,g.value,e-1),h.indexOf("\n")>-1&&(h=o?h.split("\n").map(function(t){return"  "+t}).join("\n").substr(2):"\n"+h.split("\n").map(function(t){return"   "+t}).join("\n"))):h=t.stylize("[Circular]","special")),y(r)){if(o&&n.match(/^\d+$/))return h;r=JSON.stringify(""+n),r.match(/^"([a-zA-Z_][a-zA-Z_0-9]*)"$/)?(r=r.substr(1,r.length-2),r=t.stylize(r,"name")):(r=r.replace(/'/g,"\\'").replace(/\\"/g,'"').replace(/(^"|"$)/g,"'"),r=t.stylize(r,"string"))}return r+": "+h}function c(t,i,e){var s=0;return t.reduce(function(t,i){return s++,i.indexOf("\n")>=0&&s++,t+i.replace(/\u001b\[\d\d?m/g,"").length+1},0)>60?e[0]+(""===i?"":i+"\n ")+" "+t.join(",\n  ")+" "+e[1]:e[0]+i+" "+t.join(", ")+" "+e[1]}function C(t){return Array.isArray(t)}function u(t){return"boolean"==typeof t}function d(t){return null===t}function p(t){return null==t}function f(t){return"number"==typeof t}function v(t){return"string"==typeof t}function m(t){return"symbol"==typeof t}function y(t){return void 0===t}function w(t){return b(t)&&"[object RegExp]"===T(t)}function b(t){return"object"==typeof t&&null!==t}function x(t){return b(t)&&"[object Date]"===T(t)}function k(t){return b(t)&&("[object Error]"===T(t)||t instanceof Error)}function S(t){return"function"==typeof t}function U(t){return null===t||"boolean"==typeof t||"number"==typeof t||"string"==typeof t||"symbol"==typeof t||void 0===t}function T(t){return Object.prototype.toString.call(t)}function P(t){return t<10?"0"+t.toString(10):t.toString(10)}function G(){var t=new Date,i=[P(t.getHours()),P(t.getMinutes()),P(t.getSeconds())].join(":");return[t.getDate(),R[t.getMonth()],i].join(" ")}function E(t,i){return Object.prototype.hasOwnProperty.call(t,i)}e.format=function(t){if(!v(t)){for(var i=[],e=0;e<arguments.length;e++)i.push(n(arguments[e]));return i.join(" ")}for(var e=1,s=arguments,o=s.length,r=String(t).replace(/%[sdj%]/g,function(t){if("%%"===t)return"%";if(e>=o)return t;switch(t){case"%s":return String(s[e++]);case"%d":return Number(s[e++]);case"%j":try{return JSON.stringify(s[e++])}catch(t){return"[Circular]"}default:return t}}),h=s[e];e<o;h=s[++e])d(h)||!b(h)?r+=" "+h:r+=" "+n(h);return r},e.deprecate=function(t,n){function o(){if(!r){if(i.throwDeprecation)throw new Error(n);i.traceDeprecation?console.trace(n):console.error(n),r=!0}return t.apply(this,arguments)}if(y(s.process))return function(){return e.deprecate(t,n).apply(this,arguments)};if(!0===i.noDeprecation)return t;var r=!1;return o};var M,z={};e.debuglog=function(t){if(y(M)&&(M=i.env.NODE_DEBUG||""),t=t.toUpperCase(),!z[t])if(new RegExp("\\b"+t+"\\b","i").test(M)){var s=i.pid;z[t]=function(){var i=e.format.apply(e,arguments);console.error("%s %d: %s",t,s,i)}}else z[t]=function(){};return z[t]},e.inspect=n,n.colors={bold:[1,22],italic:[3,23],underline:[4,24],inverse:[7,27],white:[37,39],grey:[90,39],black:[30,39],blue:[34,39],cyan:[36,39],green:[32,39],magenta:[35,39],red:[31,39],yellow:[33,39]},n.styles={special:"cyan",number:"yellow",boolean:"yellow",undefined:"grey",null:"bold",string:"green",date:"magenta",regexp:"red"},e.isArray=C,e.isBoolean=u,e.isNull=d,e.isNullOrUndefined=p,e.isNumber=f,e.isString=v,e.isSymbol=m,e.isUndefined=y,e.isRegExp=w,e.isObject=b,e.isDate=x,e.isError=k,e.isFunction=S,e.isPrimitive=U,e.isBuffer=t("./support/isBuffer");var R=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];e.log=function(){console.log("%s - %s",G(),e.format.apply(e,arguments))},e.inherits=t("inherits"),e._extend=function(t,i){if(!i||!b(i))return t;for(var e=Object.keys(i),s=e.length;s--;)t[e[s]]=i[e[s]];return t}}).call(this,t("_process"),void 0!==global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{"./support/isBuffer":43,_process:42,inherits:41}],45:[function(t,i,e){var s=Object.prototype.hasOwnProperty,n=Object.prototype.toString,o=function(t){"use strict";if(!t||"[object Object]"!==n.call(t))return!1;var i=s.call(t,"constructor"),e=t.constructor&&t.constructor.prototype&&s.call(t.constructor.prototype,"isPrototypeOf");if(t.constructor&&!i&&!e)return!1;var o;for(o in t);return void 0===o||s.call(t,o)};i.exports=function t(){"use strict";var i,e,s,n,r,h,a=arguments[0],g=1,l=arguments.length,I=!1;for("boolean"==typeof a?(I=a,a=arguments[1]||{},g=2):("object"!=typeof a&&"function"!=typeof a||null==a)&&(a={});g<l;++g)if(null!=(i=arguments[g]))for(e in i)s=a[e],n=i[e],a!==n&&(I&&n&&(o(n)||(r=Array.isArray(n)))?(r?(r=!1,h=s&&Array.isArray(s)?s:[]):h=s&&o(s)?s:{},a[e]=t(I,h,n)):void 0!==n&&(a[e]=n));return a}},{}],46:[function(t,i,e){!function(){function t(t,i,e){return t.call.apply(t.bind,arguments)}function s(t,i,e){if(!t)throw Error();if(2<arguments.length){var s=Array.prototype.slice.call(arguments,2);return function(){var e=Array.prototype.slice.call(arguments);return Array.prototype.unshift.apply(e,s),t.apply(i,e)}}return function(){return t.apply(i,arguments)}}function n(i,e,o){return n=Function.prototype.bind&&-1!=Function.prototype.bind.toString().indexOf("native code")?t:s,n.apply(null,arguments)}function o(t,i){this.F=t,this.k=i||t,this.H=this.k.document}function r(t,i,e){t=t.H.getElementsByTagName(i)[0],t||(t=document.documentElement),t.insertBefore(e,t.lastChild)}function h(t,i,e){i=i||[],e=e||[];for(var s=t.className.split(/\s+/),n=0;n<i.length;n+=1){for(var o=!1,r=0;r<s.length;r+=1)if(i[n]===s[r]){o=!0;break}o||s.push(i[n])}for(i=[],n=0;n<s.length;n+=1){for(o=!1,r=0;r<e.length;r+=1)if(s[n]===e[r]){o=!0;break}o||i.push(s[n])}t.className=i.join(" ").replace(/\s+/g," ").replace(/^\s+|\s+$/,"")}function a(t,i){for(var e=t.className.split(/\s+/),s=0,n=e.length;s<n;s++)if(e[s]==i)return!0;return!1}function g(t){if("string"==typeof t.fa)return t.fa;var i=t.k.location.protocol;return"about:"==i&&(i=t.F.location.protocol),"https:"==i?"https:":"http:"}function l(t,i,e){function s(){a&&n&&o&&(a(h),a=null)}i=t.createElement("link",{rel:"stylesheet",href:i,media:"all"});var n=!1,o=!0,h=null,a=e||null;$?(i.onload=function(){n=!0,s()},i.onerror=function(){n=!0,h=Error("Stylesheet failed to load"),s()}):setTimeout(function(){n=!0,s()},0),r(t,"head",i)}function I(t,i,e,s){var n=t.H.getElementsByTagName("head")[0];if(n){var o=t.createElement("script",{src:i}),r=!1;return o.onload=o.onreadystatechange=function(){r||this.readyState&&"loaded"!=this.readyState&&"complete"!=this.readyState||(r=!0,e&&e(null),o.onload=o.onreadystatechange=null,"HEAD"==o.parentNode.tagName&&n.removeChild(o))},n.appendChild(o),setTimeout(function(){r||(r=!0,e&&e(Error("Script load timeout")))},s||5e3),o}return null}function A(){this.S=0,this.K=null}function c(t){return t.S++,function(){t.S--,u(t)}}function C(t,i){t.K=i,u(t)}function u(t){0==t.S&&t.K&&(t.K(),t.K=null)}function d(t){this.ea=t||"-"}function p(t,i){this.Q=t,this.M=4,this.L="n";var e=(i||"n4").match(/^([nio])([1-9])$/i);e&&(this.L=e[1],this.M=parseInt(e[2],10))}function f(t){return y(t)+" "+t.M+"00 300px "+v(t.Q)}function v(t){var i=[];t=t.split(/,\s*/);for(var e=0;e<t.length;e++){var s=t[e].replace(/['"]/g,"");-1!=s.indexOf(" ")||/^\d/.test(s)?i.push("'"+s+"'"):i.push(s)}return i.join(",")}function m(t){return t.L+t.M}function y(t){var i="normal";return"o"===t.L?i="oblique":"i"===t.L&&(i="italic"),i}function w(t){var i=4,e="n",s=null;return t&&((s=t.match(/(normal|oblique|italic)/i))&&s[1]&&(e=s[1].substr(0,1).toLowerCase()),(s=t.match(/([1-9]00|normal|bold)/i))&&s[1]&&(/bold/i.test(s[1])?i=7:/[1-9]00/.test(s[1])&&(i=parseInt(s[1].substr(0,1),10)))),e+i}function b(t,i){this.a=t,this.j=t.k.document.documentElement,this.O=i,this.g="wf",this.e=new d("-"),this.da=!1!==i.events,this.u=!1!==i.classes}function x(t){t.u&&h(t.j,[t.e.d(t.g,"loading")]),S(t,"loading")}function k(t){if(t.u){var i=a(t.j,t.e.d(t.g,"active")),e=[],s=[t.e.d(t.g,"loading")];i||e.push(t.e.d(t.g,"inactive")),h(t.j,e,s)}S(t,"inactive")}function S(t,i,e){t.da&&t.O[i]&&(e?t.O[i](e.getName(),m(e)):t.O[i]())}function U(){this.t={}}function T(t,i,e){var s,n=[];for(s in i)if(i.hasOwnProperty(s)){var o=t.t[s];o&&n.push(o(i[s],e))}return n}function P(t,i){this.a=t,this.h=i,this.m=this.a.createElement("span",{"aria-hidden":"true"},this.h)}function G(t,i){var e,s=t.m;e="display:block;position:absolute;top:-9999px;left:-9999px;font-size:300px;width:auto;height:auto;line-height:normal;margin:0;padding:0;font-variant:normal;white-space:nowrap;font-family:"+v(i.Q)+";font-style:"+y(i)+";font-weight:"+i.M+"00;",s.style.cssText=e}function E(t){r(t.a,"body",t.m)}function M(t,i,e,s,n,o){this.G=t,this.J=i,this.f=s,this.a=e,this.v=n||3e3,this.h=o||void 0}function z(t,i,e,s,n,o,r){this.G=t,this.J=i,this.a=e,this.f=s,this.h=r||"BESbswy",this.s={},this.v=n||3e3,this.Z=o||null,this.D=this.C=this.A=this.w=null,this.w=new P(this.a,this.h),this.A=new P(this.a,this.h),this.C=new P(this.a,this.h),this.D=new P(this.a,this.h),G(this.w,new p(this.f.getName()+",serif",m(this.f))),G(this.A,new p(this.f.getName()+",sans-serif",m(this.f))),G(this.C,new p("serif",m(this.f))),G(this.D,new p("sans-serif",m(this.f))),E(this.w),E(this.A),E(this.C),E(this.D)}function R(){if(null===it){var t=/AppleWebKit\/([0-9]+)(?:\.([0-9]+))/.exec(window.navigator.userAgent);it=!!t&&(536>parseInt(t[1],10)||536===parseInt(t[1],10)&&11>=parseInt(t[2],10))}return it}function _(t,i,e){for(var s in tt)if(tt.hasOwnProperty(s)&&i===t.s[tt[s]]&&e===t.s[tt[s]])return!0;return!1}function L(t){var i,e=t.w.m.offsetWidth,s=t.A.m.offsetWidth;(i=e===t.s.serif&&s===t.s["sans-serif"])||(i=R()&&_(t,e,s)),i?Q()-t.ga>=t.v?R()&&_(t,e,s)&&(null===t.Z||t.Z.hasOwnProperty(t.f.getName()))?O(t,t.G):O(t,t.J):j(t):O(t,t.G)}function j(t){setTimeout(n(function(){L(this)},t),50)}function O(t,i){setTimeout(n(function(){this.w.remove(),this.A.remove(),this.C.remove(),this.D.remove(),i(this.f)},t),0)}function B(t,i,e){this.a=t,this.p=i,this.P=0,this.ba=this.Y=!1,this.v=e}function F(t){0==--t.P&&t.Y&&(t.ba?(t=t.p,t.u&&h(t.j,[t.e.d(t.g,"active")],[t.e.d(t.g,"loading"),t.e.d(t.g,"inactive")]),S(t,"active")):k(t.p))}function D(t){this.F=t,this.q=new U,this.$=0,this.T=this.U=!0}function N(t,i,e,s,o){var r=0==--t.$;(t.T||t.U)&&setTimeout(function(){var t=o||null,a=s||null||{};if(0===e.length&&r)k(i.p);else{i.P+=e.length,r&&(i.Y=r);var g,l=[];for(g=0;g<e.length;g++){var I=e[g],A=a[I.getName()],c=i.p,C=I;c.u&&h(c.j,[c.e.d(c.g,C.getName(),m(C).toString(),"loading")]),S(c,"fontloading",C),c=null,c=et?new M(n(i.V,i),n(i.W,i),i.a,I,i.v,A):new z(n(i.V,i),n(i.W,i),i.a,I,i.v,t,A),l.push(c)}for(g=0;g<l.length;g++)l[g].start()}},0)}function q(t,i,e){var s=[],n=e.timeout;x(i);var s=T(t.q,e,t.a),o=new B(t.a,i,n);for(t.$=s.length,i=0,e=s.length;i<e;i++)s[i].load(function(i,e,s){N(t,o,i,e,s)})}function W(t,i,e){this.N=t||i+st,this.o=[],this.R=[],this.ca=e||""}function Y(t,i){for(var e=i.length,s=0;s<e;s++){var n=i[s].split(":");3==n.length&&t.R.push(n.pop());var o="";2==n.length&&""!=n[1]&&(o=":"),t.o.push(n.join(o))}}function H(t){this.o=t,this.aa=[],this.I={}}function V(t,i){this.a=t,this.c=i}function Z(t,i){this.a=t,this.c=i,this.X=[]}function X(t,i){this.a=t,this.c=i}function K(t,i){this.a=t,this.c=i}function J(t,i){this.a=t,this.c=i}var Q=Date.now||function(){return+new Date},$=!!window.FontFace;o.prototype.createElement=function(t,i,e){if(t=this.H.createElement(t),i)for(var s in i)i.hasOwnProperty(s)&&("style"==s?t.style.cssText=i[s]:t.setAttribute(s,i[s]));return e&&t.appendChild(this.H.createTextNode(e)),t},d.prototype.d=function(t){for(var i=[],e=0;e<arguments.length;e++)i.push(arguments[e].replace(/[\W_]+/g,"").toLowerCase());return i.join(this.ea)},p.prototype.getName=function(){return this.Q},P.prototype.remove=function(){var t=this.m;t.parentNode&&t.parentNode.removeChild(t)},M.prototype.start=function(){var t=this.a.k.document,i=this;Promise.race([new Promise(function(t,e){setTimeout(function(){e(i.f)},i.v)}),t.fonts.load(f(this.f),this.h)]).then(function(t){1===t.length?i.G(i.f):i.J(i.f)},function(){i.J(i.f)})};var tt={ia:"serif",ha:"sans-serif"},it=null;z.prototype.start=function(){this.s.serif=this.C.m.offsetWidth,this.s["sans-serif"]=this.D.m.offsetWidth,this.ga=Q(),L(this)};var et=!!window.FontFace;B.prototype.V=function(t){var i=this.p;i.u&&h(i.j,[i.e.d(i.g,t.getName(),m(t).toString(),"active")],[i.e.d(i.g,t.getName(),m(t).toString(),"loading"),i.e.d(i.g,t.getName(),m(t).toString(),"inactive")]),S(i,"fontactive",t),this.ba=!0,F(this)},B.prototype.W=function(t){var i=this.p;if(i.u){var e=a(i.j,i.e.d(i.g,t.getName(),m(t).toString(),"active")),s=[],n=[i.e.d(i.g,t.getName(),m(t).toString(),"loading")];e||s.push(i.e.d(i.g,t.getName(),m(t).toString(),"inactive")),h(i.j,s,n)}S(i,"fontinactive",t),F(this)},D.prototype.load=function(t){this.a=new o(this.F,t.context||this.F),this.U=!1!==t.events,this.T=!1!==t.classes,q(this,new b(this.a,t),t)};var st="//fonts.googleapis.com/css";W.prototype.d=function(){if(0==this.o.length)throw Error("No fonts to load!");if(-1!=this.N.indexOf("kit="))return this.N;for(var t=this.o.length,i=[],e=0;e<t;e++)i.push(this.o[e].replace(/ /g,"+"));return t=this.N+"?family="+i.join("%7C"),0<this.R.length&&(t+="&subset="+this.R.join(",")),0<this.ca.length&&(t+="&text="+encodeURIComponent(this.ca)),t};var nt={latin:"BESbswy",cyrillic:"&#1081;&#1103;&#1046;",greek:"&#945;&#946;&#931;",khmer:"&#x1780;&#x1781;&#x1782;",Hanuman:"&#x1780;&#x1781;&#x1782;"},ot={thin:"1",extralight:"2","extra-light":"2",ultralight:"2","ultra-light":"2",light:"3",regular:"4",book:"4",medium:"5","semi-bold":"6",semibold:"6","demi-bold":"6",demibold:"6",bold:"7","extra-bold":"8",extrabold:"8","ultra-bold":"8",ultrabold:"8",black:"9",heavy:"9",l:"3",r:"4",b:"7"},rt={i:"i",italic:"i",n:"n",normal:"n"},ht=/^(thin|(?:(?:extra|ultra)-?)?light|regular|book|medium|(?:(?:semi|demi|extra|ultra)-?)?bold|black|heavy|l|r|b|[1-9]00)?(n|i|normal|italic)?$/;H.prototype.parse=function(){for(var t=this.o.length,i=0;i<t;i++){var e=this.o[i].split(":"),s=e[0].replace(/\+/g," "),n=["n4"];if(2<=e.length){var o,r=e[1];if(o=[],r)for(var r=r.split(","),h=r.length,a=0;a<h;a++){var g;if(g=r[a],g.match(/^[\w-]+$/))if(null==(g=ht.exec(g.toLowerCase())))g="";else{var l;if(null==(l=g[1])||""==l)l="4";else{var I=ot[l];l=I||(isNaN(l)?"4":l.substr(0,1))}g=g[2],g=[null==g||""==g?"n":rt[g],l].join("")}else g="";g&&o.push(g)}0<o.length&&(n=o),3==e.length&&(e=e[2],o=[],e=e?e.split(","):o,0<e.length&&(e=nt[e[0]])&&(this.I[s]=e))}for(this.I[s]||(e=nt[s])&&(this.I[s]=e),e=0;e<n.length;e+=1)this.aa.push(new p(s,n[e]))}};var at={Arimo:!0,Cousine:!0,Tinos:!0};V.prototype.load=function(t){var i=new A,e=this.a,s=new W(this.c.api,g(e),this.c.text),n=this.c.families;Y(s,n);var o=new H(n);o.parse(),l(e,s.d(),c(i)),C(i,function(){t(o.aa,o.I,at)})},Z.prototype.B=function(t){var i=this.a;return g(this.a)+(this.c.api||"//f.fontdeck.com/s/css/js/")+(i.k.location.hostname||i.F.location.hostname)+"/"+t+".js"},Z.prototype.load=function(t){var i=this.c.id,e=this.a.k,s=this;i?(e.__webfontfontdeckmodule__||(e.__webfontfontdeckmodule__={}),e.__webfontfontdeckmodule__[i]=function(i,e){for(var n=0,o=e.fonts.length;n<o;++n){var r=e.fonts[n];s.X.push(new p(r.name,w("font-weight:"+r.weight+";font-style:"+r.style)))}t(s.X)},I(this.a,this.B(i),function(i){i&&t([])})):t([])},X.prototype.B=function(t){return(this.c.api||"https://use.typekit.net")+"/"+t+".js"},X.prototype.load=function(t){var i=this.c.id,e=this.a.k;i?I(this.a,this.B(i),function(i){if(i)t([]);else if(e.Typekit&&e.Typekit.config&&e.Typekit.config.fn){i=e.Typekit.config.fn;for(var s=[],n=0;n<i.length;n+=2)for(var o=i[n],r=i[n+1],h=0;h<r.length;h++)s.push(new p(o,r[h]));try{e.Typekit.load({events:!1,classes:!1,async:!0})}catch(t){}t(s)}},2e3):t([])},K.prototype.B=function(t,i){return g(this.a)+"//"+(this.c.api||"fast.fonts.net/jsapi").replace(/^.*http(s?):(\/\/)?/,"")+"/"+t+".js"+(i?"?v="+i:"")},K.prototype.load=function(t){function i(){if(n["__mti_fntLst"+e]){var s,o=n["__mti_fntLst"+e](),r=[];if(o)for(var h=0;h<o.length;h++){var a=o[h].fontfamily;void 0!=o[h].fontStyle&&void 0!=o[h].fontWeight?(s=o[h].fontStyle+o[h].fontWeight,r.push(new p(a,s))):r.push(new p(a))}t(r)}else setTimeout(function(){i()},50)}var e=this.c.projectId,s=this.c.version;if(e){var n=this.a.k;I(this.a,this.B(e,s),function(e){e?t([]):i()}).id="__MonotypeAPIScript__"+e}else t([])},J.prototype.load=function(t){var i,e,s=this.c.urls||[],n=this.c.families||[],o=this.c.testStrings||{},r=new A;for(i=0,e=s.length;i<e;i++)l(this.a,s[i],c(r));var h=[];for(i=0,e=n.length;i<e;i++)if(s=n[i].split(":"),s[1])for(var a=s[1].split(","),g=0;g<a.length;g+=1)h.push(new p(s[0],a[g]));else h.push(new p(s[0]));C(r,function(){t(h,o)})};var gt=new D(window);gt.q.t.custom=function(t,i){return new J(i,t)},gt.q.t.fontdeck=function(t,i){return new Z(i,t)},gt.q.t.monotype=function(t,i){return new K(i,t)},gt.q.t.typekit=function(t,i){return new X(i,t)},gt.q.t.google=function(t,i){return new V(i,t)};var lt={load:n(gt.load,gt)};void 0!==(__WEBPACK_AMD_DEFINE_RESULT__=function(){return lt}.call(e,__webpack_require__,e,i))&&(i.exports=__WEBPACK_AMD_DEFINE_RESULT__)}()},{}]},{},[1])}).call(exports,__webpack_require__(5))},function(t,i,e){var s,n;s=[e(0),e(9),e(1),e(8),e(7),e(6),e(2),e(3)],void 0!==(n=function(t,i,e,s,n){e.initialized=!1,console.log(s),e.init=function(){!function(){nx.colorize("accent","#FFF"),nx.colorize("fill","rgba(0,0,0,0)"),nx.colorize("white","rgba(0,0,0,0)"),nx.globalWidgets=!1}();n();e.draw(),e.initialized=!0},window.ToneEditor=e}.apply(i,s))&&(t.exports=n)},function(t,i,e){var s,n;s=[e(0),e(1),e(2)],void 0!==(n=function(i,s,n){var o=function(t,o,r){var r=r||{};this.parentComponent=o,this.parentToneComponent=o.toneComponent,this.name=t,this.toneParameter=this.parentToneComponent[t],this.nxWidget=!1,this.overwritten=!1,this.initialized=!1,this.element=void 0,this.id=o.id+"_"+t;var h=this;this.getValue=function(){return h.parentToneComponent.get(t)[t]};var a=i.getMeta(this),g=i.isSignal(h.toneParameter);if("slider"===a.uiType){this.applyValue=function(i){!0===h.initialized&&!1===h.overwritten&&(h.element.addClass("overwritten"),s._editedParameters.push(h),s._updateEditCount(),h.overwritten=!0),h.parentToneComponent.set(t,i),h.nxWidget.set({value:i}),h.valueElement.innerHTML=nx.prune(i,2)};var l=document.createElement("div");l.innerHTML=e(23),l.querySelector(".parameter-name").innerHTML=this.name,l.querySelector(".unit").innerHTML=a.unit,g&&l.firstElementChild.classList.add("signal"),h.element=l.firstElementChild,h.element.setAttribute("id",h.id),h.parentComponent.deferUntilDrawn(function(){h.nxWidget=nx.add(a.uiType,{parent:h.element,name:h.id+"_slider",w:"100%",h:"100%"}),i.extend(h.nxWidget,{hslider:!0,mode:"relative",labelSize:0,min:a.min,max:a.max,canvas:h.element.querySelector("canvas")}),h.nxWidget.on("value",function(t){h.applyValue(t),h.valueElement.innerHTML=nx.prune(h.getValue(),2),h.valueElement.setAttribute("contenteditable",!1)});var t=h.getValue();if(h.toneParameter.overridden){var e=document.createElement("div");e.classList.add("blocker"),h.element.classList.add("overridden-by-signal"),h.element.appendChild(e)}else h.applyValue(t);h.initialized=!0}),h.valueElement=h.element.querySelector("div.value"),h.valueElement.addEventListener("mouseover",function(t){s.mouseIsDown&&t.preventDefault()}),h.valueElement.addEventListener("keydown",function(t){switch(t.which){case 13:var i=h.valueElement.innerHTML;h.applyValue(parseFloat(i)),h.valueElement.setAttribute("contenteditable",!1);break;case 8:break;case 38:var e=1;n.shiftIsDown&&(e=10),n.optionIsDown&&(e=.1),n.shiftIsDown&&n.optionIsDown&&(e=100);var i=parseFloat(h.valueElement.innerHTML);h.applyValue(i+e),document.execCommand("selectAll",!1,null);break;case 40:var e=1;n.shiftIsDown&&(e=10),n.optionIsDown&&(e=.1),n.shiftIsDown&&n.optionIsDown&&(e=100);var i=parseFloat(h.valueElement.innerHTML);h.applyValue(i-e),document.execCommand("selectAll",!1,null);break;case 27:var i=parseFloat(h.valueElement.getAttribute("data-previous-value"));h.applyValue(i),h.valueElement.blur(),h.valueElement.setAttribute("contenteditable",!1);break;default:t.which>=48&&t.which<=57||189===t.which||t.preventDefault()}})}else if("menu"===a.uiType){var l=document.createElement("div");l.innerHTML=e(22),l.querySelector(".parameter-name").innerHTML=this.name,h.element=l.firstElementChild,h.element.setAttribute("id",h.id),h.valueElement=h.element.querySelector("div.value"),h.menuElement=h.element.getElementsByTagName("select")[0];var I="";a.menuItems.forEach(function(t){I+='<option value="'+t+'">'+t+"</option>"}),h.menuElement.innerHTML=I,h.valueElement.addEventListener("keydown",function(t){if(13===t.keyCode){var i=h.valueElement.innerHTML;h.applyValue(i),h.valueElement.setAttribute("contenteditable",!1)}}),h.menuElement.onchange=function(){h.applyValue(this.value),this.blur()},this.applyValue=function(i){!0===h.initialized&&!1===h.overwritten&&(h.element.classList.add("overwritten"),s._editedParameters.push(h),s._updateEditCount(),h.overwritten=!0);for(var e=h.menuElement.children,n=0;n<e.length;n++)e[n].value===i?e[n].setAttribute("selected",""):e[n].removeAttribute("selected");h.parentToneComponent.set(t,i),h.valueElement.innerHTML=i},this.applyValue(this.getValue())}this.draw=function(){return h.element}};t.exports=o}.apply(i,s))&&(t.exports=n)},function(t,i,e){var s;void 0!==(s=function(i){function e(t){var i=[];for(var e in s)if(t instanceof Tone[e]){i.push(e);for(var o=0;o<s[e].length;o++)t instanceof Tone[s[e][o]]&&i.push(s[e][o])}if(0===i.length)for(var o=0;o<n.length;o++)t instanceof Tone[n[o]]&&i.push(n[o]);return i}var s={Instrument:["AMSynth","DuoSynth","FMSynth","MembraneSynth","MetalSynth","MonoSynth","Monophonic","NoiseSynth","PluckSynth","PolySynth","Sampler","Synth"],Effect:["AutoFilter","AutoPanner","AutoWah","BitCrusher","Chebyshev","Chorus","Convolver","Distortion","FeedbackDelay","FeedbackEffect","Freeverb","JCReverb","MidSideEffect","Phaser","PingPongDelay","PitchShift","StereoEffect","StereoFeedbackEffect","StereoWidener","StereoXFeedbackEffect","Tremolo","Vibrato"],Source:["AMOscillator","BufferSource","FMOscillator","FatOscillator","GrainPlayer","MultiPlayer","Noise","OmniOscillator","Oscillator","PWMOscillator","Player","PulseOscillator","UserMedia"]},n=["AmplitudeEnvelope","Analyser","Compressor","CrossFade","EQ3","Envelope","FeedbackCombFilter","Filter","Follower","FrequencyEnvelope","Gate","LFO","Limiter","LowpassCombFilter","Merge","Meter","MidSideCompressor","MidSideMerge","MidSideSplit","Mono","MultibandCompressor","MultibandSplit","PanVol","Panner","Panner3D","ScaledEnvelope","Split","Volume","Abs","Add","AudioToGain","EqualPowerGain","Expr","GainToAudio","GreaterThan","GreaterThanZero","Modulo","Multiply","Negate","Normalize","Pow","Scale","ScaleExp","Signal","SignalBase","Subtract","TimelineSignal","WaveShaper","Zero"];t.exports=e}.call(i,e,i,t))&&(t.exports=s)},function(t,i,e){var s;void 0!==(s=function(){var i={portamento:{uiType:"slider",unit:"s",min:0,max:5},roomSize:{uiType:"slider",unit:"",min:0,max:1},wet:{uiType:"slider",unit:"",min:0,max:1},phase:{uiType:"slider",unit:"deg",min:0,max:360},volume:{uiType:"slider",unit:"dB",min:-100,max:10},default:{uiType:"slider",unit:"",min:0,max:100}},e={Oscillator:{frequency:i.frequency,detune:i.detune,type:{uiType:"menu",menuItems:["sine","square","triangle","sawtooth"]},phase:i.phase,volume:i.volume},Filter:{type:{uiType:"menu",unit:"dB",menuItems:["lowpass","highpass","bandpass","lowshelf","highshelf","notch","allpass","peaking"]},rolloff:{uiType:"menu",unit:"dB",menuItems:[-12,-24,-48,-96]},frequency:i.frequency}},s={frequency:{uiType:"slider",unit:"hz",min:0,max:2e4},db:{uiType:"slider",unit:"dB",min:-100,max:10},cents:{uiType:"slider",unit:"c",min:-100,max:100}};t.exports=function(t){var n=t.parentComponent,o=t.name,r=t.toneParameter,h=e[n.heritage[1]]||e[n.heritage[2]]||e[n.heritage[0]];return void 0!==h&&void 0!==h[o]?h[o]:void 0!==s[r.units]?s[r.units]:void 0!==i[o]?i[o]:i.default}}.call(i,e,i,t))&&(t.exports=s)},function(t,i){t.exports=function(t){return t instanceof Tone.Signal}},function(t,i,e){var s,s;/*!
+
+
+var timingUtils = require('../utils/timing');
+var drawingUtils = require('../utils/drawing');
+var EventEmitter = require('events').EventEmitter;
+var util = require('util');
+var transmit = require('../utils/transmit');
+//var WAAClock = require('waaclock');
+
+
+var manager = module.exports = function() {
+
+/**
+
+  @class nx
+  @description Central nexusUI manager with shared utility functions for all nexusUI objects
+
+*/
+
+  EventEmitter.apply(this)
+
+  /**@property {object} widgets Contains all interface widgets (e.g. nx.widgets.dial1, nx.widgets.toggle1) */
+  this.widgets = new Object();
+
+  this.elemTypeArr = new Array();
+  this.aniItems = new Array();
+  /*  @property {boolean} showLabels Whether or not to draw an automatic text label on each interface component. */
+  this.showLabels = false;
+  this.starttime = new Date().getTime();
+  if (transmit) {
+    /**
+    @method sendsTo
+    @param {string or function} [destination] Protocol for transmitting data from interfaces (i.e. "js", "ajax", "ios", "max", or "node"). Also accepts custom functions.
+    ```js
+    nx.sendsTo("ajax")
+
+    // or
+
+    nx.sendsTo(function(data) {
+         //define a custom transmission function
+    })
+    ```
+    */
+    this.sendsTo = transmit.setGlobalTransmit;
+    /**
+    @method setAjaxPath
+    @param {string} [path] If sending via AJAX, define the path to ajax destination
+    */
+    this.setAjaxPath = transmit.setAjaxPath;
+    /**  @property {string} destination NexusUI's transmission protocol (i.e. "js" or "ajax"). Defaults to "js". We recommend setting this property using nx.sendsTo() which ensures that all widgets receive this setting. */
+    this.destination = "js";
+    /**  @property {string} ajaxPath If sending via AJAX, the destination path. Defaults to "lib/nexusOSCRelay.php". We recommend setting this property using nx.setAjaxPath() which ensures that all widgets receive this setting. */
+    this.ajaxPath = "lib/nexusOSCRelay.php";
+  }
+
+  /** @property {boolean} isTouchDevice Returns true if page is loaded on a touch device. */
+  this.isTouchDevice = ('ontouchstart' in document.documentElement)? true:false;
+  this.metas = document.getElementsByTagName('meta');
+
+  /**  @property {boolean} globalWidgets Whether or not to instantiate a global variable for each widget (i.e. button1). Defaults to true. Designers of other softwares who wish to keep nexusUI entirely encapsulated in the nx object may set this property to false. In that case, all widgets are accessible in nx.widgets */
+  this.globalWidgets = true;
+
+  this.font = "'open sans'";
+  this.fontSize = 14;
+  this.fontWeight = "normal";
+
+  var audioContext = window.AudioContext || window.webkitAudioContext;
+  this.context = new audioContext();
+
+  this.sys = navigator.userAgent.toLowerCase();
+  this.isAndroid = this.sys.indexOf("android") > -1;
+  this.isMobile = this.sys.indexOf("mobile") > -1;
+
+  /**  @property {integer} throttlePeriod Throttle time in ms (for nx.throttle). */
+  this.throttlePeriod = 20;
+
+
+  /* extra colors */
+
+  this.colors.borderhl = drawingUtils.shadeBlendConvert(-0.5,this.colors.border); // colors.border + [20% Darker] => colors.darkborder
+  this.colors.accenthl = drawingUtils.shadeBlendConvert(0.15,this.colors.accent);
+
+}
+
+util.inherits(manager, EventEmitter)
+
+
+/**
+  @method add
+  Adds a NexusUI element to the webpage. This will create an HTML5 canvas and draw the interface on it.
+  @param {string} [type] NexusUI widget type (i.e. "dial").
+  @param {object} [settings] (Optional.) Extra settings for the new widget. This settings object may have any of the following properties: x (integer in px), y, w (width), h (height), name (widget's OSC name and canvas ID), parent (the ID of the element you wish to add the canvas into). If no settings are provided, the element will be at default size and appended to the body of the HTML document.
+  */
+manager.prototype.add = function(type, args) {
+  //args may have optional properties: x, y, w, h, name, parent
+
+  if(type) {
+      var canv = document.createElement("canvas");
+      canv.setAttribute('nx', type);
+      if (args) {
+        if (args.x || args.y) {
+           canv.style.position = "absolute";
+        }
+        if (args.x) {
+           canv.style.left = args.x + "px";
+        }
+        if (args.y) {
+           canv.style.top = args.y + "px";
+        }
+        if (args.w) {
+           canv.style.width = args.w;
+           if (typeof args.w != "string")
+             canv.width = args.w;
+        }
+        if (args.h) {
+           canv.style.height = args.h;
+           if (typeof args.h != "string")
+             canv.height = args.h;
+        }
+        if (args.parent) {
+          var parent;
+          if (typeof args.parent === "string") {
+            parent = document.getElementById(args.parent);
+          } else if (args.parent instanceof HTMLElement){
+            parent = args.parent;
+          } else if (args.parent instanceof jQuery){
+            parent = args.parent[0];
+          }
+        }
+        if (args.name) {
+           canv.id = args.name
+        }
+      }
+      if (!parent) {
+        var parent = document.body
+      }
+      parent.appendChild(canv);
+      return this.transform(canv);
+  }
+}
+
+/** @method transform
+Transform an existing canvas into a NexusUI widget.
+@param {string} [canvasID] The ID of the canvas to be transformed.
+@param {string} [type] (Optional.) Specify which type of widget the canvas will become. If no type is given, the canvas must have an nx attribute with a valid widget type.
+*/
+manager.prototype.transform = function(canvas, type) {
+  for (var key in nx.widgets) {
+    if (nx.widgets[key].canvasID == canvas.id) {
+      return;
+    }
+  }
+  if (type) {
+    var nxType = type;
+  } else {
+    var nxType = canvas.getAttribute("nx");
+  }
+
+  if (!nxType) {
+    return;
+  }
+  var elemCount = 0;
+  var newObj;
+
+  /* find out how many of the same elem type have come before
+    i.e. nx.elemTypeArr will look like [ dial, dial, toggle, toggle ]
+    allowing you to count how many dials already exist on the page
+    and give your new dial the appropriate index and id: dial3 */
+
+  for (j=0;j<this.elemTypeArr.length;j++) {
+    if (this.elemTypeArr[j] === nxType) {
+      elemCount++;
+    }
+  }
+
+  // add your new nexus element type to the element list
+  this.elemTypeArr.push(nxType);
+
+  // check to see if it has a pre-given ID
+  // and use that as its id if so
+  if (!canvas.id) {
+    var idNum = elemCount + 1;
+    canvas.id = nxType + idNum;
+  }
+
+  if(nxType) {
+    try {
+      var newObj = new (require('../widgets')[nxType])(canvas.id);
+    } catch (err) {
+      console.log("creation of " + nxType + " failed");
+      return;
+    }
+  }
+
+  newObj.type = nxType;
+
+  this.widgets[newObj.canvasID] = newObj;
+  if (this.globalWidgets) {
+    window[newObj.canvasID] = this.widgets[newObj.canvasID]
+  }
+
+  newObj.init();
+  return newObj;
+}
+
+/** @method transmit
+The "output" instructions for sending a widget's data to another application or to a JS callback. Inherited by each widget and executed when each widget is interacted with or its value changes. Set using nx.sendsTo() to ensure that all widgets inherit the new function correctly.
+@param {object} [data] The data to be transmitted. Each property of the object will become its own OSC message. (This works with objects nested to up to 2 levels).
+*/
+
+manager.prototype.transmit = function(data, passive) {
+  //console.log(passive + " manager.transmit")
+    this.makeOSC(this.emit, data, passive);
+    this.emit('*',data, passive);
+}
+
+/**
+  @method colorize
+  @param {string} [aspect] Which part of ui to change, i.e. "accent" "fill", "border"
+  @param {string} [color] Hex or rgb color code
+  Change the color of all nexus objects, by aspect ([fill, accent, border, accentborder]
+
+  ```js
+  nx.colorize("#00ff00") // changes the accent color by default
+  nx.colorize("border", "#000000") // changes the border color
+  ```
+
+**/
+manager.prototype.colorize = function(aspect, newCol) {
+
+  if (!newCol) {
+    // just sending in a color value colorizes the accent
+    newCol = aspect;
+    aspect = "accent";
+  }
+
+  this.colors[aspect] = newCol;
+
+  this.colors.borderhl = drawingUtils.shadeBlendConvert(0.1,this.colors.border,this.colors.black); // colors.border + [20% Darker] => colors.darkborder
+  this.colors.accenthl = drawingUtils.shadeBlendConvert(0.3,this.colors.accent);
+
+  for (var key in this.widgets) {
+    this.widgets[key].colors[aspect] = newCol;
+    this.widgets[key].colors["borderhl"] = this.colors.borderhl;
+    this.widgets[key].colors["accenthl"] = this.colors.accenthl;
+
+    this.widgets[key].draw();
+  }
+
+}
+
+
+/** @method setThrottlePeriod
+Set throttle time of nx.throttle, which controls rapid network transmissions of widget data.
+@param {integer} [throttle time] Throttle time in milliseconds.
+*/
+manager.prototype.setThrottlePeriod = function(newThrottle) {
+  this.throttlePeriod = newThrottle;
+  for (var key in this.widgets) {
+    this.widgets[key].throttlePeriod = this.throttlePeriod;
+  }
+}
+
+
+
+  /*
+   *    GUI
+   */
+
+/**  @property {object} colors The interface's color settings. Set with nx.colorize(). */
+manager.prototype.colors = {
+  "accent": "#ff5500",
+  "fill": "#eeeeee",
+  "border": "#e3e3e3",
+  "mid": "#1af",
+  "black": "#000000",
+  "white": "#FFFFFF"
+};
+
+/**  @method startPulse
+  Start an animation interval for animated widgets (calls nx.pulse() every 30 ms). Executed by default when NexusUI loads.
+*/
+manager.prototype.startPulse = function() {
+  this.pulseInt = setInterval("nx.pulse()", 30);
+}
+
+/**  @method stopPulse
+  Stop the animation pulse interval.
+*/
+manager.prototype.stopPulse = function() {
+  clearInterval(this.pulseInt);
+}
+
+/**  @method pulse
+  Animation pulse which executes all functions stored in the nx.aniItems array.
+*/
+manager.prototype.pulse = function() {
+  for (var i=0;i<this.aniItems.length;i++) {
+    this.aniItems[i]();
+  }
+}
+
+manager.prototype.addAni = function(fn) {
+
+}
+
+manager.prototype.removeAni = function(fn) {
+  this.aniItems.splice(this.aniItems.indexOf(fn));
+}
+
+manager.prototype.addStylesheet = function() {
+  var cssString = 'select {'
+    + 'width: 150px;'
+    + 'padding: 5px 5px;'
+    + 'font-size: 16px;'
+    + 'color:#666666;'
+    + 'border: solid 2px #e4e4e4;'
+    + 'border-radius: 0;'
+    + '-webkit-appearance: none;'
+    + 'outline: none;'
+    + 'cursor:pointer;'
+    + 'background-color:#EEE;'
+    + 'font-family:"open sans";'
+    + '}'
+    + ''
+    + 'input[type=text]::-moz-selection { background: transparent; }'
+    + 'input[type=text]::selection { background: transparent; }'
+    + 'input[type=text]::-webkit-selection { background: transparent; }'
+    + ''
+    + 'canvas { '
+    + 'cursor:pointer;'
+    + 'border-radius:0px;'
+    + 'moz-border-radius:0px;'
+    + 'webkit-border-radius:0px;'
+    + 'box-sizing:border-box;'
+    + '-moz-box-sizing:border-box;'
+    + '-webkit-box-sizing:border-box;'
+    + '}'
+    + ''
+    + 'input[type=text] { '
+    + 'border-radius:5px;'
+    + 'moz-border-radius:5px;'
+    + 'webkit-border-radius:5px;'
+    + 'box-sizing:border-box;'
+    + '-moz-box-sizing:border-box;'
+    + '-webkit-box-sizing:border-box;'
+    + '}';
+
+    var head = document.head;
+    var style = document.createElement('style');
+
+    style.type = 'text/css';
+    if (style.styleSheet){
+      style.styleSheet.cssText = cssString;
+    } else {
+      style.appendChild(document.createTextNode(cssString));
+    }
+    head.appendChild(style);
+}
+
+/**  @method setViewport
+    Set mobile viewport scale (similar to a zoom)
+    @param {integer} [scale] Zoom ratio (i.e. 0.5, 1, 2) */
+manager.prototype.setViewport = function(scale) {
+  for (i=0; i<this.metas.length; i++) {
+    if (this.metas[i].name == "viewport") {
+      this.metas[i].content = "minimum-scale="+scale+", maximum-scale="+scale;
+    }
+  }
+}
+
+/*  @method setLabels
+    Tell all widgets whether or not draw text labels on widgets
+    @param {boolean} [on/off] true to add labels, false to remove labels
+ */
+manager.prototype.setLabels = function(onoff) {
+  if (onoff=="on") {
+    this.showLabels = true;
+  } else {
+    this.showLabels = false;
+  }
+  for (var key in this.widgets) {
+    this.widgets[key].draw()
+  }
+}
+
+manager.prototype.setProp = function(prop,val) {
+  if (prop && val) {
+    nx[prop] = val;
+    for (var key in this.widgets) {
+      this.widgets[key][prop] = val;
+      this.widgets[key].draw()
+    }
+  }
+}
+
+manager.prototype.blockMove = function(e) {
+  if (e.target.attributes["nx"]) {
+     e.preventDefault();
+     if (this.isAndroid) {
+       e.stopPropagation ? e.stopPropagation() : false;
+     }
+  }
+}
+
+manager.prototype.calculateDigits = function(value) {
+  var nondecimals = this.max ? Math.floor(this.max).toString().length : 1
+  if (nondecimals < this.maxdigits) {
+    var decimals = 3-nondecimals
+  } else {
+    var decimals = 0
+  }
+  var valdigits = nondecimals + decimals
+  return {
+    wholes: nondecimals,
+    decimals: decimals,
+    total: nondecimals + decimals,
+  }
+}
+
+manager.prototype.themes = {
+  "light": {
+    "fill": "#DDDDDD",
+    "border": "#DADADA",
+    "black": "#000000",
+    "white": "#FFFFFF",
+    "body": "#F3F3F3"
+  },
+  "dark": {
+    "fill": "#222",
+    "border": "#292929",
+    "black": "#FFFFFF",
+    "white": "#000000",
+    "body": "#111"
+  },
+  "red": "#f24",
+  "orange": "#f50",
+  "yellow": "#ec1",
+  "green": "#1c9",
+  "blue": "#09d",
+  "purple": "#40a",
+}
+
+manager.prototype.skin = function(name) {
+
+  var names = name.split("-")
+
+  nx.colorize("fill", nx.themes[names[0]].fill)
+  nx.colorize("border", nx.themes[names[0]].border)
+  nx.colorize("black", nx.themes[names[0]].black)
+  nx.colorize("white", nx.themes[names[0]].white)
+
+  nx.colorize("accent", nx.themes[names[1]])
+
+  document.body.style.backgroundColor = nx.themes[names[0]].body
+}
+
+
+manager.prototype.labelSize = function(size) {
+  for (var key in this.widgets) {
+    var widget = this.widgets[key]
+
+    if (widget.label) {
+      var newheight = widget.GUI.h + size
+      widget.labelSize = size
+      if (["select","number","text"].indexOf(widget.type)<0) {
+        widget.resize(false,newheight)
+      }
+    }
+  }
+  var textLabels = document.querySelectorAll(".nxlabel");
+  console.log(textLabels)
+
+  for (var i = 0; i < textLabels.length; i++) {
+      console.log(textLabels[i])
+      textLabels[i].style.fontSize = size/2.8+"px"
+      console.log(textLabels[i].style.fontSize)
+  }
+}
+
+},{"../utils/drawing":5,"../utils/timing":7,"../utils/transmit":8,"../widgets":16,"events":40,"util":44}],3:[function(require,module,exports){
+var EventEmitter = require('events').EventEmitter;
+var util = require('util');
+var domUtils = require('../utils/dom');
+var drawingUtils = require('../utils/drawing');
+var timingUtils = require('../utils/timing');
+var transmit = require('../utils/transmit');
+
+
+
+var widget = module.exports = function (target) {
+  EventEmitter.apply(this)
+  this.preClick = this.preClick.bind(this)
+  this.preMove = this.preMove.bind(this)
+  this.preRelease = this.preRelease.bind(this)
+  this.preTouch = this.preTouch.bind(this)
+  this.preTouchMove = this.preTouchMove.bind(this)
+  this.preTouchRelease = this.preTouchRelease.bind(this)
+
+/**
+
+  @class widget
+  All NexusUI interface widgets inherit from the widget class. The properties and methods of the widget class are usable by any NexusUI interface.
+
+*/
+
+  /**  @property {string} canvasID ID attribute of the interface's HTML5 canvas */
+  this.canvasID = target;
+  /**  @property {string} oscPath OSC prefix for this interface. By default this is populated using the canvas ID (i.e. an ID of dial1 has OSC path /dial1) */
+  this.oscPath = "/"+target;
+  if (!document.getElementById(target)) {
+    var newcanv = document.createElement("canvas")
+    newcanv.id = target;
+    document.body.appendChild(newcanv)
+  }
+  /**
+   * @property {string} type The type of NexusUI widget (i.e. "dial", "toggle", "slider"). Set automatically at creation.
+   */
+  this.type = undefined;
+  /**  @property {DOM element} canvas The widget's HTML5 canvas */
+  this.canvas = document.getElementById(target);
+  /**  @property {HTML5 drawing context} context The canvas's drawing context */
+  this.context = this.canvas.getContext("2d");
+
+  this.checkPercentage();
+  this.canvas.className = this.canvas.className ? this.canvas.className += " nx" : "nx"
+
+  this.canvas.height = window.getComputedStyle(document.getElementById(target), null).getPropertyValue("height").replace("px","");
+  this.canvas.width = window.getComputedStyle(document.getElementById(target), null).getPropertyValue("width").replace("px","");
+  /**  @property {integer} height The widget canvas's computed height in pixels */
+  this.height = parseInt(window.getComputedStyle(document.getElementById(target), null).getPropertyValue("height").replace("px",""));
+  /**  @property {integer} width The widget canvas's computed width in pixels */
+  this.width = parseInt(window.getComputedStyle(document.getElementById(target), null).getPropertyValue("width").replace("px",""));
+  if (!this.defaultSize) {
+    /**  @property {object} defaultSize The widget's default size if not defined with HTML/CSS style. (Has properties 'width' and 'height', both in pixels) */
+    this.defaultSize = { width: 100, height: 100 };
+  }
+
+  /**  @property {boolean} label Whether or not to draw a text label this widget.   */
+  this.label = false
+  this.labelSize = 30
+  this.labelAlign = "center"
+  this.labelFont = "'Open Sans'"
+
+  if (this.canvas.getAttribute("label")!=null) {
+    this.label = this.canvas.getAttribute("label")
+    this.origDefaultHeight = this.defaultSize.height
+  }
+  if (this.label) {
+    this.defaultSize.height += this.labelSize
+  }
+
+  if (this.width==300 && this.height==150) {
+    this.canvas.width = this.defaultSize.width*2;
+    this.canvas.height = this.defaultSize.height*2;
+    this.width = this.defaultSize.width;
+    this.height = this.defaultSize.height;
+  } else {
+  	var proxyw = this.width;
+  	var proxyh = this.height;
+  	this.canvas.width = proxyw*2;
+    this.canvas.height = proxyh*2;
+    this.width = proxyw;
+    this.height = proxyh;
+  }
+  this.canvas.style.width = this.canvas.width/2+"px";
+  this.canvas.style.height = this.canvas.height/2+"px";
+  this.context.scale(2,2)
+
+
+  this.makeRoomForLabel()
+
+  /**  @property {object} offset The widget's computed offset from the top left of the document. (Has properties 'top' and 'left', both in pixels) */
+  this.offset = domUtils.findPosition(this.canvas);
+  /**  @property {object} center The center of the widget's canvas. A 100x100 widget would have a center at 50x50. (Has properties 'x' and 'y', both in pixels) */
+  this.center = {
+    x: this.GUI.w/2,
+    y: this.GUI.h/2
+  };
+  //drawing
+  /**  @property {integer} lineWidth The default line width for drawing (default is 2 pixels). In many widgets, this is overwritten to suite the widget. However it does dictate the border width on most widgets. */
+  this.lineWidth = 2;
+  this.context.lineWidth = this.lineWidth;
+  /**  @property {object} colors A widget's individual color scheme. Inherited from nx.colors. (Has properties "accent", "fill", "border", "black", and "white") */
+  this.colors = new Object();
+  // define colors individually so they are not pointers to nx.colors
+  // this way each object can have its own color scheme
+  for (var key in nx.colors) {
+    this.colors[key] = nx.colors[key]
+  }
+  /*this.colors.accent = nx.colors.accent;
+  this.colors.fill = nx.colors.fill;
+  this.colors.border = nx.colors.border;
+  this.colors.accentborder = nx.colors.accentborder;
+  this.colors.black = nx.colors.black;
+  this.colors.white = nx.colors.white;
+  this.colors.highlight = nx.colors.highlight; */
+  //interaction
+  /**  @property {object} clickPos The most recent mouse/touch position when interating with a widget. (Has properties x and y) */
+  this.clickPos = {x: 0, y: 0};
+  /**  @property {array} clickPos.touches If multitouch, an array of touch positions  */
+  this.clickPos.touches = new Array();
+  /**  @property {boolean} clicked Whether or not the widget is currently clicked  */
+  this.clicked = false;
+  this.value = 0;
+    /**
+      @property {object} val An object containing the core interactive values of the widget, which are also the widget's data output.
+    */
+  this.val = new Object();
+  this.pval = new Object();
+  this.nodePos = new Array();
+  /**  @property {object} deltaMove Difference between the current touch/mouse position and the previous touch/mouse position, in pixels.   */
+  this.deltaMove = new Object();
+  this.throttlePeriod = nx.throttlePeriod;
+  this.throttle = timingUtils.throttle;
+  this.hasMoved = false;
+  //recording
+  /**  @property {boolean} isRecording Whether or not this widget's output is being recorded to a "remix" widget */
+  this.isRecording = false;
+  this.tapeNum = 0;
+  this.recorder = null;
+  //transmission
+  if (transmit) {
+    /**  @method sendsTo
+    Set the transmission protocol for this widget individually
+    @param {string or function} [destination] Protocol for transmitting data from this widget (i.e. "js", "ajax", "ios", "max", or "node"). Also accepts custom functions.
+    ```js
+    dial1.sendsTo("ajax")
+
+    // or
+
+    dial1.sendsTo(function(data) {
+         //define a custom transmission function
+    })
+    ```
+    */
+    this.sendsTo = transmit.setWidgetTransmit;
+    this.destination = "js";
+  }
+  this.events = new Object();
+
+  // Setup interaction
+  if (nx.isTouchDevice) {
+    this.canvas.ontouchstart = this.preTouch;
+    this.canvas.ontouchmove = this.preTouchMove;
+    this.canvas.ontouchend = this.preTouchRelease;
+  } else {
+//  if ('onmousedown' in document.documentElement) {
+    this.canvas.addEventListener('mousedown', this.preClick, false);
+  }
+
+  this.fontSize = nx.fontSize;
+  this.fontWeight = nx.fontWeight;
+  this.font = nx.font;
+
+  this.clickCB = false;
+  this.releaseCB = false;
+
+  this.actuated = true;
+
+
+
+}
+util.inherits(widget, EventEmitter)
+
+/**  @method transmit
+    The "output" instructions for sending the widget's data to another application or to a JS callback. Inherited from nx.transmit and executed when each widget is interacted with or during animation. Set using .sendsTo() to use our built-in transmission defintions.
+    @param {object} [data] The data to be transmitted. Each property of the object will become its own OSC message if sending via "ajax" or "max7" protocols. (This works with objects nested to up to 2 levels).
+*/
+widget.prototype.transmit = nx.transmit;
+
+/**  @method makeOSC
+    Loops through an object (i.e. a widget's data), creates OSC path/value pairs, and executes a callback function with these two arguments.
+    @param {function} [callback] A function defining the action to be taken with each OSC path/value pair. This function should have two parameters, path (string) and data (type depends on widget data type).
+    @param {object} [data] The data as an object, to be broken into individual OSC messages.
+*/
+widget.prototype.makeOSC = function(action, data) {
+    this.action = action;
+    if ((typeof data == "object") && (data !== null)) {
+      for (var key in data) {
+        if ((typeof data[key] == "object") && (data[key] !== null)) {
+          for (var key2 in data[key]) {
+              this.action(key+"/"+key2, data[key][key2])
+          }
+        } else {
+            this.action(key, data[key])
+        }
+      }
+    } else if (typeof data == "number" || typeof data == "string") {
+        this.action('value', data)
+    }
+}
+
+// getoffset is useful as an API for others
+// otherwise they would have to write
+// dial1.offset = utils.findPosition()
+// now it is simply:
+// dial1.getOffset()
+
+/**  @method getOffset
+    Recalculate the computed offset of the widget's canvas and store it in widget.offset. This is useful if a widget has been moved after being created.
+    */
+widget.prototype.getOffset = function() {
+  this.offset = domUtils.findPosition(this.canvas)
+}
+
+widget.prototype.preClick = function(e) {
+  this.actuated = true;
+  this.offset = domUtils.findPosition(this.canvas)
+  this.clickPos = domUtils.getCursorPosition(e, this.offset);
+  // need something like:
+  // if (this.clickPos.y < this.GUI.h) {
+  document.addEventListener("mousemove", this.preMove, false);
+  document.addEventListener("mouseup", this.preRelease, false);
+  this.clicked = true;
+  this.deltaMove.x = 0;
+  this.deltaMove.y = 0;
+  this.hasMoved = false;
+  this.clickCB ? this.clickCB() : null;
+  this.click(e);
+  document.body.style.userSelect = "none";
+  document.body.style.mozUserSelect = "none";
+  document.body.style.webkitUserSelect = "none";
+  document.body.style.cursor = "pointer";
+}
+
+widget.prototype.preMove = function(e) {
+  this.actuated = true;
+  var newClickPos = domUtils.getCursorPosition(e, this.offset);
+  this.deltaMove.y = newClickPos.y - this.clickPos.y;
+  this.deltaMove.x = newClickPos.x - this.clickPos.x;
+  this.clickPos = newClickPos;
+  this.hasMoved = true;
+  this.move(e);
+}
+
+widget.prototype.preRelease = function(e) {
+  this.actuated = true;
+  document.removeEventListener("mousemove", this.preMove, false);
+  document.removeEventListener("mouseup", this.preRelease, false);
+  this.clicked = false;
+  this.releaseCB ? this.releaseCB() : null;
+  this.release();
+  document.body.style.userSelect = "text";
+  document.body.style.mozUserSelect = "text";
+  document.body.style.webkitUserSelect = "text";
+  document.body.style.cursor = "default";
+}
+
+widget.prototype.preTouch = function(e) {
+  this.actuated = true;
+  this.clickPos = domUtils.getTouchPosition(e, this.offset);
+  this.clicked = true;
+  this.deltaMove.x = 0;
+  this.deltaMove.y = 0;
+  this.hasMoved = false;
+  this.touch(e);
+}
+
+widget.prototype.preTouchMove = function(e) {
+  if (this.clicked) {
+    this.actuated = true;
+    var newClickPos = domUtils.getTouchPosition(e, this.offset);
+    this.deltaMove.y = newClickPos.y - this.clickPos.y;
+    this.deltaMove.x = newClickPos.x - this.clickPos.x;
+    this.clickPos = newClickPos;
+    this.hasMoved = true;
+    this.touchMove(e);
+  }
+}
+
+widget.prototype.preTouchRelease = function(e) {
+  this.actuated = true;
+  if (e.targetTouches.length>=1) {
+    var newClickPos = domUtils.getTouchPosition(e, this.offset);
+    this.clickPos = newClickPos;
+  } else {
+    this.clicked = false;
+  }
+  this.touchRelease();
+}
+
+
+/**  @method init
+     Initialize or re-initialize the widget. Defined separately within each widget.
+    */
+
+/**  @method draw
+    Draw the widget onto the canvas.
+    */
+widget.prototype.draw = function() {
+}
+
+
+/**  @method click
+    Executes when the widget is clicked on
+    */
+widget.prototype.click = function() {
+}
+
+
+/**  @method move
+    Executes on drag (mouse moves while clicked).
+    */
+widget.prototype.move = function() {
+}
+
+
+/**  @method release
+    Executes when the mouse releases after having clicked on the widget.
+    */
+widget.prototype.release = function() {
+}
+
+/**  @method touch
+    Executes when the widget is touched on a touch device.
+    */
+widget.prototype.touch = function() {
+  this.click();
+}
+
+/**  @method touchMove
+    Executes on drag (touch then move) on a touch device
+    */
+widget.prototype.touchMove = function() {
+  this.move();
+}
+
+/**  @method touchRelease
+    Executes when the touch releases after having touched the widget.
+    */
+widget.prototype.touchRelease = function() {
+  this.release();
+}
+
+widget.prototype.adjustSizeIfDefault = function() {
+  if (this.width==300 && this.height==150) {
+    this.canvas.width = this.defaultSize.width;
+    this.canvas.height = this.defaultSize.height;
+    this.width = this.defaultSize.width;
+    this.height = this.defaultSize.height;
+  }
+}
+
+widget.prototype.makeRoundedBG = function() {
+  this.bgLeft = this.lineWidth;
+  this.bgRight = this.width - this.lineWidth;
+  this.bgTop = this.lineWidth;
+  this.bgBottom = this.height - this.lineWidth;
+  this.bgHeight = this.bgBottom - this.lineWidth;
+  this.bgWidth = this.bgRight - this.lineWidth;
+
+  drawingUtils.makeRoundRect(this.context, this.bgLeft, this.bgTop, this.bgWidth, this.bgHeight);
+}
+
+/**  @method erase
+    Erase the widget's canvas.
+    */
+widget.prototype.erase = function() {
+  this.context.clearRect(0,0,this.width,this.height);
+}
+
+widget.prototype.hideCursor = function() {
+  this.canvas.style.cursor = "none";
+}
+
+widget.prototype.showCursor = function() {
+  this.canvas.style.cursor = "auto";
+}
+
+// allow us to get the constructor function name programatically
+//i.e. if element is a dial, this function will return "dial"
+//deprecated
+widget.prototype.getName = function() {
+  return "deprecated -- use widget.type instead"
+}
+
+/** @method set
+Manually set a widget's value (that is, set any properties of a widget's .val). See widget.val or the .val property of individual widgets for more info.
+@param {object} [data] Parameter/value pairs in object notation.
+@param {boolean} [transmit] (optional) Whether or not to transmit new value after being set.
+Sets the value of an object.
+
+```js
+  position1.set({
+  &nbsp;  x: 100,
+  &nbsp;  y: 250
+  })
+```
+
+An optional second argument decides whether the object then transmits its new value.
+```js
+  button1.set({
+  &nbsp;  press: 100
+  }, true)
+```
+*/
+widget.prototype.set = function(data, transmit) {
+
+  this.actuated = false;
+
+  if (typeof this.val == "object" && this.val !== "null") {
+    if (typeof data == "object" && data !== "null") {
+      for (var key in data) {
+        this.val[key] = data[key];
+      }
+    }
+  } else if (typeof this.val == "string" || typeof this.val == "number") {
+    if (typeof data == "object" && data !== "null") {
+      this.val = data["value"];
+      this.draw();
+    } else if (typeof data == "string" || typeof data == "number") {
+      this.val = data;
+    }
+  }
+  this.draw();
+
+  if (transmit) {
+    this.transmit(this.val,true)
+  }
+}
+
+/**  @method destroy
+    Remove the widget object, canvas, and all related event listeners from the document.
+    */
+widget.prototype.destroy = function() {
+  var type = nx.elemTypeArr.indexOf(this.getName())
+  nx.elemTypeArr.splice(type,1)
+
+  this.canvas.ontouchmove = null;
+  this.canvas.ontouchend = null;
+  this.canvas.onclick = null;
+  this.canvas.onmousemove = null;
+  this.canvas.onmouseoff = null;
+  document.removeEventListener("mousemove", this.preMove, false);
+  document.removeEventListener("mouseup", this.preRelease, false);
+
+  var elemToKill = document.getElementById(this.canvasID)
+  if (elemToKill) {
+    elemToKill.parentNode.removeChild(elemToKill);
+  }
+
+  this.customDestroy();
+
+  var id = this.canvasID
+  delete nx.widgets[id];
+  delete window[id];
+
+}
+
+widget.prototype.customDestroy = function() {
+
+}
+
+widget.prototype.wrapText = function(text, x, y, maxWidth, lineHeight) {
+  if (text) {
+    var words = text.split(' ');
+    var line = '';
+
+    for(var n = 0; n < words.length; n++) {
+      var testLine = line + words[n] + ' ';
+      var metrics = this.context.measureText(testLine);
+      var testWidth = metrics.width;
+      if (testWidth > maxWidth && n > 0) {
+        this.context.fillText(line, x, y);
+        line = words[n] + ' ';
+        y += lineHeight;
+      }
+      else {
+        line = testLine;
+      }
+    }
+    this.context.fillText(line, x, y);
+  }
+}
+
+widget.prototype.drawLabel = function() {
+  if (this.label) {
+    with(this.context) {
+      fillStyle = this.colors.black;
+      textAlign = "center"
+      textBaseline = "middle";
+      font = (this.labelSize/2.8) + "px "+this.labelFont+" normal"
+      fillText(this.label,this.width/2,this.labelY);
+    }
+  }
+}
+
+/**  @method saveCanv
+     Download the widget's current graphical state as an image (png).
+    */
+widget.prototype.saveCanv = function() {
+  var data = this.canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+  window.location.href = data
+}
+
+widget.prototype.setFont = function() {
+  with (this.context) {
+      textAlign = "center";
+      font = this.fontWeight+" "+this.fontSize+"px "+this.font;
+      fillStyle = this.colors.black;
+      globalAlpha = 1;
+  }
+}
+
+
+/* Percentage width support */
+
+
+widget.prototype.checkPercentage = function() {
+  var wstr = this.canvas.style.width;
+  var hstr = this.canvas.style.height;
+  if (wstr.indexOf("%") >= 0 || hstr.indexOf("%") >= 0) {
+    this.percent = {
+      w: (wstr.indexOf("%") >= 0) ? wstr.replace("%","") : false,
+      h: (hstr.indexOf("%") >= 0) ? hstr.replace("%","") : false
+    }
+    this.stretch();
+  }
+}
+
+widget.prototype.stretch = function() {
+  window.addEventListener("resize", function(e) {
+    if (this.percent.w) {
+      var newWidth = window.getComputedStyle(this.canvas.parentNode, null).getPropertyValue("width").replace("px","");
+      newWidth *= this.percent.w/100
+    } else {
+      var newWidth = false;
+    }
+    if (this.percent.h) {
+      var newHeight = window.getComputedStyle(this.canvas.parentNode, null).getPropertyValue("height").replace("px","");
+      newHeight *= this.percent.h/100
+    } else {
+      var newHeight = false;
+    }
+    this.resize(newWidth,newHeight);
+  }.bind(this))
+}
+
+widget.prototype.resize = function(w,h) {
+
+  this.canvas.width = w ? w*2 : this.canvas.width;
+  this.canvas.height = h ? h*2 : this.canvas.height;
+  this.width =  w ? w : this.width;
+  this.height = h ? h : this.height;
+  this.canvas.style.width = this.width+"px";
+  this.canvas.style.height = this.height+"px";
+  this.context.scale(2,2)
+
+  this.center = {
+    x: this.GUI.w/2,
+    y: this.GUI.h/2
+  };
+
+  this.makeRoomForLabel()
+
+  this.init();
+  this.draw();
+
+}
+
+widget.prototype.normalize = function(value) {
+  return nx.scale(value,this.min,this.max,0,1)
+}
+widget.prototype.rangify = function(value) {
+  return nx.scale(value,0,1,this.min,this.max)
+}
+
+
+widget.prototype.makeRoomForLabel = function() {
+  this.GUI = {
+    w: this.width,
+    h: this.label ? this.height - this.labelSize : this.height
+  }
+  this.labelY = this.height - this.labelSize/2;
+  // must add the above code to widget.resize
+}
+
+},{"../utils/dom":4,"../utils/drawing":5,"../utils/timing":7,"../utils/transmit":8,"events":40,"util":44}],4:[function(require,module,exports){
+
+/** @class utils
+  Shared utility functions. These functions are exposed as methods of nx in NexusUI projects, i.e. .mtof() here can be accessed in your project with nx.mtof().
+*/
+
+
+/** @method findPosition
+    Returns the offset of an HTML element. Returns an object with 'top' and 'left' properties.
+    @param {DOM element} [element]
+    ```js
+    var button1Offset = nx.findPosition(button1.canvas)
+    ```
+*/
+exports.findPosition = function(element) {
+  var body = document.body,
+      win = document.defaultView,
+      docElem = document.documentElement,
+      box = document.createElement('div');
+  box.style.paddingLeft = box.style.width = "1px";
+  body.appendChild(box);
+  var isBoxModel = box.offsetWidth == 2;
+  body.removeChild(box);
+  box = element.getBoundingClientRect();
+  var clientTop  = docElem.clientTop  || body.clientTop  || 0,
+      clientLeft = docElem.clientLeft || body.clientLeft || 0,
+      scrollTop  = win.pageYOffset || isBoxModel && docElem.scrollTop  || body.scrollTop,
+      scrollLeft = win.pageXOffset || isBoxModel && docElem.scrollLeft || body.scrollLeft;
+  return {
+    top : box.top  + scrollTop  - clientTop,
+    left: box.left + scrollLeft - clientLeft
+  };
+}
+
+exports.getCursorPosition = function(e, canvas_offset) {
+  var x;
+  var y;
+  if (e.pageX != undefined && e.pageY != undefined) {
+    x = e.pageX;
+    y = e.pageY;
+  } else {
+    x = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+    y = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+  }
+  x -= canvas_offset.left;
+  y -= canvas_offset.top;
+  var click_position = {x: x, y: y};
+  click_position.touches = [ {x: x, y: y } ];
+  return click_position;
+}
+
+exports.getTouchPosition = function(e, canvas_offset) {
+  var x;
+  var y;
+  x = e.targetTouches[0].pageX;
+  y = e.targetTouches[0].pageY;
+  x -= canvas_offset.left;
+    y -= canvas_offset.top;
+  var click_position = {x: x, y: y};
+
+  click_position.touches = new Array();
+  for (var i=0;i<e.targetTouches.length;i++) {
+     click_position.touches.push({
+      x: e.targetTouches[i].pageX - canvas_offset.left,
+      y: e.targetTouches[i].pageY - canvas_offset.top
+    });
+  }
+  click_position.changed = new Array();
+  for (var i=0;i<e.changedTouches.length;i++) {
+     click_position.changed.push({
+      x: e.changedTouches[i].pageX - canvas_offset.left,
+      y: e.changedTouches[i].pageY - canvas_offset.top
+    });
+  }
+  return click_position;
+}
+},{}],5:[function(require,module,exports){
+var math = require('./math')
+
+/** @method randomColor
+    Returns a random color string in rgb format
+*/
+exports.randomColor = function() {
+  return "rgb(" + math.random(250) + "," + math.random(250) + "," + math.random(250) + ")";
+}
+
+/** @method hexToRgb
+    Converts a hex color code to rgb format
+    @param {color code} [hex] Input color code in hex format
+    @param {float} [alpha] Color alpha level
+*/
+exports.hexToRgb = function(hex, a) {
+  // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+  var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+  hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+      return r + r + g + g + b + b;
+  });
+
+  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  if (!a) {
+    a = 0.5;
+  }
+
+  var r = parseInt(result[1], 16);
+  var g = parseInt(result[2], 16);
+  var b = parseInt(result[3], 16);
+
+  return "rgba(" + r + "," + g + "," + b + "," + a + ")";
+}
+
+exports.isInside = function(clickedNode,currObject) {
+  if (clickedNode.x > currObject.x && clickedNode.x < (currObject.x+currObject.w) && clickedNode.y > currObject.y && clickedNode.y < (currObject.y+currObject.h)) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+exports.makeRoundRect = function(ctx,xpos,ypos,wid,hgt,depth) {
+  var x1 = xpos;
+  var y1 = ypos;
+  var x2 = wid+x1;
+  var y2 = hgt+y1;
+  if (!depth) {
+    depth = 2;
+  }
+
+  ctx.beginPath();
+  ctx.moveTo(x1+depth, y1); //TOP LEFT
+  ctx.lineTo(x2-depth, y1); //TOP RIGHT
+  ctx.quadraticCurveTo(x2, y1, x2, y1+depth);
+  ctx.lineTo(x2, y2-depth); //BOTTOM RIGHT
+  ctx.quadraticCurveTo(x2, y2, x2-depth, y2);
+  ctx.lineTo(x1+depth, y2); //BOTTOM LEFT
+  ctx.quadraticCurveTo(x1, y2, x1, y2-depth);
+  ctx.lineTo(x1, y1+depth); //TOP LEFT
+  ctx.quadraticCurveTo(x1, y1, x1+depth, y1);
+  ctx.closePath();
+}
+
+exports.text = function(context, text, position) {
+  if (!position) {
+    position = [10 , 10];
+  }
+  with(context) {
+    beginPath();
+    font = "bold 12px sans-serif";
+    fillText(text,position[0],position[1]);
+    closePath();
+  }
+}
+
+exports.shadeBlendConvert = function(p, from, to) {
+    if(typeof(p)!="number"||p<-1||p>1||typeof(from)!="string"||(from[0]!='r'&&from[0]!='#')||(typeof(to)!="string"&&typeof(to)!="undefined"))return null; //ErrorCheck
+    this.sbcRip=function(d){
+        var l=d.length,RGB=new Object();
+        if(l>9){
+            d=d.split(",");
+            if(d.length<3||d.length>4)return null;//ErrorCheck
+            RGB[0]=i(d[0].slice(4)),RGB[1]=i(d[1]),RGB[2]=i(d[2]),RGB[3]=d[3]?parseFloat(d[3]):-1;
+        }else{
+            switch(l){case 8:case 6:case 3:case 2:case 1:return null;} //ErrorCheck
+            if(l<6)d="#"+d[1]+d[1]+d[2]+d[2]+d[3]+d[3]+(l>4?d[4]+""+d[4]:""); //3 digit
+            d=i(d.slice(1),16),RGB[0]=d>>16&255,RGB[1]=d>>8&255,RGB[2]=d&255,RGB[3]=l==9||l==5?r(((d>>24&255)/255)*10000)/10000:-1;
+        }
+        return RGB;}
+    var i=parseInt,r=Math.round,h=from.length>9,h=typeof(to)=="string"?to.length>9?true:to=="c"?!h:false:h,b=p<0,p=b?p*-1:p,to=to&&to!="c"?to:b?"#000000":"#FFFFFF",f=this.sbcRip(from),t=this.sbcRip(to);
+    if(!f||!t)return null; //ErrorCheck
+    if(h)return "rgb("+r((t[0]-f[0])*p+f[0])+","+r((t[1]-f[1])*p+f[1])+","+r((t[2]-f[2])*p+f[2])+(f[3]<0&&t[3]<0?")":","+(f[3]>-1&&t[3]>-1?r(((t[3]-f[3])*p+f[3])*10000)/10000:t[3]<0?f[3]:t[3])+")");
+    else return "#"+(0x100000000+(f[3]>-1&&t[3]>-1?r(((t[3]-f[3])*p+f[3])*255):t[3]>-1?r(t[3]*255):f[3]>-1?r(f[3]*255):255)*0x1000000+r((t[0]-f[0])*p+f[0])*0x10000+r((t[1]-f[1])*p+f[1])*0x100+r((t[2]-f[2])*p+f[2])).toString(16).slice(f[3]>-1||t[3]>-1?1:3);
+}
+},{"./math":6}],6:[function(require,module,exports){
+
+
+/** @method toPolar
+    Receives cartesian coordinates and returns polar coordinates as an object with 'radius' and 'angle' properties.
+    @param {float} [x]
+    @param {float} [y]
+    ```js
+    var ImOnACircle = nx.toPolar({ x: 20, y: 50 }})
+    ```
+*/
+exports.toPolar = function(x,y) {
+  var r = Math.sqrt(x*x + y*y);
+
+  var theta = Math.atan2(y,x);
+  if (theta < 0.) {
+    theta = theta + (2 * Math.PI);
+  }
+  return {radius: r, angle: theta};
+}
+
+/** @method toCartesian
+    Receives polar coordinates and returns cartesian coordinates as an object with 'x' and 'y' properties.
+    @param {float} [radius]
+    @param {float} [angle]
+*/
+exports.toCartesian = function(radius, angle){
+  var cos = Math.cos(angle);
+  var sin = Math.sin(angle);
+  return {x: radius*cos, y: radius*sin*-1};
+}
+
+
+/** @method clip
+    Limits a number to within low and high values.
+    @param {float} [input value]
+    @param {float} [low limit]
+    @param {float} [high limit]
+    ```js
+    nx.clip(5,0,10) // returns 5
+    nx.clip(15,0,10) // returns 10
+    nx.clip(-1,0,10) // returns 0
+    ```
+*/
+exports.clip = function(value, low, high) {
+  return Math.min(high, Math.max(low, value));
+}
+
+/** @method prune
+    Limits a float to within a certain number of decimal places
+    @param {float} [input value]
+    @param {integer} [max decimal places]
+    ```js
+    nx.prine(1.2345, 3) // returns 1.234
+    nx.prune(1.2345, 1) // returns 1.2
+    ```
+*/
+
+exports.prune = function(data, scale) {
+  if (typeof data === "number") {
+    data = parseFloat(data.toFixed(scale));
+  } else if (data instanceof Array) {
+    for (var i=0;i<data.length;i++) {
+      if (typeof data[i]=="number") {
+        data[i] = parseFloat(data[i].toFixed(scale));
+      }
+    }
+  }
+  return data;
+}
+
+
+/** @method scale
+    Scales an input number to a new range of numbers
+    @param {float} [input value]
+    @param {float} [low1]  input range (low)
+    @param {float} [high1] input range (high)
+    @param {float} [low2] output range (low)
+    @param {float} [high2] output range (high)
+    ```js
+    nx.scale(5,0,10,0,100) // returns 50
+    nx.scale(5,0,10,1,2) // returns 1.5
+    ```
+*/
+exports.scale = function(inNum, inMin, inMax, outMin, outMax) {
+  return (((inNum - inMin) * (outMax - outMin)) / (inMax - inMin)) + outMin;
+}
+
+/** @method invert
+    Equivalent to nx.scale(input,0,1,1,0). Inverts a normalized (0-1) number.
+    @param {float} [input value]
+    ```js
+    nx.invert(0.25) // returns 0.75
+    nx.invert(0) // returns 1
+    ```
+*/
+exports.invert = function (inNum) {
+  return exports.scale(inNum, 1, 0, 0, 1);
+}
+
+exports.bounce = function(posIn, borderMin, borderMax, delta) {
+  if (posIn > borderMin && posIn < borderMax) {
+    return delta;
+  } else if (posIn <= borderMin) {
+    return Math.abs(delta);
+  } else if (posIn >= borderMax) {
+    return Math.abs(delta) * (-1);
+  }
+}
+
+
+/** @method mtof
+    MIDI to frequency conversion. Returns frequency in Hz.
+    @param {float} [MIDI] MIDI value to convert
+    ```js
+    nx.mtof(69) // returns 440
+    ```
+*/
+exports.mtof = function(midi) {
+  return Math.pow(2, ((midi-69)/12)) * 440;
+}
+
+
+/** @method random
+    Returns a random integer between 0 a given scale parameter.
+    @param {float} [scale] Upper limit of random range.
+    ```js
+    nx.random(10) // returns a random number from 0 to 9.
+    ```
+*/
+exports.random = function(scale) {
+  return Math.floor(Math.random() * scale);
+}
+
+
+exports.interp = function(loc,min,max) {
+  return loc * (max - min) + min;
+}
+
+exports.lphistory = {}
+
+
+exports.lp = function(tag,value,limit) {
+
+  if (!this.lphistory[tag]) {
+    this.lphistory[tag] = []
+  }
+
+  var total = 0;
+
+  this.lphistory[tag].push(value)
+
+  if (this.lphistory[tag].length>limit) {
+    this.lphistory[tag].splice(0,1)
+  }
+
+  for (var i=0;i<this.lphistory[tag].length;i++) {
+    total += this.lphistory[tag][i]
+  }
+
+  var newvalue = total / this.lphistory[tag].length;
+
+  return newvalue;
+}
+
+
+exports.lp2 = function(value,limit) {
+
+  var total = 0;
+  for (var i=0;i<this.lphistory.length;i++) {
+    total += this.lphistory[i]
+  }
+  total += value;
+
+  var newvalue = total / ( this.lphistory.length + 1 )
+
+  this.lphistory.push(newvalue)
+
+  if (this.lphistory.length>limit) {
+    this.lphistory.splice(0,1)
+  }
+
+  return newvalue;
+}
+
+
+exports.lp3 = function(value,pvalue,limit) {
+
+  var total = value + pvalue * limit;
+  newvalue = total / (limit + 1)
+
+  return newvalue;
+}
+},{}],7:[function(require,module,exports){
+
+
+exports.throttle = function(func, wait) {
+  var timeout;
+  return function() {
+    var context = this, args = arguments;
+    if (!timeout) {
+      // the first time the event fires, we setup a timer, which
+      // is used as a guard to block subsequent calls; once the
+      // timer's handler fires, we reset it and create a new one
+      timeout = setTimeout(function() {
+        timeout = null;
+        try {
+          func.apply(context, args);
+        } catch (err) {
+          console.log(err);
+        }
+      }, wait);
+    }
+  }
+}
+},{}],8:[function(require,module,exports){
+exports.defineTransmit = function(protocol) {
+
+  var newTransmit;
+
+  if (typeof(protocol)=="function") {
+    return protocol;
+  } else {
+    switch (protocol) {
+      case 'js':
+        newTransmit = function(data,passive) {
+          this.makeOSC(this.emit, data, passive);
+          this.emit('*',data, passive);
+        }
+        return newTransmit
+
+      case 'ajax':
+        newTransmit = function(data) {
+          this.makeOSC(exports.ajaxTransmit, data);
+        }
+        return newTransmit
+
+      case 'node':
+        newTransmit = function(data) {
+          this.makeOSC(exports.nodeTransmit, data);
+        }
+        return newTransmit
+
+      case 'ios':
+        newTransmit = function(data) {
+
+        }
+        return newTransmit
+
+      case 'max':
+        newTransmit = function(data) {
+          this.makeOSC(exports.maxTransmit, data);
+        }
+        return newTransmit
+
+      case 'wc':
+        newTransmit = function(data, passive) {
+          this.emit('internal',data, passive);
+        }
+        return newTransmit
+    }
+  }
+}
+
+exports.setGlobalTransmit = function(protocol) {
+  var newTransmit = exports.defineTransmit(protocol)
+  this.transmit = newTransmit
+  this.destination = protocol
+  for (var key in nx.widgets) {
+    this.widgets[key].transmit = newTransmit;
+    this.widgets[key].destination = protocol;
+  }
+}
+
+exports.setWidgetTransmit = function(protocol) {
+  var newTransmit = exports.defineTransmit(protocol)
+  this.transmit = newTransmit
+  this.destination = protocol
+}
+
+
+exports.ajaxTransmit = function(subPath, data) {
+
+    var oscPath = subPath=='value' ? this.oscPath : this.oscPath+"/"+subPath;
+
+    xmlhttp=new XMLHttpRequest();
+    xmlhttp.open("POST",nx.ajaxPath,true);
+    xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+    xmlhttp.send('oscName='+oscPath+'&data='+data);
+
+}
+
+exports.setAjaxPath = function(path) {
+  this.ajaxPath = path;
+}
+
+exports.nodeTransmit = function(subPath, data) {
+
+    var msg = {
+      oscName: subPath=='value' ? this.oscPath : this.oscPath+"/"+subPath,
+      value: data
+    }
+    socket.emit('nx', msg)
+
+}
+
+exports.maxTransmit = function (subPath, data) {
+    var oscPath = subPath=='value' ? this.oscPath : this.oscPath+"/"+subPath;
+    window.max.outlet(oscPath + " " + data);
+}
+},{}],9:[function(require,module,exports){
+var util = require('util');
+var widget = require('../core/widget');
+
+/**
+	@class banner
+	"Powered by NexusUI" tag with a link to our website. Use it if you want to share the positive vibes of NexusUI. Thanks for using!
+	```html
+	<canvas nx="banner"></canvas>
+	```
+	<canvas nx="banner" style="margin-left:25px"></canvas>
+*/
+
+var banner = module.exports = function (target) {
+	this.defaultSize = { width: 100, height: 40 };
+	widget.call(this, target);
+
+	//unique attributes
+	/** @property {string} message1 The first line of text on the banner. */
+	this.message1 = "Powered By";
+	/** @property {string} message2 The second line of text on the banner. */
+	this.message2 = "NexusUI";
+	/** @property {string} link The URL the banner will link to. */
+	this.link = "http://www.nexusosc.com";
+	/** @property {boolean} isLink Whether or not the banner is a hyperlink. Defaults to true. */
+	this.isLink = true;
+}
+util.inherits(banner, widget);
+
+banner.prototype.init = function() {
+	this.draw();
+}
+
+banner.prototype.draw = function() {
+	with (this.context) {
+
+		globalAlpha = 0.1;
+		fillStyle = this.colors.accent;
+		beginPath();
+			moveTo(0,10);
+			lineTo(10,this.GUI.h/2+5);
+			lineTo(0,this.GUI.h);
+			lineTo(30,this.GUI.h);
+			lineTo(30,10);
+			fill();
+			moveTo(this.GUI.w-30,10);
+			lineTo(this.GUI.w-30,this.GUI.h);
+			lineTo(this.GUI.w,this.GUI.h);
+			lineTo(this.GUI.w-10,this.GUI.h/2+5);
+			lineTo(this.GUI.w,10);
+			fill();
+		closePath();
+		globalAlpha = 1;
+
+		fillStyle = this.colors.accent;
+		fillRect(15,0,this.GUI.w-30,this.GUI.h-10);
+
+		fillStyle = this.colors.white;
+		font = this.fontWeight + " " +this.GUI.h/5+"px "+this.font;
+		textAlign = "center";
+		fillText(this.message1, this.GUI.w/2, this.GUI.h/3.3);
+		fillText(this.message2, this.GUI.w/2, (this.GUI.h/3.3)*2);
+
+		fillStyle = this.colors.black;
+		beginPath();
+			moveTo(15,this.GUI.h-10);
+			lineTo(30,this.GUI.h);
+			lineTo(30,this.GUI.h-10);
+			lineTo(15,this.GUI.h-10);
+			fill();
+			moveTo(this.GUI.w-15,this.GUI.h-10);
+			lineTo(this.GUI.w-30,this.GUI.h);
+			lineTo(this.GUI.w-30,this.GUI.h-10);
+			lineTo(this.GUI.w-15,this.GUI.h-10);
+			fill();
+		closePath();
+
+	}
+}
+
+banner.prototype.click = function() {
+	if (this.isLink) {
+		window.location = this.link;
+	}
+}
+},{"../core/widget":3,"util":44}],10:[function(require,module,exports){
+var util = require('util');
+var widget = require('../core/widget');
+var drawing = require('../utils/drawing');
+
+var button = module.exports = function(target) {
+
+/**
+
+	@public
+	@class button
+
+	Touch button with three modes of interaction ("toggle", "impulse", and "aftertouch").
+	```html
+	<canvas nx="button"></canvas>
+	```
+	<canvas nx="button" style="margin-left:25px"></canvas>
+*/
+
+	this.defaultSize = { width: 50, height: 50 };
+	widget.call(this, target);
+
+	/**
+		@property {object}  val  Main value set and output, with sub-properties:
+		| &nbsp; | data
+		| --- | ---
+		| *press* | 0 (clicked) or 1 (unclicked)
+		| *x* | 0-1 float of x-position of click ("aftertouch" mode only)
+		| *y* | 0-1 float of y-position of click ("aftertouch" mode only)
+
+		When the widget is interacted with, val is sent as the output data for the widget.
+		```js
+		button1.on('*', function(data) {
+			// some code using data.press, data.x, and data.y
+		});
+		```
+		Or, if NexusUI is outputting OSC (e.g. if nx.sendsTo("ajax")), val will be broken into OSC messages:
+		```html
+		/button1/press 1
+		/button1/x 37
+		/button1/y 126
+		```
+		*/
+	this.val = {
+		press: 0
+	}
+
+	/** @property {string}  mode  Interaction mode. Options:
+	<b>impulse</b> &nbsp; 1 on click <br>
+	<b>toggle</b> &nbsp;  1 on click, 0 on release<br>
+	<b>aftertouch</b> &nbsp; 1, x, y on click; x, y on move; 0, x, y on release _(default)_ <br>
+	```js
+	button1.mode = "aftertouch"
+	```
+	*/
+	this.mode = "aftertouch";
+
+	this.lockResize = true;
+
+	this.image = null;
+	this.imageHover = null;
+	this.imageTouch = null;
+
+	this.subval = new Object();
+
+	this.init();
+
+}
+util.inherits(button, widget);
+
+button.prototype.init = function() {
+	this.center = {
+		x: this.GUI.w/2,
+		y: this.GUI.h/2
+	}
+	this.strokeWidth = this.GUI.w/20;
+	this.radius = (Math.min(this.center.x, this.center.y))
+	this.draw();
+}
+
+button.prototype.draw = function() {
+
+	this.erase();
+
+	with (this.context) {
+
+		if (this.image !== null) {
+			// Image Button
+			if (!this.val.press) {
+				// Draw Image if not touched
+				drawImage(this.image, 0, 0);
+			} else {
+				if (this.imageTouch) {
+					// Draw Touch Image
+					drawImage(this.imageTouch, 0, 0)
+
+				} else {
+
+					drawImage(this.image, 0, 0)
+
+					// No touch image, apply highlighting
+					globalAlpha = 0.5;
+					fillStyle = this.colors.accent;
+					fillRect (0, 0, this.GUI.w, this.GUI.h);
+					globalAlpha = 1;
+
+				}
+			}
+
+		} else {
+
+			// Regular Button
+
+			if (!this.val.press) {
+				fillStyle = this.colors.fill
+				strokeStyle = this.colors.border
+			//	var strokealpha = 1
+			} else if (this.val.press) {
+				fillStyle = this.colors.accent;
+			//	strokeStyle = this.colors.accentborder || "#fff"
+				strokeStyle = this.colors.accenthl
+			//	var strokealpha = 0.2
+			}
+
+			lineWidth = this.strokeWidth;
+
+			beginPath();
+				arc(this.center.x, this.center.y, this.radius, 0, Math.PI*2, true);
+				fill()
+			closePath()
+
+			beginPath();
+				arc(this.center.x, this.center.y, this.radius-lineWidth/2, 0, Math.PI*2, true);
+			//	globalAlpha = strokealpha
+				stroke()
+				globalAlpha = 1
+			closePath()
+
+			if (this.val.press && this.mode=="aftertouch") {
+
+				var x = nx.clip(this.clickPos.x,this.GUI.w*.2,this.GUI.w/1.3)
+				var y = nx.clip(this.clickPos.y,this.GUI.h*.2,this.GUI.h/1.3)
+
+				var gradient = this.context.createRadialGradient(x,y,this.GUI.w/6,this.center.x,this.center.y,this.radius*1.3);
+				gradient.addColorStop(0,this.colors.accent);
+				gradient.addColorStop(1,"white");
+
+				strokeStyle = gradient;
+				lineWidth = this.GUI.w/20;
+
+				beginPath()
+					arc(this.center.x, this.center.y, this.radius-this.GUI.w/40, 0, Math.PI*2, true);
+					stroke()
+				closePath()
+
+			}
+		}
+
+		this.drawLabel();
+
+	}
+}
+
+button.prototype.click = function(e) {
+	if (drawing.isInside(this.clickPos,{x: this.center.x-this.radius, y:this.center.y-this.radius, w:this.radius*2, h:this.radius*2})) {
+		this.val["press"] = 1;
+		if (this.mode=="aftertouch") {
+			this.val["x"] = this.clickPos.x;
+			this.val["y"] = this.clickPos.y;
+		}
+		this.transmit(this.val);
+		this.draw();
+	}
+}
+
+button.prototype.move = function () {
+	// use to track movement on the button
+	if (this.mode=="aftertouch") {
+		this.val["x"] = this.clickPos.x;
+		this.val["y"] = this.clickPos.y;
+		this.subval["x"] = this.clickPos.x;
+		this.subval["y"] = this.clickPos.y;
+		this.transmit(this.subval);
+		this.draw();
+	}
+}
+
+button.prototype.release = function() {
+	this.val["press"] = 0;
+	if (this.mode=="toggle" || this.mode=="aftertouch") {
+		this.transmit(this.val);
+	}
+	this.draw();
+}
+
+
+/** @method setImage
+	Turns the button into an image button with custom image. Sets the default (unclicked) button image.
+	@param {string} [src] Image source */
+button.prototype.setImage = function(image) {
+	this.image = new Image();
+	this.image.onload = this.draw.bind(this)
+	this.image.src = image;
+}
+
+button.prototype.setHoverImage = function(image) {
+	this.imageHover = new Image();
+	this.imageHover.onload = this.draw.bind(this)
+	this.imageHover.src = image;
+}
+
+/** @method setTouchImage
+	Sets the image that will show when the button is clicked.
+	@param {string} [src] Image source */
+button.prototype.setTouchImage = function(image) {
+	this.imageTouch = new Image();
+	this.imageTouch.onload = this.draw.bind(this)
+	this.imageTouch.src = image;
+}
+},{"../core/widget":3,"../utils/drawing":5,"util":44}],11:[function(require,module,exports){
+var util = require('util');
+var widget = require('../core/widget');
+
+/**
+	@class colors
+	Color picker that outputs RBG values
+	```html
+	<canvas nx="colors"></canvas>
+	```
+	<canvas nx="colors" style="margin-left:25px"></canvas>
+*/
+
+var colors = module.exports = function (target) {
+
+	this.defaultSize = { width: 100, height: 100 };
+	widget.call(this, target);
+
+	this.init();
+
+}
+util.inherits(colors, widget);
+
+colors.prototype.init = function() {
+
+	/* new tactic */
+
+	this.gradient1 = this.context.createLinearGradient(0,0,this.GUI.w,0)
+ 	this.gradient1.addColorStop(0, '#F00');
+ 	this.gradient1.addColorStop(0.17, '#FF0');
+ 	this.gradient1.addColorStop(0.34, '#0F0');
+ 	this.gradient1.addColorStop(0.51, '#0FF');
+ 	this.gradient1.addColorStop(0.68, '#00F');
+ 	this.gradient1.addColorStop(0.85, '#F0F');
+ 	this.gradient1.addColorStop(1, '#F00');
+
+	this.gradient2 = this.context.createLinearGradient(0,0,0,this.GUI.h)
+ 	this.gradient2.addColorStop(0, 'rgba(0,0,0,255)');
+ 	this.gradient2.addColorStop(0.49, 'rgba(0,0,0,0)');
+ 	this.gradient2.addColorStop(0.51, 'rgba(255,255,255,0)');
+ 	this.gradient2.addColorStop(0.95, 'rgba(255,255,255,255)');
+
+	this.draw();
+}
+
+colors.prototype.draw = function() {
+	this.erase();
+
+	with(this.context) {
+		fillStyle = this.gradient1;
+		fillRect(0,0,this.GUI.w,this.GUI.h)
+		fillStyle = this.gradient2;
+		fillRect(0,0,this.GUI.w,this.GUI.h)
+	}
+
+	this.drawLabel();
+}
+
+colors.prototype.drawColor = function() {
+	with(this.context) {
+		fillStyle = "rgb("+this.val.r+","+this.val.g+","+this.val.b+")"
+		fillRect(0,this.GUI.h * 0.95,this.GUI.w,this.GUI.h* 0.05)
+
+	}
+}
+
+colors.prototype.click = function(e) {
+	if (this.clickPos.x > 0 && this.clickPos.y > 0 && this.clickPos.x < this.GUI.w && this.clickPos.y < this.GUI.h) {
+		var imgData = this.context.getImageData(this.clickPos.x*2,this.clickPos.y*2,1,1);
+	} else {
+		return;
+	}
+
+
+	/** @property {object}  val  RGB color value at mouse position. <br> This is also the widget's data output (See <a href="#nexusui-api-widget-widgetval">widget.val</a>). <br> Properties:
+	| &nbsp; | data
+	| --- | ---
+	| *r* | red value 0-256
+	| *g* | green value 0-256
+	| *b* | blue value 0-256
+	```js
+	colors1.on('*', function(data) {
+		// some code using data.r, data.g, and data.b
+	}
+	```
+	*/
+
+	this.val = {
+		r: imgData.data[0],
+		g: imgData.data[1],
+		b: imgData.data[2]
+	}
+	this.transmit(this.val);
+	this.drawColor();
+}
+
+
+colors.prototype.move = function(e) {
+	this.click(e);
+}
+},{"../core/widget":3,"util":44}],12:[function(require,module,exports){
+var util = require('util');
+var widget = require('../core/widget');
+
+/**
+	@class comment
+	Text comment
+	```html
+	<canvas nx="comment"></canvas>
+	```
+	<canvas nx="comment" style="margin-left:25px"></canvas>
+*/
+
+var comment = module.exports = function (target) {
+
+	this.defaultSize = { width: 100, height: 20 };
+	widget.call(this, target);
+
+	/** @property {object}  val
+		| &nbsp; | data
+		| --- | ---
+		| *text* | text of comment area (as string)
+		```js
+		comment1.val.text = "This is my comment"
+		comment1.draw()
+		```
+	*/
+
+	this.val = {
+		text: "comment"
+	}
+	this.sizeSet = false;
+
+	this.init();
+}
+util.inherits(comment, widget);
+
+/** @method setSize
+	Set the font size of the comment text
+	@param {integer} [size] Text size in pixels
+*/
+comment.prototype.setSize = function(size) {
+	this.size = size;
+	this.sizeSet = true;
+	this.draw();
+}
+
+comment.prototype.init = function() {
+	this.draw();
+}
+
+comment.prototype.draw = function() {
+	if (!this.sizeSet) {
+		this.size = Math.sqrt((this.GUI.w * this.GUI.h) / (this.val.text.length*2));
+	}
+
+	this.erase();
+	with (this.context) {
+
+		fillStyle = this.colors.fill;
+		fillRect(0,0,this.GUI.w,this.GUI.h);
+
+		fillStyle = this.colors.black;
+		textAlign = "left";
+		font = this.size+"px 'Open Sans'";
+	}
+	this.wrapText(this.val.text, 6, 3+this.size, this.GUI.w-6, this.size);
+}
+},{"../core/widget":3,"util":44}],13:[function(require,module,exports){
+var math = require('../utils/math')
+var util = require('util');
+var widget = require('../core/widget');
+
+/**
+	@class crossfade
+	Crossfade for panning or mixing
+	```html
+	<canvas nx="crossfade"></canvas>
+	```
+	<canvas nx="crossfade" style="margin-left:25px"></canvas>
+*/
+
+var crossfade = module.exports = function (target) {
+	this.defaultSize = { width: 100, height: 30 };
+	widget.call(this, target);
+
+	/** @property {object}  val
+		| &nbsp; | data
+		| --- | ---
+		| *value* | Crossfade value (float -1 to 1)
+	*/
+	this.val = {
+		R: 0.75,
+		L: 0.75
+	}
+
+	this.location = 0.5
+
+	this.init();
+}
+util.inherits(crossfade, widget);
+
+crossfade.prototype.init = function() {
+	this.draw();
+}
+
+crossfade.prototype.draw = function() {
+
+	this.erase();
+
+	this.location = Math.pow(this.val.R,2)
+
+	with (this.context) {
+
+		fillStyle = this.colors.fill;
+		fillRect(0,0,this.GUI.w,this.GUI.h);
+
+		var y1 = 0;
+		var y2 = this.GUI.h;
+		var x1 = this.location*this.GUI.w;
+		//var x2 = this.GUI.w/5;
+		//
+		fillStyle = this.colors.accent;
+		fillRect(x1,y1,this.GUI.w-x1,y2);
+
+		textBaseline="middle"
+		font = this.GUI.h/3 + "px 'Open Sans'"
+
+		fillStyle = this.colors.accent;
+		textAlign="right"
+		fillText(this.val.R.toFixed(2), x1-2, this.GUI.h/4)
+
+		fillStyle = this.colors.fill;
+		textAlign="left"
+		fillText(this.val.L.toFixed(2), x1+2, this.GUI.h* 0.75)
+
+
+	}
+
+	this.drawLabel()
+
+}
+
+crossfade.prototype.click = function() {
+	this.move();
+}
+
+crossfade.prototype.move = function() {
+	var R = math.clip(this.clickPos.x/this.GUI.w,0,1)
+	var L = 1 - R
+	this.location = R
+	this.val.R = math.prune(Math.sqrt(R),3)
+	this.val.L = math.prune(Math.sqrt(L),3)
+	this.draw();
+	this.transmit(this.val);
+}
+},{"../core/widget":3,"../utils/math":6,"util":44}],14:[function(require,module,exports){
+var math = require('../utils/math');
+var util = require('util');
+var widget = require('../core/widget');
+
+/**
+	@class dial
+	Circular dial
+	```html
+	<canvas nx="dial"></canvas>
+	```
+	<canvas nx="dial" style="margin-left:25px"></canvas>
+*/
+
+var dial = module.exports = function(target) {
+
+	this.defaultSize = { width: 100, height: 100 };
+	widget.call(this, target);
+
+	//define unique attributes
+	this.circleSize;
+	this.handleLength;
+
+	/** @property {object}  val
+	    | &nbsp; | data
+		| --- | ---
+		| *value* | Current value of dial as float 0-1
+	*/
+	this.val = {
+		value: 0
+	}
+	/** @property {float}  responsivity    How much the dial increments on drag. Default: 0.004<br>
+	*/
+	this.responsivity = 0.004;
+
+	this.aniStart = 0;
+	this.aniStop = 1;
+	this.aniMove = 0.01;
+
+	this.lockResize = true;
+
+  if (this.canvas.getAttribute("min")!=null) {
+    this.min = parseFloat(this.canvas.getAttribute("min"));
+  } else {
+  	this.min = 0
+  }
+  if (this.canvas.getAttribute("max")!=null) {
+    this.max = parseFloat(this.canvas.getAttribute("max"));
+  } else {
+  	this.max = 1
+  }
+  if (this.canvas.getAttribute("step")!=null) {
+    this.step = parseFloat(this.canvas.getAttribute("step"));
+  } else {
+  	this.step = 0.001
+  }
+
+	this.maxdigits = 3
+	this.calculateDigits = nx.calculateDigits
+
+	this.init();
+
+}
+
+util.inherits(dial, widget);
+
+dial.prototype.init = function() {
+
+	this.circleSize = (Math.min(this.center.x, this.center.y));
+	this.handleLength = this.circleSize;
+	this.mindim = Math.min(this.GUI.w,this.GUI.h)
+
+	if (this.mindim<101 || this.mindim<101) {
+		this.accentWidth = this.lineWidth * 1;
+	} else {
+		this.accentWidth = this.lineWidth * 2;
+	}
+
+	this.draw();
+
+}
+
+dial.prototype.draw = function() {
+
+	var normalval = this.normalize(this.val.value)
+
+	//var dial_angle = (((1.0 - this.val.value) * 2 * Math.PI) + (1.5 * Math.PI));
+	var dial_position = (normalval + 0.25) * 2 * Math.PI
+	//var point = math.toCartesian(this.handleLength, dial_angle);
+
+	this.erase();
+
+	with (this.context) {
+
+		lineCap = 'butt';
+		beginPath();
+			lineWidth = this.circleSize/2;
+			arc(this.center.x, this.center.y, this.circleSize-lineWidth/2, Math.PI * 0, Math.PI * 2, false);
+			strokeStyle = this.colors.fill;
+			stroke();
+		closePath();
+
+		//draw round accent
+		lineCap = 'butt';
+		beginPath();
+			lineWidth = this.circleSize/2;
+			arc(this.center.x, this.center.y, this.circleSize-lineWidth/2, Math.PI * 0.5, dial_position, false);
+			strokeStyle = this.colors.accent;
+			stroke();
+		closePath();
+
+		clearRect(this.center.x-this.GUI.w/40,this.center.y,this.GUI.w/20,this.GUI.h/2)
+
+		if (normalval > 0) {
+			beginPath();
+			lineWidth = 1.5;
+			moveTo(this.center.x-this.GUI.w/40,this.center.y+this.circleSize/2) //this.radius-this.circleSize/4
+			lineTo(this.center.x-this.GUI.w/40,this.center.y+this.circleSize) //this.radius+this.circleSize/4
+			strokeStyle = this.colors.accent
+			stroke();
+			closePath();
+		}
+
+    //figure out text size
+    //
+    //
+    //
+    this.val.value = math.prune(this.rangify(normalval),3)
+
+
+		//var valdigits = this.max ? Math.floor(this.max).toString().length : 1
+		//valdigits += this.step ? this.step < 1 ? 1 : 2 : 2
+		this.digits = this.calculateDigits()
+
+		valtextsize = (this.mindim / this.digits.total) * 0.55
+
+		if (valtextsize > 7) {
+
+	    var valtext = this.val.value.toFixed(this.digits.decimals)
+
+			fillStyle = this.colors.borderhl
+	    textAlign = "center"
+	    textBaseline = "middle"
+	    font = valtextsize+"px 'Open Sans'"
+	    fillText(valtext,this.GUI.w/2,this.GUI.h/2);
+
+	  }
+
+	}
+
+	this.drawLabel();
+}
+
+
+dial.prototype.click = function(e) {
+	this.val.value = math.prune(this.val.value, 4)
+	this.transmit(this.val);
+	this.draw();
+	this.aniStart = this.val.value;
+}
+
+
+dial.prototype.move = function() {
+	var normalval = this.normalize(this.val.value)
+	normalval = math.clip((normalval - (this.deltaMove.y * this.responsivity)), 0, 1);
+	this.val.value = math.prune(this.rangify(normalval), 4)
+	this.transmit(this.val);
+
+	this.draw();
+}
+
+
+dial.prototype.release = function() {
+	this.aniStop = this.val.value;
+}
+
+/** @method animate
+	Animates the dial
+	@param {string} [type] Type of animation. Currently accepts "bounce" (bounces between mousedown and mouserelease points) or "none" */
+dial.prototype.animate = function(aniType) {
+
+	switch (aniType) {
+		case "bounce":
+			nx.aniItems.push(this.aniBounce.bind(this));
+			break;
+		case "none":
+			nx.aniItems.splice(nx.aniItems.indexOf(this.aniBounce));
+			break;
+	}
+
+}
+
+dial.prototype.aniBounce = function() {
+	if (!this.clicked) {
+		this.val.value += this.aniMove;
+		if (this.aniStop < this.aniStart) {
+			this.stopPlaceholder = this.aniStop;
+			this.aniStop = this.aniStart;
+			this.aniStart = this.stopPlaceholder;
+		}
+		this.aniMove = math.bounce(this.val.value, this.aniStart, this.aniStop, this.aniMove);
+		this.draw();
+		this.val.value = math.prune(this.val.value, 4)
+		this.transmit(this.val);
+	}
+}
+
+
+},{"../core/widget":3,"../utils/math":6,"util":44}],15:[function(require,module,exports){
+var startTime = 0;
+
+var math = require('../utils/math')
+var util = require('util');
+var widget = require('../core/widget');
+
+/**
+	@class envelope
+	Multi-point line ramp generator
+	```html
+	<canvas nx="envelope"></canvas>
+	```
+	<canvas nx="envelope" style="margin-left:25px"></canvas>
+*/
+
+var envelope = module.exports = function (target) {
+	this.defaultSize = { width: 200, height: 100 };
+	widget.call(this, target);
+
+	this.nodeSize = 1;
+	/** @property {boolean} active Whether or not the envelope is currently animating. */
+	this.active = false;
+	/** @property {integer} duration The envelope's duration in ms. */
+	this.duration = 1000; // 1000 ms
+	/** @property {boolean} looping Whether or not the envelope loops. */
+	this.looping = false
+
+
+	this.scanIndex = 0
+
+	//define unique attributes
+
+	/** @property {object}  val
+		| &nbsp; | data
+		| --- | ---
+		| *amp* | amplitude at current point of ramp (float 0-1)
+		| *index* | current progress through ramp (float 0-1)
+		| *points* | array containing x/y coordinates of each node.
+	*/
+
+	this.val = {
+		index: 0,
+		amp: 0,
+		points: [
+			{
+				x: 0.1,
+				y: 0.4
+			},
+			{
+				x: 0.35,
+				y: 0.6
+			},
+			{
+				x: 0.65,
+				y: 0.2
+			},
+			{
+				x: 0.9,
+				y: 0.4
+			}
+		]
+	}
+
+	// Index of which node was clicked
+	this.selectedNode = null;
+
+	nx.aniItems.push(this.pulse.bind(this));
+
+	this.init();
+}
+
+util.inherits(envelope, widget);
+
+envelope.prototype.init = function() {
+	this.mindim = this.GUI.w < this.GUI.h ? this.GUI.w : this.GUI.h;
+	this.draw();
+}
+
+envelope.prototype.draw = function() {
+	this.erase();
+	with (this.context) {
+		fillStyle = this.colors.fill;
+		fillRect(0,0,this.GUI.w,this.GUI.h);
+		fillStyle = this.colors.accent;
+		var centerx = this.mindim/10
+		var centery = this.GUI.h-this.mindim/10
+		beginPath()
+			moveTo(centerx,centery)
+			arc(centerx,centery,this.mindim/10,Math.PI*1.5,Math.PI*2*this.val.index+Math.PI*1.5,false);
+			fill()
+		closePath()
+
+		// draw all the points
+		var drawingX = [];
+		var drawingY = [];
+
+		for (var i = 0; i < this.val.points.length; i++) {
+			drawingX[i] = this.val.points[i].x * this.GUI.w;
+			drawingY[i] = (1 - this.val.points[i].y) * this.GUI.h;
+
+			//stay within right/left bounds
+			if (drawingX[i]<(this.bgLeft+this.nodeSize)) {
+				drawingX[i] = this.bgLeft + this.nodeSize;
+			} else if (drawingX[i]>(this.bgRight-this.nodeSize)) {
+				drawingX[i] = this.bgRight - this.nodeSize;
+			}
+			//stay within top/bottom bounds
+			if (drawingY[i]<(this.bgTop+this.nodeSize)) {
+				drawingY[i] = this.bgTop + this.nodeSize;
+			} else if (drawingY[i]>(this.bgBottom-this.nodeSize)) {
+				drawingY[i] = this.bgBottom - this.nodeSize;
+			}
+		}
+
+		// draw rectangles
+		for (var j = 0; j < drawingX.length; j++) {
+			var size = this.mindim/35 + 2;
+			beginPath()
+			arc(drawingX[j],drawingY[j],size,0,Math.PI*2,false);
+			fillStyle = this.colors.accent
+			fill()
+			closePath()
+		}
+
+
+		// draw shape
+		beginPath();
+			strokeStyle = this.colors.accent;
+			moveTo(-5,this.GUI.h);
+			lineTo(-5,(1-this.val.points[0].y)*this.GUI.h);
+
+			// draw each line
+			for (var j = 0; j < drawingX.length; j++) {
+				lineTo(drawingX[j],drawingY[j]);
+			}
+
+			lineTo(this.GUI.w+5,(1-this.val.points[this.val.points.length-1].y)*this.GUI.h);
+			lineTo(this.GUI.w+5,this.GUI.h);
+			stroke();
+			globalAlpha = 0.2;
+			fillStyle = this.colors.accent;
+			fill();
+			globalAlpha = 1
+		closePath();
+
+
+
+	}
+
+	this.drawLabel();
+}
+
+envelope.prototype.scaleNode = function(nodeIndex) {
+	var i = nodeIndex;
+	var prevX = 0;
+	var nextX = this.GUI.w;
+
+	var actualX = this.val.points[i].x;
+	var actualY = (this.GUI.h - this.val.points[i].y);
+	var clippedX = math.clip(actualX/this.GUI.w, 0, 1);
+	var clippedY = math.clip(actualY/this.GUI.h, 0, 1);
+
+	this.val.points[i].x = math.prune(clippedX, 3);
+	this.val.points[i].y = math.prune(clippedY, 3);
+
+	// find x value of nodes to the right and left
+	if (i > 0) {
+		prevX = this.val.points[i-1].x;
+	}
+	if (this.val.points.length > i+1) {
+		nextX = this.val.points[i+1].x;
+	}
+
+	if (this.val.points[i].x < prevX) {
+		this.val.points.splice(i-1, 0, this.val.points.splice(i, 1)[0])
+		i = i-1;
+		this.selectedNode = i;
+	}
+
+	if (this.val.points[i].x > nextX) {
+		this.val.points.splice(i+1, 0, this.val.points.splice(i, 1)[0])
+		i = i+1;
+		this.selectedNode = i;
+	}
+
+}
+
+envelope.prototype.click = function() {
+
+	// find nearest node and set this.selectedNode (index)
+	this.selectedNode = this.findNearestNode(this.clickPos.x/this.GUI.w, this.clickPos.y/this.GUI.h, this.val.points);
+
+	this.transmit(this.val);
+	this.draw();
+}
+
+envelope.prototype.move = function() {
+	if (this.clicked) {
+		this.val.points[this.selectedNode].x = this.clickPos.x;
+		this.val.points[this.selectedNode].y = this.clickPos.y;
+		this.scaleNode(this.selectedNode);
+		this.transmit(this.val);
+		this.draw();
+	}
+}
+
+envelope.prototype.release = function() {
+
+	if (!this.hasMoved) {
+		this.val.points.splice(this.selectedNode,1)
+	}
+
+	this.draw();
+
+	// reset the this.selectedNode
+	this.selectedNode = null;
+}
+
+// update index and amp
+envelope.prototype.pulse = function() {
+	if (this.active) {
+
+		// calculate index based on audio context
+		var percentDone = (nx.context.currentTime - startTime) / (this.duration/1000);
+		if (percentDone >= 1) {
+			if (this.looping) {
+				percentDone -= 1;
+				startTime += this.duration/1000;
+				this.val.index = 0
+				this.scanIndex = 0
+			} else {
+				this.stop();
+			}
+
+		}
+		this.val.index = percentDone;
+
+		if (this.val.index > this.val.points[this.val.points.length-1].x) {
+			this.val.amp = this.val.points[this.val.points.length-1].y
+		} else if (this.val.index < this.val.points[0].x) {
+			this.val.amp = this.val.points[0].y
+		} else {
+			this.scanIndex = 0;
+			while (this.val.index > this.val.points[this.scanIndex].x) {
+				this.scanIndex++;
+			}
+
+			var nextPX = this.val.points[this.scanIndex].x;
+			var prevPX = this.val.points[this.scanIndex-1].x;
+			var nextPY = this.val.points[this.scanIndex].y;
+			var prevPY = this.val.points[this.scanIndex-1].y;
+
+			this.val.amp = math.interp((this.val.index-prevPX)/(nextPX - prevPX),prevPY,nextPY);
+
+		}
+
+		this.transmit(this.val);
+		this.draw();
+	}
+}
+
+/** @method start
+	Start ramp from beginning. If set to loop, will loop the ramp until stopped. */
+envelope.prototype.start = function() {
+	this.active = true;
+	this.val.index = 0;
+
+	// set startTime
+	startTime = nx.context.currentTime;
+}
+
+/** @method stop
+	Stop the ramp and set progress to 0. */
+envelope.prototype.stop = function() {
+	this.active = false;
+	this.val.index = 0;
+	this.draw();
+}
+
+envelope.prototype.findNearestNode = function(x, y, nodes) {
+	var nearestIndex = null;
+	var nearestDist = 1000;
+	var before = false;
+	y = 1 - y;
+	for (var i = 0; i<nodes.length; i++) {
+		var distance = Math.sqrt(  Math.pow( (nodes[i].x - x), 2), Math.pow((nodes[i].y - (-y)), 2) );
+
+		if (distance < nearestDist) {
+			nearestDist = distance;
+			nearestIndex = i;
+			before = x > nodes[i].x
+		}
+	}
+
+	if (nearestDist>.1) {
+		if (before) { nearestIndex++ }
+		this.val.points.splice(nearestIndex,0,{
+			x: this.clickPos.x/this.GUI.w,
+			y: (this.GUI.h-this.clickPos.y)/this.GUI.h
+		})
+		//nearestIndex++;
+	}
+
+	return nearestIndex;
+}
+},{"../core/widget":3,"../utils/math":6,"util":44}],16:[function(require,module,exports){
+module.exports = {
+  banner: require('./banner'),
+  button: require('./button'),
+  colors: require('./colors'),
+  comment: require('./comment'),
+  crossfade: require('./crossfade'),
+  dial: require('./dial'),
+  envelope: require('./envelope'),
+  joints: require('./joints'),
+  keyboard: require('./keyboard'),
+  matrix: require('./matrix'),
+  message: require('./message'),
+  meter: require('./meter'),
+  metro: require('./metro'),
+  motion: require('./motion'),
+  mouse: require('./mouse'),
+  multislider: require('./multislider'),
+  multitouch: require('./multitouch'),
+  number: require('./number'),
+  position: require('./position'),
+  range: require('./range'),
+  select: require('./select'),
+  slider: require('./slider'),
+  string: require('./string'),
+  tabs: require('./tabs'),
+  text: require('./text'),
+  tilt: require('./tilt'),
+  toggle: require('./toggle'),
+  typewriter: require('./typewriter'),
+  vinyl: require('./vinyl'),
+  waveform: require('./waveform'),
+}
+
+},{"./banner":9,"./button":10,"./colors":11,"./comment":12,"./crossfade":13,"./dial":14,"./envelope":15,"./joints":17,"./keyboard":18,"./matrix":19,"./message":20,"./meter":21,"./metro":22,"./motion":23,"./mouse":24,"./multislider":25,"./multitouch":26,"./number":27,"./position":28,"./range":29,"./select":30,"./slider":31,"./string":32,"./tabs":33,"./text":34,"./tilt":35,"./toggle":36,"./typewriter":37,"./vinyl":38,"./waveform":39}],17:[function(require,module,exports){
+var math = require('../utils/math')
+var util = require('util');
+var widget = require('../core/widget');
+
+/**
+	@class joints
+	2D slider with connections to several points; a proximity-based multislider.
+	```html
+	<canvas nx="joints"></canvas>
+	```
+	<canvas nx="joints" style="margin-left:25px"></canvas>
+*/
+
+var joints = module.exports = function (target) {
+	this.defaultSize = { width: 150, height: 150 };
+	widget.call(this, target);
+
+	/* @property {integer} nodeSize The size of the proximity points in pixels */
+	this.nodeSize = this.GUI.w/14;
+	this.values = [0,0];
+
+	/** @property {object}  val
+		| &nbsp; | data
+		| --- | ---
+		| *x* | x position of touch/mouse
+		| *y* | y position of touch/mouse
+		| *node0* | nearness to first node if within range (float 0-1)
+		| *node1* | nearness to second node if within range (float 0-1)
+		| *node2* | nearness to third node if within range (float 0-1)
+		| etc... | &nbsp;
+
+	*/
+	this.val = {
+		x: 0.35,
+		y: 0.35,
+		node1: 0
+	}
+	/** @property {array} joints An array of objects with x and y properties detailing coordinates of each proximity node. Coordinates are 0-1 floats which are decimal fractions of the width and height.
+	```js
+		// The widget will now have 2 proximity points instead of 8
+		joints1.joints = [
+		&nbsp; { x: 0.5 , y: 0.2 },
+		&nbsp; { x: 0.5 , y: 0.7 }
+		]
+	```
+	 */
+	this.joints = [
+		{ x: .1, y: .2 },
+	    { x: .2, y: .1 },
+	    { x: .3, y: .7 },
+	    { x: .4, y: .4 },
+	    { x: .5, y: .9 },
+	    { x: .6, y: .15 },
+	    { x: .7, y: .3 },
+	    { x: .8, y: .8 },
+	]
+	this.threshold = this.GUI.w / 3;
+}
+util.inherits(joints, widget);
+
+joints.prototype.init = function() {
+  this.nodeSize = this.GUI.w/14;
+  this.threshold = this.GUI.w/3;
+  this.draw();
+}
+
+joints.prototype.draw = function() {
+	this.erase();
+
+	this.drawingX = this.val.x * this.GUI.w;
+	this.drawingY = this.val.y * this.GUI.h;
+
+	with (this.context) {
+		fillStyle = this.colors.fill;
+		fillRect(0,0,this.GUI.w,this.GUI.h);
+		if (this.val.x != null) {
+			this.drawNode();
+		}
+		else {
+			fillStyle = this.colors.border;
+			font = "14px courier";
+			fillText(this.default_text, 10, 20);
+		}
+		fillStyle = this.colors.accent;
+		strokeStyle = this.colors.border;
+		for (var i in this.joints) {
+			beginPath();
+				arc(this.joints[i].x*this.GUI.w, this.joints[i].y*this.GUI.h, this.nodeSize/2, 0, Math.PI*2, true);
+				fill();
+			closePath();
+			var cnctX = Math.abs(this.joints[i].x*this.GUI.w-this.drawingX);
+			var cnctY = Math.abs(this.joints[i].y*this.GUI.h-this.drawingY);
+			var strength = cnctX + cnctY;
+			if (strength < this.threshold) {
+				beginPath();
+					moveTo(this.joints[i].x*this.GUI.w, this.joints[i].y*this.GUI.h);
+					lineTo(this.drawingX,this.drawingY);
+					strokeStyle = this.colors.accent;
+					lineWidth = math.scale( strength, 0, this.threshold, this.nodeSize/2, 5 );
+					stroke();
+				closePath();
+				var scaledstrength = math.scale( strength, 0, this.threshold, 1, 0 );
+				this.val["node"+i] = scaledstrength;
+			}
+		}
+	}
+
+	this.drawLabel();
+}
+
+joints.prototype.drawNode = function() {
+	//stay within right/left bounds
+	if (this.drawingX<(this.nodeSize)) {
+		this.drawingX = this.nodeSize;
+	} else if (this.drawingX>(this.GUI.w-this.nodeSize)) {
+		this.drawingX = this.GUI.w - this.nodeSize;
+	}
+	//stay within top/bottom bounds
+	if (this.drawingY < this.nodeSize) {
+		this.drawingY = this.nodeSize;
+	} else if (this.drawingY>(this.GUI.h-this.nodeSize)) {
+		this.drawingY = this.GUI.h - this.nodeSize;
+	}
+
+	with (this.context) {
+		globalAlpha=1;
+		beginPath();
+			fillStyle = this.colors.accent;
+			strokeStyle = this.colors.border;
+			lineWidth = this.lineWidth;
+			arc(this.drawingX, this.drawingY, this.nodeSize, 0, Math.PI*2, true);
+			fill();
+		closePath();
+	}
+}
+
+joints.prototype.click = function() {
+	this.val = new Object();
+	this.val.x = this.clickPos.x/this.GUI.w;
+	this.val.y = this.clickPos.y/this.GUI.h;
+	this.draw();
+	this.transmit(this.val);
+	this.connections = new Array();
+
+}
+
+joints.prototype.move = function() {
+	this.val = new Object();
+	if (this.clicked) {
+		this.val.x = this.clickPos.x/this.GUI.w;
+		this.val.y = this.clickPos.y/this.GUI.h;
+		this.draw();
+		this.transmit(this.val);
+		this.connections = new Array();
+	}
+}
+
+
+joints.prototype.release = function() {
+		this.anix = this.deltaMove.x/this.GUI.w;
+		this.aniy = (this.deltaMove.y)/this.GUI.h;
+
+}
+
+/** @method animate
+	Add simple physics to the widget
+	@param {string} [type] Currently accepts "bounce" or "none".
+*/
+
+joints.prototype.animate = function(aniType) {
+
+	switch (aniType) {
+		case "bounce":
+			nx.aniItems.push(this.aniBounce.bind(this));
+			break;
+		case "none":
+			nx.aniItems.splice(nx.aniItems.indexOf(this.aniBounce));
+			break;
+	}
+
+}
+
+joints.prototype.anix = 0;
+joints.prototype.aniy = 0;
+
+joints.prototype.aniBounce = function() {
+	if (!this.clicked && this.val.x) {
+		this.val.x += (this.anix);
+		this.val.y += (this.aniy);
+		this.anix = math.bounce(this.val.x, 0.1, 0.9, this.anix);
+		this.aniy = math.bounce(this.val.y, 0.1, 0.9, this.aniy);
+		this.draw();
+		this.transmit(this.val);
+	}
+}
+
+},{"../core/widget":3,"../utils/math":6,"util":44}],18:[function(require,module,exports){
+var util = require('util');
+var widget = require('../core/widget');
+var drawing = require('../utils/drawing');
+var math = require('../utils/math');
+
+/**
+	@class keyboard
+	Piano keyboard which outputs MIDI
+	```html
+	<canvas nx="keyboard"></canvas>
+	```
+	<canvas nx="keyboard" style="margin-left:25px"></canvas>
+*/
+
+var keyboard = module.exports = function (target) {
+
+	this.defaultSize = { width: 300, height: 75 };
+	widget.call(this, target);
+
+	/** @property {integer} octaves  Number of octaves on the keyboard
+		```js
+			//This key pattern would put a black key between every white key
+			keyboard1.octaves = 1
+			keyboard1.init()
+		```
+
+	*/
+
+	this.octaves = 3;
+
+	this.white = {
+		width:0,
+		height:0
+	}
+	this.black = {
+		width:0,
+		height:0
+	}
+	this.wkeys = new Array();
+	this.bkeys = new Array();
+
+	/** @property {array} keypattern Array of 'w' and 'b' denoting the pattern of white and black keys. This can be customized! The pattern can be any number of keys, however each black key must be surrounded by two white keys.
+	```js
+		//This key pattern would put a black key between every white key
+		keyboard1.keypattern = ['w','b','w','b','w','b','w','b','w','b','w','b']
+		keyboard1.init()
+
+		//This key pattern uses only white keys
+		keyboard2.keypattern = ['w','w','w','w','w','w','w','w','w','w','w','w']
+		keyboard2.init()
+	```
+
+
+	 */
+	this.keypattern = ['w','b','w','b','w','w','b','w','b','w','b','w']
+	this.keys = new Array();
+	/** @property {integer} midibase The MIDI note value of the lowest note on the keyboard. Defaults to 48. */
+	this.midibase = 48;
+	this.lineWidth = 1;
+
+	//to enable multitouch
+	this.fingers = [
+		{
+			key: -1,
+			pkey: -1
+
+		}
+	]
+	this.multitouch = false; // will auto switch to true if experiences 2 simultaneous touches
+	this.oneleft = false;
+
+	/** @property {string} mode Play mode. Currently accepts "button" (default) or "sustain" in which each key acts as a toggle. */
+	this.mode = "button" // modes: "button", "sustain" and, possibly in future, "aftertouch"
+
+	// for each key: x, y, w, h, color, on, note
+
+	/** @property {object}  val   Core interactive values and data output
+		| &nbsp; | data
+		| --- | ---
+		| *on* | 0 if noteon, 1 if noteoff
+		| *note* | MIDI value of key pressed
+		| *midi* | paired MIDI message as a string - example "20 0" - This is to allow for simultaneous arrival of the MIDI pair if sent as an OSC message.
+	*/
+	this.val = {
+		on: 0,
+		note: 0,
+		midi: "0 0"
+	};
+
+	this.init();
+
+}
+util.inherits(keyboard, widget);
+
+keyboard.prototype.init = function() {
+
+	//recap from header
+	this.white = {
+		width:0,
+		height:0
+	}
+	this.black = {
+		width:0,
+		height:0
+	}
+	this.wkeys = new Array();
+	this.bkeys = new Array();
+
+	/** @property {array} keys Array of key objects. This may be of use in combination with the keyboard.toggle method. */
+	this.keys = new Array();
+
+	//new stuff
+	this.white.num = 0;
+	for (var i=0;i<this.keypattern.length;i++) {
+		this.keypattern[i]=='w' ? this.white.num++ : null;
+	}
+	this.white.num *= this.octaves;
+
+	this.white.width = this.GUI.w/this.white.num
+	this.white.height = this.GUI.h
+
+	this.black.width = this.white.width*0.6
+	this.black.height = this.GUI.h*0.6
+
+	for (var i=0;i<this.keypattern.length*this.octaves;i++) {
+		this.keys[i] = {
+			note: i+this.midibase,
+			on: false
+		}
+		switch (this.keypattern[i%this.keypattern.length]) {
+			case 'w':
+				this.keys[i].x =  this.wkeys.length*this.white.width,
+				this.keys[i].y = 0,
+				this.keys[i].w = this.white.width,
+				this.keys[i].h = this.white.height,
+				this.keys[i].type = 'w';
+				this.keys[i].index = i;
+				this.wkeys.push(this.keys[i]);
+
+				break;
+			case 'b':
+				this.keys[i].x = this.wkeys.length*this.white.width - this.black.width/2,
+				this.keys[i].y = 0,
+				this.keys[i].w = this.black.width,
+				this.keys[i].h = this.black.height,
+				this.keys[i].type = 'b';
+				this.keys[i].index = i;
+				this.bkeys.push(this.keys[i]);
+				break;
+		}
+	}
+
+
+	this.draw();
+}
+
+keyboard.prototype.draw = function() {
+
+	with (this.context) {
+		strokeStyle = this.colors.borderhl;
+		lineWidth = 1;
+
+		for (var i in this.wkeys) {
+			fillStyle = this.wkeys[i].on ? this.colors.borderhl : this.colors.fill
+			strokeRect(this.wkeys[i].x,0,this.white.width,this.white.height);
+			fillRect(this.wkeys[i].x,0,this.white.width,this.white.height);
+		}
+		for (var i in this.bkeys) {
+			fillStyle = this.bkeys[i].on ? this.colors.borderhl : this.colors.black
+			fillRect(this.bkeys[i].x,0,this.black.width,this.black.height);
+		}
+		//strokeRect(0,0,this.GUI.w,this.GUI.h);
+	}
+	this.drawLabel();
+}
+
+/** @method toggle
+	Manually toggle a key on or off, and transmit the new state.
+	@param {object} [key]  A key object (from the .keys array) to be turned on or off
+	@param {boolean} [on/off]  (Optional) Whether the key should be turned on (true) or off (false). If this parameter is left out, the key will switch to its opposite state.
+	```js
+	// Turns the first key on
+	keyboard1.toggle( keyboard1.keys[0], true );
+	```
+*/
+keyboard.prototype.toggle = function(key, data) {
+	if (this.mode=="button") {
+		if (key) {
+			if (data || data===false) {
+				key.on = data;
+			} else {
+				key.on = !key.on;
+			}
+
+			var on = key.on ? 1 : 0;
+			var amp = math.invert(this.clickPos.y/this.GUI.h) * 128;
+			amp = math.prune(math.clip(amp,5,128),0);
+
+			this.val = {
+				on: on*amp,
+				note: key.note,
+				midi: key.note + " " + on
+			};
+			this.transmit(this.val);
+			this.draw();
+		}
+	} else if (this.mode=="sustain") {
+		if (key) {
+			if (data) {
+				key.on = data;
+			} else {
+				key.on = !key.on;
+			}
+
+			var on = key.on ? 1 : 0;
+			var amp = math.invert(this.clickPos.y/this.GUI.h) * 128;
+			amp = math.prune(math.clip(amp,5,128),0);
+
+			this.val = {
+				on: on*amp,
+				note: key.note,
+				midi: key.note + " " + on
+			};
+			this.transmit(this.val);
+			this.draw();
+		}
+
+	}
+
+}
+
+keyboard.prototype.whichKey = function (x, y){
+
+	for (var i in this.bkeys) {
+		if (drawing.isInside({"x":x,"y":y}, this.bkeys[i])) {
+			return this.bkeys[i]
+		}
+	}
+
+	var keyx = ~~(x/this.white.width);
+	if (keyx>=this.wkeys.length) { keyx = this.wkeys.length-1 }
+	if (keyx<0) { keyx = 0 }
+	return this.wkeys[keyx];
+}
+
+keyboard.prototype.click = function(e) {
+
+	if (this.clickPos.touches.length>1 || this.multitouch) {
+		this.multitouch = true;
+		if (this.clickPos.touches.length>=2 && this.oneleft) {
+			this.oneleft = false;
+		}
+		this.keysinuse = new Array();
+		for (var j=0;j<this.clickPos.touches.length;j++) {
+			this.fingers[j] = {
+				key: this.whichKey(this.clickPos.touches[j].x, this.clickPos.touches[j].y)
+			}
+			if (!this.fingers[j].key.on) {
+				this.toggle(this.fingers[j].key, true)
+			}
+			this.keysinuse.push(this.fingers[j].key.index)
+		}
+		for (var j=0;j<this.keys.length;j++) {
+			if (this.keys[j].on  && this.keysinuse.indexOf(this.keys[j].index)<0) {
+				this.toggle(this.keys[j], false);
+			}
+		}
+	} else {
+		this.fingers[0].pkey = this.fingers[0].key;
+		this.fingers[0].key = this.whichKey(this.clickPos.x, this.clickPos.y);
+		this.toggle(this.fingers[0].key)
+	}
+
+}
+
+keyboard.prototype.move = function(e) {
+	if (this.clickPos.touches.length>1 || this.multitouch) {
+		this.keysinuse = new Array();
+		for (var j=0;j<this.clickPos.touches.length;j++) {
+			this.fingers[j] = {
+				key: this.whichKey(this.clickPos.touches[j].x, this.clickPos.touches[j].y)
+			}
+			if (!this.fingers[j].key.on) {
+				this.toggle(this.fingers[j].key, true)
+			}
+			this.keysinuse.push(this.fingers[j].key.index)
+		}
+		for (var j=0;j<this.keys.length;j++) {
+			if (this.keys[j].on  && this.keysinuse.indexOf(this.keys[j].index)<0) {
+				this.toggle(this.keys[j], false);
+			}
+		}
+	} else {
+		this.fingers[0].pkey = this.fingers[0].key;
+		this.fingers[0].key = this.whichKey(this.clickPos.x, this.clickPos.y);
+		if (this.fingers[0].key && this.fingers[0].key.index != this.fingers[0].pkey.index) {
+			this.toggle(this.fingers[0].pkey, false);
+			this.toggle(this.fingers[0].key, true);
+		}
+	}
+}
+
+keyboard.prototype.release = function(e) {
+	if (this.clickPos.touches.length>1 || this.multitouch) {
+		this.keysinuse = new Array();
+		for (var j=0;j<this.clickPos.touches.length;j++) {
+			if (this.oneleft && this.clickPos.touches.length==1) {
+				break;
+			}
+			this.fingers[j] = {
+				key: this.whichKey(this.clickPos.touches[j].x, this.clickPos.touches[j].y)
+			}
+			this.keysinuse.push(this.fingers[j].key.index)
+		}
+		for (var j=0;j<this.keys.length;j++) {
+			if (this.keys[j].on  && this.keysinuse.indexOf(this.keys[j].index)<0) {
+				this.toggle(this.keys[j], false);
+			}
+		}
+		if (this.clickPos.touches.length==1) { this.oneleft = true }
+	} else {
+		if (this.mode=="button") {
+			this.toggle(this.fingers[0].key, false);
+		}
+	}
+}
+
+
+
+
+
+
+
+
+},{"../core/widget":3,"../utils/drawing":5,"../utils/math":6,"util":44}],19:[function(require,module,exports){
+var math = require('../utils/math');
+var drawing = require('../utils/drawing');
+var util = require('util');
+var widget = require('../core/widget');
+
+/**
+	@class matrix
+	Matrix of toggles, with sequencer functionality.
+	```html
+	<canvas nx="matrix"></canvas>
+	```
+	<canvas nx="matrix" style="margin-left:25px"></canvas>
+*/
+
+
+var matrix = module.exports = function (target) {
+	this.defaultSize = { width: 100, height: 100 };
+	widget.call(this, target);
+
+
+	/** @property {integer}  row   Number of rows in the matrix
+	```js
+		matrix1.row = 2;
+		matrix1.init()
+	```
+	*/
+	this.row = 4;
+
+	/** @property {integer}  col   Number of columns in the matrix
+	```js
+		matrix1.col = 10;
+		matrix1.init()
+	```
+	*/
+	this.col = 4;
+
+	this.cellHgt;
+	this.cellWid;
+
+	/** @property {array}  matrix   Nested array of matrix values. Cells can be manually altered using .matrix (see code), however this will *not* cause the new value to be transmit. See .setCell() to set/transmit cell values.
+	```js
+		//Turn on the cell at row 1 column 2
+		matrix1.matrix[1][2] = 1
+		matrix1.draw()
+
+
+		//Turn off the cell at row 3 column 0
+		matrix1.matrix[3][0] = 0
+		matrix1.draw()
+	```
+	*/
+	this.matrix;
+
+	/** @property {object}  val   Core values and data output
+		| &nbsp; | data
+		| --- | ---
+		| *row* | Current row being changed
+		| *col* | Current column being changed
+		| *level* | Whether cell is on or off (0 or 1)
+		| *list * | Array of values in highlighted column (if sequencing)
+	*/
+	this.val = {
+		row: 0,
+		col: 0,
+		level: 0,
+		list: new Array()
+	}
+
+	//for mouse logic
+	this.cur;
+	this.prev;
+
+	/** @property {boolean}  erasing   Whether or not mouse clicks will erase cells. Set to true automatically if you click on an "on" cell. */
+	this.erasing = false;
+
+	/** @property {integer}  place   When sequencing, the current column. */
+	this.place = null;
+
+	this.starttime;
+	this.lastbeat;
+	this.thisframe = 0;
+	this.lastframe = 0;
+	this.context.lineWidth = 1;
+
+	this.sequencing = false;
+
+	/** @property {integer}  cellBuffer  How much padding between matrix cells, in pixels */
+	this.cellBuffer = 4;
+
+	/** @property {string}  sequenceMode  Sequence pattern (currently accepts "linear" which is default, or "random") */
+	this.sequenceMode = "linear"; // "linear" or "random". future options would be "wander" (drunk) or "markov"
+
+	/** @property {integer}  bpm   Beats per minute (if sequencing)
+	```js
+		matrix1.bpm = 120;
+	```
+	*/
+	this.bpm = 120;
+	this.pbpm = this.bpm
+
+	this.starttime = nx.starttime;
+
+	this.init();
+
+}
+util.inherits(matrix, widget);
+
+
+
+matrix.prototype.init = function() {
+
+
+	this.pmatrix = this.matrix ? this.matrix : false;
+
+	this.matrix = null;
+	// generate 2D matrix array
+	this.matrix = new Array(this.col)
+	for (var i=0;i<this.col;i++) {
+		this.matrix[i] = new Array(this.row)
+		for (var j=0;j<this.row;j++) {
+			this.matrix[i][j] = this.pmatrix ? this.pmatrix[i] ? this.pmatrix[i][j] : 0 : 0; // set value of each matrix cell
+		}
+	}
+
+	this.draw();
+
+  	this.life = this.unboundlife.bind(this)
+
+}
+
+matrix.prototype.draw = function() {
+
+	this.erase();
+
+	this.cellWid = this.GUI.w/this.col;
+	this.cellHgt = this.GUI.h/this.row;
+
+	with (this.context) {
+		strokeStyle = this.colors.fill
+		//lineWidth = 0
+		//strokeRect(0,0,this.GUI.w,this.GUI.h)
+	}
+
+	for (var i=0;i<this.row;i++){
+		for (var j=0;j<this.col;j++) {
+			var st_x = j*this.cellWid // starting point(left)
+			j==0 ? st_x += 0 : null;
+			var st_y = i*this.cellHgt; // starting point(top)
+			i==0 ? st_y += 0 : null;
+			var boxwid = this.cellWid;
+			var boxhgt = this.cellHgt;
+
+
+			with (this.context) {
+				strokeStyle = this.colors.border;
+				lineWidth = this.cellBuffer;
+				if (this.matrix[j][i] > 0) {
+					fillStyle = this.colors.accent;
+				} else {
+					fillStyle = this.colors.fill;
+				}
+				fillRect(st_x+this.cellBuffer/2, st_y+this.cellBuffer/2, boxwid-this.cellBuffer, boxhgt-this.cellBuffer);
+
+				// sequencer highlight
+				if (this.place == j) {
+					globalAlpha = 0.4;
+					fillStyle = this.colors.border;
+					fillRect(st_x, st_y, boxwid, boxhgt);
+					globalAlpha = 1;
+				}
+
+			}
+		}
+	}
+
+	this.drawLabel();
+}
+
+
+
+matrix.prototype.click = function(e) {
+
+	this.cur = {
+		col: ~~(this.clickPos.x/this.cellWid),
+		row: ~~(this.clickPos.y/this.cellHgt)
+	}
+
+	if (this.matrix[this.cur.col][this.cur.row]) {
+		this.matrix[this.cur.col][this.cur.row] = 0;
+		this.erasing = true;
+	} else {
+		this.matrix[this.cur.col][this.cur.row] = 1;
+		this.erasing = false;
+	}
+
+	this.cur.value = this.matrix[this.cur.col][this.cur.row]
+	this.prev = this.cur;
+
+//	var data = this.matrix[this.cur.col];
+//	data = data.join();
+//	data = data.replace(/\,/g," ");
+
+	this.val = {
+		row: this.cur.row,
+		col: this.cur.col,
+		level: this.cur.value
+	}
+
+	this.transmit(this.val);
+	this.draw();
+}
+
+matrix.prototype.move = function(e) {
+	if (this.clicked) {
+
+		this.cur = {
+			col: ~~(this.clickPos.x/this.cellWid),
+			row: ~~(this.clickPos.y/this.cellHgt)
+		}
+
+		if (this.cur.row < this.row && this.cur.col < this.col && this.cur.row >= 0 && this.cur.col >=0) {
+			if (this.cur.col!=this.prev.col || this.cur.row != this.prev.row) {
+				if (this.erasing) {
+					this.matrix[this.cur.col][this.cur.row] = 0;
+				} else {
+					this.matrix[this.cur.col][this.cur.row] = 1;
+				}
+
+				this.cur.value = this.matrix[this.cur.col][this.cur.row]
+				this.prev = this.cur;
+
+				this.val = {
+					row: this.cur.row,
+					col: this.cur.col,
+					level: this.cur.value
+				}
+
+				this.transmit(this.val);
+				this.draw();
+			}
+		}
+
+	}
+}
+
+
+/** @method setCell
+Manually set an individual cell on/off and transmit the new value.
+@param {integer} [col] The column of the cell to be turned on/off
+@param {integer} [row] The row of the cell to be turned on/off
+@param {boolean} [on/off] Whether the cell should be turned on/off
+
+```js
+	// Turns cell on at column 1 row 3
+	matrix1.setCell(1,3,true);
+```
+*/
+matrix.prototype.setCell = function(col,row,on) {
+
+	var value = on ? 1 : 0;
+	this.matrix[col][row] = value
+
+	this.val = {
+		row: row,
+		col: col,
+		level: value
+	}
+
+	this.transmit(this.val);
+	this.draw();
+
+}
+
+/** @method sequence
+@param {float} [bpm] Beats per minute of the pulse
+Turns the matrix into a sequencer.
+
+```js
+	matrix1.sequence(240);
+```
+*/
+matrix.prototype.sequence = function(bpm) {
+
+	if (bpm) {
+		this.bpm = bpm;
+	}
+	this.sequencing = true;
+	requestAnimationFrame(this.seqStep.bind(this));
+
+}
+
+matrix.prototype.setBPM = function(bpm) {
+	this.bpm = bpm
+	//console.log(bpm)
+	//nx.interval.bpm(this.pulse,bpm)
+}
+
+/** @method stop
+Stops the matrix sequencer.
+
+```js
+	matrix1.stop();
+```
+*/
+matrix.prototype.stop = function() {
+	this.sequencing = false;
+}
+
+matrix.prototype.seqStep = function() {
+
+	if (this.bpm == 0) { this.bpm = 1 }
+
+	//current time
+	var now = new Date().getTime();
+
+	//delta time since start
+	var dt = now - this.starttime;
+
+	if (this.bpm != this.pbpm) {
+
+		//frame + decimal since last beat, in old bpm
+		var timeP = (dt/(60000/this.pbpm))
+
+		// scale to new bpm
+		dt = timeP * (60000/this.bpm)
+
+		//adjust the starttime reference point
+		this.starttime = now - dt
+
+		//calculate new frame #
+		this.thisframe = ~~(dt/(60000/this.bpm));
+
+	} else {
+
+	    //this.thisframe is a constantly ascending integer counter
+	    //to compare with this.lastframe to determine when to increment this.place
+	    //this.thisframe IS NOT the current column.
+	    //the current column is this.place, which is set conditionally below.
+		this.thisframe = ~~(dt/(60000/this.bpm));
+
+	}
+
+	this.pbpm = this.bpm;
+
+    if (this.thisframe != this.lastframe) {
+
+		this.lastbeat = now;
+
+		if (this.sequenceMode=="linear") {
+			this.place++;
+		} else if (this.sequenceMode=="random") {
+			this.place = math.random(this.col);
+		}
+		if (this.place>=this.col) {
+			this.place = 0;
+		}
+
+		if (this.place==null) {
+			this.place = 0;
+		}
+
+		this.jumpToCol(this.place);
+
+    }
+
+	this.lastframe = this.thisframe;
+    if (this.sequencing) {
+		requestAnimationFrame(this.seqStep.bind(this));
+	}
+}
+
+/** @method jumpToCol
+Jump to a certain column of the matrix, highlight it, and output its values as an array. Column numbers start at 0.
+
+```js
+	matrix1.jumpToCol(1);
+```
+*/
+
+matrix.prototype.jumpToCol = function(place) {
+		this.place = place
+		this.val = {
+			list: this.matrix[this.place]
+		}
+		this.transmit(this.val);
+		this.draw();
+}
+
+
+matrix.prototype.customDestroy = function() {
+	this.stop();
+}
+
+matrix.prototype.unboundlife = function() {
+  if (!this.clicked) {
+  this.newmatrix = []
+  for (var i=0;i<this.col;i++) {
+    this.newmatrix[i] = []
+    for (var j=0;j<this.row;j++) {
+      var total = 0
+      if (i-1 >= 0) {
+        total += this.matrix[i-1][j-1] ? this.matrix[i-1][j-1] : 0
+        total += this.matrix[i-1][j] ? this.matrix[i-1][j] : 0
+        total += this.matrix[i-1][j+1] ? this.matrix[i-1][j+1] : 0
+      }
+      total += this.matrix[i][j-1] ? this.matrix[i][j-1] : 0
+      total += this.matrix[i][j+1] ? this.matrix[i][j+1] : 0
+      if (i+1 < this.col) {
+        total += this.matrix[i+1][j-1] ? this.matrix[i+1][j-1] : 0
+        total += this.matrix[i+1][j] ? this.matrix[i+1][j] : 0
+        total += this.matrix[i+1][j+1] ? this.matrix[i+1][j+1] : 0
+      }
+
+      if (this.matrix[i][j]) {
+        if (total < 2) {
+          this.newmatrix[i][j] = 0
+        } else if (total ==2 || total == 3) {
+          this.newmatrix[i][j] = 1
+        } else if (total > 3) {
+          this.newmatrix[i][j] = 0
+        }
+      } else if (!this.matrix[i][j] && total == 3) {
+        this.newmatrix[i][j] = 1
+      } else {
+        this.newmatrix[i][j] = this.matrix[i][j]
+      }
+    }
+  }
+  this.matrix = this.newmatrix
+  }
+  this.transmit({ grid: this.matrix})
+  this.draw()
+}
+
+/** @method life
+Alters the matrix according to Conway's Game of Life. Matrix.life() constitutes one tick through the game. To simulate the game, you might use setInterval.
+
+```js
+  //one tick
+  matrix1.life();
+
+  //repeated ticks at 80ms
+  setInterval(matrix1.life,80)
+```
+*/
+matrix.prototype.life = function() {
+  return false;
+}
+
+},{"../core/widget":3,"../utils/drawing":5,"../utils/math":6,"util":44}],20:[function(require,module,exports){
+var util = require('util');
+var widget = require('../core/widget');
+
+/**
+	@class message
+	Send a string of text.
+	```html
+	<canvas nx="message"></canvas>
+	```
+	<canvas nx="message" style="margin-left:25px"></canvas>
+*/
+
+var message = module.exports = function (target) {
+
+	this.defaultSize = { width: 100, height: 30 };
+	widget.call(this, target);
+
+
+	/** @property {object}  val
+		| &nbsp; | data
+		| --- | ---
+		| *value* | Text of message, as string
+	*/
+
+	this.val = {
+		value: "send a message"
+	}
+
+	/** @property {integer} size Text size in px */
+	this.size = 14;
+
+}
+util.inherits(message, widget);
+
+message.prototype.init = function() {
+	if (this.canvas.getAttribute("label")) {
+		this.val.value = this.canvas.getAttribute("label");
+	}
+	//this.size = Math.sqrt((this.GUI.w * this.GUI.h) / (this.val.message.length));
+	this.draw();
+}
+
+message.prototype.draw = function() {
+	this.erase();
+	with (this.context) {
+		if (this.clicked) {
+			fillStyle = this.colors.border;
+		} else {
+			fillStyle = this.colors.fill;
+		}
+		fillRect(0,0,this.GUI.w,this.GUI.h)
+
+		if (this.clicked) {
+			fillStyle = this.colors.black;
+		} else {
+			fillStyle = this.colors.black;
+		}
+		textAlign = "left";
+		font = this.size+"px "+nx.font;
+	}
+	this.wrapText(this.val.value, 5, 1+this.size, this.GUI.w-6, this.size);
+}
+
+message.prototype.click = function(e) {
+	this.draw();
+	this.transmit(this.val);
+}
+
+message.prototype.release = function(e) {
+	this.draw();
+}
+},{"../core/widget":3,"util":44}],21:[function(require,module,exports){
+var util = require('util');
+var drawing = require('../utils/drawing');
+var widget = require('../core/widget');
+
+/**
+
+    @public
+    @class meter
+
+    Decibel level meter.
+
+    ```html
+    <canvas nx="meter"></canvas>
+    ```
+    <canvas nx="meter" style="margin-left:25px"></canvas>
+*/
+
+var meter = module.exports = function(target) {
+
+    // to update, eventually (note to self)
+    // possibly a less-frequent animation request, to lighten the graphics load
+    // option for stereo meter? i.e. optional third .setup(ctx,s1,s2) argument
+
+    this.defaultSize = { width: 20, height: 50 };
+    widget.call(this, target);
+
+    this.val = {
+        level: 0
+    }
+    this.dataArray;
+    this.bars = 8;
+
+    this.init();
+
+}
+util.inherits(meter, widget);
+
+
+meter.prototype.init = function(){
+   this.bar = {
+        x: 0,
+        y: 0,
+        w: this.GUI.w,
+        h: this.GUI.h/this.bars
+    }
+    with (this.context) {
+        fillStyle = this.colors.fill;
+        fillRect(0,0,this.GUI.w, this.GUI.h);
+    }
+}
+
+
+
+/** @method setup
+    Connect the meter to an audio source and start the meter's graphics.
+    @param {audio context} [context] The audio context hosting the source node
+    @param {audio node} [source] The audio source node to analyze
+    */
+meter.prototype.setup = function(actx,source){
+    this.actx = actx;
+    this.source = source;
+
+    this.analyser = this.actx.createAnalyser();
+    this.analyser.smoothingTimeConstant = 0.85;
+    this.analyser.fftsize = 1024;
+    this.bufferLength = this.analyser.frequencyBinCount;
+    this.dataArray = new Uint8Array(this.bufferLength);
+    this.source.connect(this.analyser);
+
+    this.draw();
+}
+
+meter.prototype.draw = function(){
+
+    if(this.dataArray) {
+        this.analyser.getByteTimeDomainData(this.dataArray);
+
+        var max = Math.max.apply(null, this.dataArray);
+        var min = Math.min.apply(null, this.dataArray);
+        var amp = max - min;
+        amp /= 240
+
+        //converts amps to db
+        var db = 20 * (Math.log(amp) / Math.log(10))
+
+        with (this.context){
+            fillStyle = this.colors.fill;
+            fillRect(0,0,this.GUI.w, this.GUI.h);
+
+            //scales: -40 to +10 db range => a number of bars
+            var dboffset = Math.floor((db + 40) / (50/this.bars) );
+
+            for (var i = 0; i<this.bars; i++) {
+
+                // 0+ db is red
+                if(i >= this.bars*.8) {
+                    fillStyle = 'rgb(255,0,0)';
+
+                // -5 to 0 db is yellow
+                } else if (i < this.bars*.8 && i >= this.bars*.69) {
+                    fillStyle = 'rgb(255,255,0)';
+
+                // -40 to -5 db is green
+                } else if (i < this.bars*.69) {
+                    fillStyle = 'rgb(0,255,0)';
+                }
+
+                // draw bar
+                if (i<dboffset)
+                    fillRect(1,this.GUI.h-this.bar.h*i,this.GUI.w-2,this.bar.h-2);
+
+            }
+        }
+    }
+
+    setTimeout(function() {
+        window.requestAnimationFrame(this.draw.bind(this));
+    }.bind(this), 80)
+
+}
+
+
+},{"../core/widget":3,"../utils/drawing":5,"util":44}],22:[function(require,module,exports){
+var math = require('../utils/math')
+var util = require('util');
+var widget = require('../core/widget');
+
+/**
+	@class metro
+	Bouncing ball metronome
+	```html
+	<canvas nx="metro"></canvas>
+	```
+	<canvas nx="metro" style="margin-left:25px"></canvas>
+*/
+
+var metro = module.exports = function (target) {
+	this.defaultSize = { width: 100, height: 20 };
+	widget.call(this, target);
+
+	//define unique attributes
+
+	/** @property {object}  val
+		| &nbsp; | data
+		| --- | ---
+		| *beat* | Which side the ball is bouncing on (0 if left, 1 if right)
+	*/
+	this.val = {
+		beat: 0
+	}
+
+	this.x = 10;
+	this.y = 10;
+	this.loc = 10;
+	this.nodeSize = 10;
+	/** @property {float} speed Speed of the ball (default 1) */
+	this.speed = 1;
+	this.direction = 1;
+	/** @property {string} orientation Orientation of metro. Default is "horizontal". */
+	this.orientation = "horizontal"
+	this.boundary = this.GUI.w
+
+	nx.aniItems.push(this.advance.bind(this));
+	this.active = true;
+
+	this.init();
+}
+util.inherits(metro, widget);
+
+metro.prototype.init = function() {
+	this.nodeSize = Math.min(this.GUI.w,this.GUI.h)/2;
+	if (this.GUI.w<this.GUI.h) {
+		this.orientation = "vertical"
+		this.boundary = this.GUI.h
+	} else {
+		this.orientation = "horizontal"
+		this.boundary = this.GUI.w
+	}
+	this.x = this.nodeSize;
+	this.y = this.nodeSize;
+	this.loc = this.nodeSize;
+
+	this.draw();
+
+}
+
+metro.prototype.draw = function() {
+	this.erase()
+	with (this.context) {
+		fillStyle = this.colors.fill;
+		fillRect(0,0,this.GUI.w,this.GUI.h);
+
+		beginPath();
+		fillStyle = this.colors.accent;
+		arc(this.x, this.y, this.nodeSize, 0, Math.PI*2, true);
+		fill();
+		closePath();
+	}
+
+	this.drawLabel();
+}
+
+metro.prototype.click = function() {
+}
+
+metro.prototype.move = function() {
+	if (this.clicked) {
+		this.speed -= (this.deltaMove.y / 50);
+	}
+}
+
+metro.prototype.release = function() {
+}
+
+metro.prototype.advance = function() {
+	if (this.speed>=0) {
+		this.loc += this.speed * this.direction;
+	} else {
+		this.loc += this.speed * this.direction;
+	}
+	if (this.loc-this.nodeSize<0 || this.loc+this.nodeSize>this.boundary) {
+		this.val.beat = math.scale(this.direction,-1,1,0,1)
+		this.transmit(this.val);
+		this.direction *= -1
+	}
+	if (this.orientation == "vertical") {
+		this.y = this.loc
+	} else {
+		this.x = this.loc
+	}
+	this.draw();
+}
+
+metro.prototype.customDestroy = function() {
+	nx.removeAni(this.advance.bind(this))
+}
+},{"../core/widget":3,"../utils/math":6,"util":44}],23:[function(require,module,exports){
+var math = require('../utils/math')
+var util = require('util');
+var widget = require('../core/widget');
+
+/**
+	@class motion
+	Mobile motion sensor. Does not work on all devices! <br> **Notes:** Clicking on this widget toggles it inactive or active. <br>
+	We recommend not calling .init() on this object after the original initialization, because it will add additional redundant motion listeners to your document.
+	```html
+	<canvas nx="motion"></canvas>
+	```
+	<canvas nx="motion" style="margin-left:25px"></canvas>
+*/
+
+var motion = module.exports = function (target) {
+	this.defaultSize = { width: 75, height: 75 };
+	widget.call(this, target);
+
+	this.motionLR;
+	this.motionFB;
+	this.z;
+	/** @property {boolean} active Whether or not the motion widget is on (animating and transmitting data). */
+	this.active = true;
+
+	this.px = 0;
+	this.py = 0;
+	this.pz = 0;
+
+	/** @property {object}  val  Object containing the core interactive aspects of the widget, which are also its data output. Has the following properties:
+		| &nbsp; | data
+		| --- | ---
+		| *x* | X-axis motion if supported (-1 to 1)
+		| *y* | Y-axis motion if supported (-1 to 1)
+		| *z* | Z-axis motion if supported (-1 to 1 or 0 to 360 depending on device)
+	*/
+	this.val = {
+		x: 0,
+		y: 0,
+		z: 0
+	}
+
+	/** @property {string}  text   Text shown on motion object
+	*/
+
+	this.text = "Motion";
+	this.init();
+
+	this.boundMotion = this.motionlistener.bind(this)
+
+	if (window.DeviceMotionEvent) {
+		window.addEventListener('devicemotion', this.boundMotion, false);
+	} else {
+		with (this.context) {
+			fillText("incompatible",0,0)
+			this.active = false;
+		}
+	}
+
+}
+util.inherits(motion, widget);
+
+motion.prototype.deviceMotionHandler = function() {
+
+	this.val = {
+		x: math.prune(this.motionLR/10,4),
+		y: math.prune(this.motionFB/10,4),
+		z: math.prune(this.z/10,4)
+	}
+
+	this.transmit(this.val);
+
+}
+
+motion.prototype.motionlistener = function(e) {
+	var data = e.acceleration
+
+	if (this.active) {
+
+
+		this.motionLR = nx.lp(this.canvasID+"motionx",data.x,20)
+		this.motionFB = nx.lp(this.canvasID+"motiony",data.y,20)
+		this.z = nx.lp(this.canvasID+"motionz",data.z,20)
+    	this.deviceMotionHandler()
+
+   		this.draw();
+
+		if (data.x===null || data.x===undefined) {
+			this.erase()
+			with (this.context) {
+				fillStyle = this.colors.fill
+				fillRect(0,0,this.GUI.w,this.GUI.h)
+				fillStyle = this.colors.black
+				font="12px courier";
+				textAlign = "center"
+				fillText("no data",this.GUI.w/2,this.GUI.h/2)
+			}
+			this.active = false;
+		}
+ 	}
+}
+
+motion.prototype.init = function() {
+	this.draw()
+}
+
+motion.prototype.draw = function() {
+
+	this.erase()
+
+	with (this.context) {
+	    fillStyle = this.colors.fill;
+	    fillRect(0,0,this.GUI.w,this.GUI.h);
+	    fillStyle = this.colors.accent;
+	    var eighth = Math.PI/4
+	    if (this.motionFB<0) {
+			beginPath()
+				moveTo(this.GUI.w/2,this.GUI.h/2)
+				arc(this.GUI.w/2,this.GUI.h/2,this.GUI.w/2,eighth*5,eighth*7,false)
+				globalAlpha = Math.pow(this.motionFB, 2)
+				fill()
+			closePath()
+	    } else {
+			beginPath()
+				moveTo(this.GUI.w/2,this.GUI.h/2)
+				arc(this.GUI.w/2,this.GUI.h/2,this.GUI.w/2,eighth*1,eighth*3,false)
+				globalAlpha = Math.pow(this.motionFB, 2)
+				fill()
+			closePath()
+	    }
+	    if (this.motionLR<0) {
+			beginPath()
+				moveTo(this.GUI.w/2,this.GUI.h/2)
+				arc(this.GUI.w/2,this.GUI.h/2,this.GUI.w/2,eighth*7,eighth*1,false)
+				globalAlpha = Math.pow(this.motionLR, 2)
+				fill()
+			closePath()
+	    } else {
+			beginPath()
+				moveTo(this.GUI.w/2,this.GUI.h/2)
+				arc(this.GUI.w/2,this.GUI.h/2,this.GUI.w/2,eighth*3,eighth*5,false)
+				globalAlpha = Math.pow(this.motionLR, 2)
+				fill()
+			closePath()
+	    }
+		beginPath()
+			moveTo(this.GUI.w/2,this.GUI.h/2)
+			arc(this.GUI.w/2,this.GUI.h/2,this.GUI.w/6,0,Math.PI*2,false)
+			globalAlpha = Math.pow(this.z, 2)
+			fill()
+		closePath()
+		globalAlpha = 1
+	}
+	this.drawLabel();
+}
+
+motion.prototype.click = function() {
+	this.active = !this.active;
+	this.draw()
+}
+
+motion.prototype.customDestroy = function() {
+	this.active = false;
+	window.removeEventListener("devicemotion",this.motionlistener,false);
+}
+},{"../core/widget":3,"../utils/math":6,"util":44}],24:[function(require,module,exports){
+var util = require('util');
+var widget = require('../core/widget');
+var math = require('../utils/math');
+
+/**
+	@class mouse
+	Mouse tracker, relative to web browser window.
+	```html
+	<canvas nx="mouse"></canvas>
+	```
+	<canvas nx="mouse" style="margin-left:25px"></canvas>
+*/
+
+var mouse = module.exports = function (target) {
+
+	this.defaultSize = { width: 98, height: 100 };
+	widget.call(this, target);
+
+	/** @property {object}  val
+		| &nbsp; | data
+		| --- | ---
+		| *x* | x value of mouse relative to browser
+		| *y* | y value of mouse relative to browser
+		| *deltax* | x change in mouse from last position
+		| *deltay* | y change in mouse from last position
+	*/
+	this.val = {
+		x: 0,
+		y: 0,
+		deltax: 0,
+		deltay: 0
+	}
+	this.inside = new Object();
+	this.boundmove = this.preMove.bind(this)
+	this.mousing = window.addEventListener("mousemove", this.boundmove, false);
+
+	this.init();
+}
+util.inherits(mouse, widget);
+
+mouse.prototype.init = function() {
+
+	this.inside.height = this.GUI.h;
+	this.inside.width = this.GUI.w;
+	this.inside.left = 0;
+	this.inside.top = 0;
+	this.inside.quarterwid = (this.inside.width)/4;
+
+	this.draw();
+}
+
+mouse.prototype.draw = function() {
+	this.erase();
+
+	with (this.context) {
+		fillStyle = this.colors.fill;
+		fillRect(0,0,this.GUI.w,this.GUI.h);
+
+		var scaledx = -(this.val.x) * this.GUI.h;
+		var scaledy = -(this.val.y) * this.GUI.h;
+		var scaleddx = -(this.val.deltax) * this.GUI.h - this.GUI.h/2;
+		var scaleddy = -(this.val.deltay) * this.GUI.h - this.GUI.h/2;
+
+		fillStyle = this.colors.accent;
+		fillRect(this.inside.left, this.inside.height, this.inside.quarterwid, scaledx);
+		fillRect(this.inside.quarterwid, this.inside.height, this.inside.quarterwid, scaledy);
+		fillRect(this.inside.quarterwid*2, this.inside.height, this.inside.quarterwid, scaleddx);
+		fillRect(this.inside.quarterwid*3, this.inside.height, this.inside.quarterwid, scaleddy);
+
+		globalAlpha = 1;
+		fillStyle = this.colors.fill;
+		textAlign = "center";
+		font = this.GUI.w/7+"px "+this.font;
+/*  fillText("x", this.inside.quarterwid*0 + this.inside.quarterwid/2, this.GUI.h-7);
+		fillText("y", this.inside.quarterwid*1 + this.inside.quarterwid/2, this.GUI.h-7);
+		fillText("dx", this.inside.quarterwid*2 + this.inside.quarterwid/2, this.GUI.h-7);
+		fillText("dy", this.inside.quarterwid*3 + this.inside.quarterwid/2, this.GUI.h-7);
+*/
+		globalAlpha = 1;
+	}
+
+	this.drawLabel();
+}
+
+mouse.prototype.move = function(e) {
+	this.val = {
+		deltax: e.clientX/window.innerWidth - this.val.x,
+		deltay: math.invert(e.clientY/window.innerHeight) - this.val.y,
+		x: e.clientX/window.innerWidth,
+		y: math.invert(e.clientY/window.innerHeight)
+	}
+	this.draw();
+	this.transmit(this.val);
+
+}
+
+mouse.prototype.customDestroy = function() {
+	window.removeEventListener("mousemove",  this.boundmove, false);
+}
+},{"../core/widget":3,"../utils/math":6,"util":44}],25:[function(require,module,exports){
+var math = require('../utils/math')
+var util = require('util');
+var widget = require('../core/widget');
+
+/**
+	@class multislider
+	Multiple vertical sliders in one interface.
+	```html
+	<canvas nx="multislider"></canvas>
+	```
+	<canvas nx="multislider" style="margin-left:25px"></canvas>
+*/
+var multislider = module.exports = function (target) {
+
+	this.defaultSize = { width: 100, height: 75 };
+	widget.call(this, target);
+
+	/** @property {integer} sliders Number of sliders in the multislider. (Must call .init() after changing this setting, or set with .setNumberOfSliders) */
+	this.sliders = 15;
+
+	/** @property {array}  val   Array of slider values. <br> **Note:** This widget's output is not .val! Transmitted output is:
+
+		| &nbsp; | data
+		| --- | ---
+		| *(slider index)* | value of currently changed slider
+		| list | all multislider values as list. (if the interface sends to js or node, this list will be an array. if sending to ajax, max7, etc, the list will be a string of space-separated values)
+
+	*/
+
+	this.sliderClicked = 0;
+	this.oldSliderToMove;
+	this.init();
+}
+util.inherits(multislider, widget);
+
+multislider.prototype.init = function() {
+	this.val = new Array();
+	for (var i=0;i<this.sliders;i++) {
+		this.val[i] = 0.7;
+	}
+	this.realSpace = { x: this.GUI.w, y: this.GUI.h }
+	this.sliderWidth = this.realSpace.x/this.sliders;
+	this.draw();
+}
+
+multislider.prototype.draw = function() {
+	this.erase();
+	with (this.context) {
+		fillStyle = this.colors.fill;
+		fillRect(0,0,this.GUI.w,this.GUI.h);
+
+		strokeStyle = this.colors.accent;
+		fillStyle = this.colors.accent;
+		lineWidth = 5;
+
+		for(var i=0; i<this.sliders; i++) {
+			beginPath();
+			moveTo(i*this.sliderWidth, this.GUI.h-this.val[i]*this.GUI.h);
+			lineTo(i*this.sliderWidth + this.sliderWidth, this.GUI.h-this.val[i]*this.GUI.h);
+			stroke();
+			lineTo(i*this.sliderWidth + this.sliderWidth, this.GUI.h);
+			lineTo(i*this.sliderWidth,  this.GUI.h);
+			globalAlpha = 0.3 - (i%3)*0.1;
+			fill();
+			closePath();
+			globalAlpha = 1;
+		//	var separation = i==this.sliders-1 ? 0 : 1;
+		//	fillRect(i*this.sliderWidth, this.GUI.h-this.val[i]*this.GUI.h, this.sliderWidth-separation, this.val[i]*this.GUI.h)
+		}
+	}
+	this.drawLabel();
+}
+
+multislider.prototype.click = function() {
+	this.oldSliderToMove = false;
+	this.move(true);
+}
+
+multislider.prototype.move = function(firstclick) {
+	if (this.clicked) {
+
+
+		if (this.clickPos.touches.length>1) {
+
+			for (var i=0;i<this.clickPos.touches.length;i++) {
+				var sliderToMove = Math.floor(this.clickPos.touches[i].x / this.sliderWidth);
+				sliderToMove = math.clip(sliderToMove,0,this.sliders-1);
+				this.val[sliderToMove] = math.clip(math.invert((this.clickPos.touches[i].y / this.GUI.h)),0,1);
+			}
+
+		} else {
+
+			var sliderToMove = Math.floor(this.clickPos.x / this.sliderWidth);
+			sliderToMove = math.clip(sliderToMove,0,this.sliders-1);
+			this.val[sliderToMove] = math.clip(math.invert(this.clickPos.y / this.GUI.h),0,1);
+
+			if (this.oldSliderToMove && this.oldSliderToMove > sliderToMove + 1) {
+				var missed = this.oldSliderToMove - sliderToMove - 1;
+				for (var i=1;i<=missed;i++) {
+					this.val[sliderToMove+i] = this.val[sliderToMove] + (this.val[this.oldSliderToMove] - this.val[sliderToMove]) * ((i/(missed+1)));
+				}
+			} else if (this.oldSliderToMove && sliderToMove > this.oldSliderToMove + 1) {
+				var missed = sliderToMove - this.oldSliderToMove - 1;
+				for (var i=1;i<=missed;i++) {
+					this.val[this.oldSliderToMove+i] = this.val[this.oldSliderToMove] + (this.val[sliderToMove] - this.val[this.oldSliderToMove]) * ((i/(missed+1)));
+				}
+			}
+
+		}
+		this.draw();
+	}
+	var msg = new Object()
+	msg[sliderToMove] = this.val[sliderToMove]
+	if (this.destination=="js" || this.destination=="node") {
+		msg["list"] = this.val;
+	} else {
+		msg["list"] = new String();
+		for (var key in this.val) { msg["list"] += this.val[key] + " " }
+	}
+	this.transmit(msg);
+	this.oldSliderToMove = sliderToMove;
+
+}
+
+/** @method setNumberOfSliders
+@param {integer} [num] New number of sliders in the multislider */
+multislider.prototype.setNumberOfSliders = function(numOfSliders) {
+	this.sliders = numOfSliders;
+	this.val = new Array();
+	for (var i=0;i<this.sliders;i++) {
+		this.val.push(0.7);
+	}
+	this.sliderWidth = this.realSpace.x/this.sliders;
+	this.init();
+}
+
+/** @method setSliderValue
+Sets a slider to new value and transmits.
+@param {integer} [slider] Slider to set (slider index starts at 0)
+@param {integer} [value] New slider value */
+multislider.prototype.setSliderValue = function(slider,value) {
+	this.val[slider] = value;
+	this.draw();
+	var msg = new Object();
+	msg[slider] = this.val[slider]
+	if (this.destination=="js" || this.destination=="node") {
+		msg["list"] = this.val;
+	} else {
+		msg["list"] = new String();
+		for (var key in this.val) { msg["list"] += this.val[key] + " " }
+	}
+	this.transmit(msg);
+}
+
+},{"../core/widget":3,"../utils/math":6,"util":44}],26:[function(require,module,exports){
+var math = require('../utils/math');
+var drawing = require('../utils/drawing');
+var util = require('util');
+var widget = require('../core/widget');
+
+/**
+	@class multitouch
+	Multitouch 2d-slider with up to 5 points of touch.
+	```html
+	<canvas nx="multitouch"></canvas>
+	```
+	<canvas nx="multitouch" style="margin-left:25px"></canvas>
+*/
+
+var multitouch = module.exports = function (target) {
+
+	this.defaultSize = { width: 200, height: 200 };
+	widget.call(this, target);
+
+	//unique attributes
+	this.nodeSize = this.GUI.w/10;
+
+	/** @property {object}  val
+		| &nbsp; | data
+		| --- | ---
+		| *touch1.x* | x position of first touch
+		| *touch1.y* | y position of first touch
+		| *touch2.x* | x position of second touch (if 2 touches)
+		| *touch2.y* | y position of second touch (if 2 touches)
+		| *etc* | &nbsp;
+	*/
+	this.val = {
+		touch1: {
+			x: 0,
+			y: 0
+		}
+	}
+
+	this.nodes = new Array();
+
+	/** @property {string}  text  Text that will show when object is static */
+	this.text = "multitouch";
+
+	this.rainbow = ["#00f", "#04f", "#08F", "0AF", "0FF"];
+
+	/** @property {string}  mode   "normal" or "matrix" mode. "matrix" mode has a GUI of discrete touch areas.
+	*/
+	this.mode = "normal";
+
+	/** @property {integer}  rows   How many rows in the matrix (matrix mode only)
+	*/
+	this.rows = 10;
+
+	/** @property {integer}  cols   How many rows in the matrix (matrix mode only)
+	*/
+	this.cols = 10;
+
+	/** @property {array}  matrixLabels  An array of strings that can provide text labels on cells of the matrix. If shorter than the matrix cells, the array will repeat.
+	```
+		this.mode = "matrix"
+		this.matrixLabels = [ "A", "A#", "B", "C" ]
+		this.init();
+	```
+	*/
+	this.matrixLabels = false;
+
+	this.init();
+}
+util.inherits(multitouch, widget);
+
+multitouch.prototype.init = function() {
+	this.nodeSize = this.GUI.w/10;
+	this.draw();
+}
+
+multitouch.prototype.draw = function() {
+	this.erase();
+	with (this.context) {
+		fillStyle = this.colors.fill;
+		fillRect(0,0,this.GUI.w,this.GUI.h);
+
+		var count = 0;
+
+		if (this.mode == "matrix") {
+			for (var j=0;j<this.rows;j++) {
+				for (var i=0;i<this.cols;i++) {
+					with (this.context) {
+						beginPath();
+							fillStyle = this.colors.accent;
+							strokeStyle = this.colors.border;
+							lineWidth = 1;
+							var circx = i*this.GUI.w/this.cols + (this.GUI.w/this.cols)/2;
+							var circy = j*this.GUI.h/this.rows + (this.GUI.h/this.rows)/2;
+							arc(circx, circy, (this.GUI.h/this.rows)/2, 0, Math.PI*2, true);
+							stroke();
+							fillStyle = this.colors.border;
+							textAlign = "center";
+							textBaseline = "middle";
+							if (this.matrixLabels) {
+								fillText(this.matrixLabels[count%this.matrixLabels.length], circx, circy);
+								count++
+							}
+							var thisarea = {
+								x: i*this.GUI.w/this.cols,
+								y: j*this.GUI.h/this.rows,
+								w: this.GUI.w/this.cols,
+								h: this.GUI.h/this.rows
+							}
+							if (this.clickPos.touches.length>=1) {
+								for (var k=0;k<this.clickPos.touches.length;k++) {
+									if (drawing.isInside(this.clickPos.touches[k],thisarea)) {
+										globalAlpha=0.5;
+										fillStyle = this.colors.accent;
+										fill();
+										globalAlpha=0.3;
+										fillStyle = this.rainbow[k];
+										fill();
+										globalAlpha=1;
+									}
+								}
+							}
+						closePath();
+					}
+				}
+			}
+		} else {
+			if (this.clickPos.touches.length>=1) {
+				for (var i=0;i<this.clickPos.touches.length;i++) {
+
+					with (this.context) {
+						globalAlpha=0.5;
+						beginPath();
+						fillStyle = this.colors.accent;
+						strokeStyle = this.colors.border;
+						lineWidth = this.lineWidth;
+						arc(this.clickPos.touches[i].x, this.clickPos.touches[i].y, this.nodeSize, 0, Math.PI*2, true);
+						fill();
+						//	stroke();
+						closePath();
+						globalAlpha=0.3;
+						beginPath();
+						fillStyle = this.rainbow[i];
+						strokeStyle = this.colors.border;
+						lineWidth = this.lineWidth;
+						arc(this.clickPos.touches[i].x, this.clickPos.touches[i].y, this.nodeSize, 0, Math.PI*2, true);
+						fill();
+						//	stroke();
+						closePath();
+						globalAlpha=1;
+					}
+				}
+				clearRect(0,this.GUI.h,this.GUI.w,this.height - this.GUI.h)
+			}
+			else {
+				this.setFont()
+				fillStyle = this.colors.border;
+				fillText(this.text, this.GUI.w/2, this.GUI.h/2);
+				globalAlpha = 1;
+			}
+		}
+	}
+	this.drawLabel();
+}
+
+multitouch.prototype.click = function() {
+	this.draw();
+	this.sendit();
+}
+
+multitouch.prototype.move = function() {
+	if (this.clicked) {
+		this.draw();
+		this.sendit();
+	}
+}
+
+multitouch.prototype.release = function() {
+
+	if(!this.clicked) {
+		this.clickPos.touches = new Array();
+		for (var i=0;i<5;i++) {
+			this.val["touch"+i] = {
+				x: 0,
+				y: 0
+			}
+		}
+		this.transmit(this.val);
+	}
+
+	this.draw();
+	this.sendit();
+
+}
+
+multitouch.prototype.sendit = function() {
+	this.val = new Object();
+	for (var i=0;i<this.clickPos.touches.length;i++) {
+		this.val["touch"+i] = {
+			x: this.clickPos.touches[i].x/this.canvas.width,
+			y: math.invert(this.clickPos.touches[i].y/this.canvas.height)
+		}
+	}
+	this.transmit(this.val);
+}
+},{"../core/widget":3,"../utils/drawing":5,"../utils/math":6,"util":44}],27:[function(require,module,exports){
+var math = require('../utils/math')
+var util = require('util');
+var widget = require('../core/widget');
+
+/**
+	@class number
+	Number box
+	```html
+	<canvas nx="number"></canvas>
+	```
+	<canvas nx="number" style="margin-left:25px"></canvas>
+*/
+
+var number = module.exports = function (target) {
+	this.defaultSize = { width: 50, height: 20 };
+	widget.call(this, target);
+
+	/** @property {object}  val
+		| &nbsp; | data
+		| --- | ---
+		| *value* | Number value
+
+		```js
+			// Sets number1.val.value to 20
+			number1.set({
+			&nbsp; value: 20
+			})
+		```
+	*/
+	this.val = {
+		value: 0
+	}
+
+	/** @property {float}  min   The minimum number allowed. Default is -20000.
+
+		```js
+		    // only allow positive numbers
+			number1.min = 0;
+		```
+	*/
+	this.min = -20000
+
+	/** @property {float}  max   The maximum number allowed. Default is 20000.
+
+		```js
+		    // only allow negative numbers
+			number1.max = 0;
+		```
+	*/
+	this.max = 20000
+
+	/** @property {float}  step   The increment. Default is 1.
+
+		```js
+		    // count by 10s
+			number1.step = 10;
+		```
+	*/
+	this.step = 1
+
+
+	/** @property {float}  rate   Sensitivity of dragging. Default is .25
+
+		```js
+		    // For fine tuning
+			number1.rate = .001;
+		```
+	*/
+	this.rate = .25
+
+	/** @property {integer}  decimalPlaces   How many decimal places on the number. This applies to both the output and the interface text. Default is 2. To achieve an int (non-float), set decimalPlaces to 0.
+
+		```js
+			// For an int counter
+			number1.decimalPlaces = 0;
+		```
+	*/
+	this.decimalPlaces = 3;
+	this.lostdata = 0;
+	this.actual = 0;
+
+	// SWAP
+	//
+	this.canvas.ontouchstart = null;
+	this.canvas.ontouchmove = null;
+	this.canvas.ontouchend = null;
+
+	var htmlstr = '<input type="text" nx="number" id="'+this.canvasID+'" style="height:'+this.GUI.h+'px;width:'+this.GUI.w+'px;font-size:'+this.GUI.h/2+'px;"></input><canvas height="1px" width="1px" style="display:none"></canvas>'
+	var canv = this.canvas
+	var cstyle = this.canvas.style
+	var parent = canv.parentNode
+	var newdiv = document.createElement("span")
+	newdiv.innerHTML = htmlstr
+	newdiv.className = "nx"
+	parent.replaceChild(newdiv,canv)
+
+	this.el = document.getElementById(this.canvasID)
+	for (var prop in cstyle) {
+			if (prop != "height" && prop != "width") {
+    		this.el.style[prop] = cstyle[prop]
+ 			}
+  }
+
+  if (this.label) {
+	  var labeldiv = document.createElement("div")
+	  labeldiv.innerHTML = this.label
+	  labeldiv.style.fontSize = this.labelSize/2.8+"px"
+	  labeldiv.style.fontFamily = this.labelFont
+	  labeldiv.style.textAlign = this.labelAlign
+	  labeldiv.style.lineHeight = this.labelSize+"px"
+	  labeldiv.style.width = this.GUI.w+"px"
+	  labeldiv.style.color = nx.colors.black
+	  labeldiv.className = "nxlabel"
+	  newdiv.appendChild(labeldiv)
+  }
+
+	this.canvas = document.getElementById(this.canvasID);
+	this.canvas.style.height = this.GUI.h + "px"
+	this.canvas.style.fontSize = this.GUI.h * .6 + "px"
+	this.canvas.style.textAlign = "left"
+	this.canvas.style.backgroundColor = this.colors.fill
+	this.canvas.style.highlight = this.colors.fill
+	this.canvas.style.border = "none"
+	this.canvas.style.outline = "none"
+	this.canvas.style.padding = "4px 10px"
+	this.canvas.style.cursor = "pointer"
+	this.canvas.style.display = "block"
+	this.canvas.className = ""
+
+	this.canvas.addEventListener("blur", function () {
+	  //this.canvas.style.border = "none";
+
+	  this.canvas.style.backgroundColor = this.colors.fill;
+	  this.canvas.style.color = this.colors.black;
+	  if (this.canvas.value != this.val.value) {
+	  	this.actual = parseFloat(this.canvas.value)
+	  	this.actual = math.clip(this.actual,this.min,this.max)
+		this.actual = math.prune(this.actual,this.decimalPlaces);
+	  	this.set({"value": this.actual}, true)
+	  }
+	}.bind(this));
+
+	this.canvas.addEventListener("keydown", function (e) {
+	  if (e.which < 48 || e.which > 57) {
+	  	if (e.which != 189 && e.which != 190 && e.which != 8) {
+	  		e.preventDefault();
+	  	}
+	  }
+	  if (e.which==13) {
+	  /*	this.actual = parseFloat(this.canvas.value)
+	  	this.actual = math.clip(this.actual,this.min,this.max)
+		this.actual = math.prune(this.actual,this.decimalPlaces);
+	  	this.set({"value": this.actual}, true) */
+	  	//this.canvas.style.outline = "none";
+	  	this.canvas.blur()
+	  }
+	}.bind(this));
+
+
+  // Setup interaction
+  if (nx.isTouchDevice) {
+    this.canvas.ontouchstart = this.preTouch;
+    this.canvas.ontouchmove = this.preTouchMove;
+    this.canvas.ontouchend = this.preTouchRelease;
+  } else {
+    this.canvas.addEventListener('mousedown', this.preClick, false);
+  }
+
+
+  this.canvas.style.userSelect = "none !important";
+  this.canvas.style.mozUserSelect = "none !important";
+  this.canvas.style.webkitUserSelect = "none !important";
+
+
+
+
+
+
+	this.init();
+}
+util.inherits(number, widget);
+
+number.prototype.init = function() {
+
+
+  this.draw();
+}
+
+number.prototype.draw = function() {
+
+	this.canvas.value = this.val.value;
+
+}
+
+
+number.prototype.click = function(e) {
+	this.canvas.readOnly = true
+	this.actual = this.val.value
+}
+
+number.prototype.move = function(e) {
+	if (this.clicked) {
+	  	this.canvas.style.border = "none";
+
+		this.actual -= (this.deltaMove.y*(this.rate*this.step));
+		this.actual = math.clip(this.actual,this.min,this.max)
+		this.val.value = Math.floor(this.actual / this.step) * this.step;
+		this.val.value = math.prune(this.val.value,this.decimalPlaces);
+		this.draw();
+		this.transmit(this.val);
+	}
+}
+
+
+number.prototype.release = function(e) {
+	if (!this.hasMoved && this.canvas.readOnly) {
+		this.canvas.readOnly = false;
+		this.canvas.focus()
+		this.canvas.setSelectionRange(0, this.canvas.value.length)
+		this.canvas.style.backgroundColor = this.colors.accent;
+		this.canvas.style.color = this.colors.fill;
+	}
+}
+
+},{"../core/widget":3,"../utils/math":6,"util":44}],28:[function(require,module,exports){
+var math = require('../utils/math')
+var util = require('util');
+var widget = require('../core/widget');
+
+/**
+	@class position
+	Two-dimensional touch slider.
+	```html
+	<canvas nx="position"></canvas>
+	```
+	<canvas nx="position" style="margin-left:25px"></canvas>
+*/
+
+var position = module.exports = function (target) {
+
+	// define a default size
+	this.defaultSize = { width: 150, height: 100 };
+
+	widget.call(this, target);
+
+	/** @property {integer} nodeSize Size of touch node graphic. */
+	this.nodeSize = 15;
+
+	/** @property {object}  val   val is an object containing the main interactive / actionable aspects of the widget.
+		| &nbsp; | data
+		| --- | ---
+		| *x* | x position of slider (float 0-1)
+		| *y* | y position of slider (float 0-1)
+	*/
+	this.val = {
+		x: 0.5,
+		y: 0.5
+	}
+
+	this.init();
+}
+
+// inherit the widget object template
+util.inherits(position, widget);
+
+// .init() is called automatically when the widget is created on a webpage.
+position.prototype.init = function() {
+	this.nodeSize = Math.min(this.GUI.h,this.GUI.w)/10;
+	this.nodeSize = Math.max(this.nodeSize,10)
+	this.actualWid = this.GUI.w - this.nodeSize*2;
+	this.actualHgt = this.GUI.h - this.nodeSize*2;
+	this.draw();
+}
+
+// .draw() should be used for any graphics activity
+position.prototype.draw = function() {
+	this.erase();
+	with (this.context) {
+
+		// use this.colors.fill for the widget background color (default: very light gray)
+		// use this.colors.border for any extra structural needs (default: light gray)
+		// use this.colors.accent for important or highlighted parts (default: a bright color)
+		fillStyle = this.colors.fill;
+		fillRect(0,0,this.GUI.w,this.GUI.h);
+
+		var drawingX = this.val.x * this.actualWid + this.nodeSize
+		var drawingY = math.invert(this.val.y) * this.actualHgt + this.nodeSize
+
+		//stay within right/left bounds
+		if (drawingX<(this.nodeSize)) {
+			drawingX = this.nodeSize;
+		} else if (drawingX>(this.GUI.w-this.nodeSize)) {
+			drawingX = this.GUI.w - this.nodeSize;
+		}
+		//stay within top/bottom bounds
+		if (drawingY<(this.nodeSize)) {
+			drawingY = this.nodeSize;
+		} else if (drawingY>(this.GUI.h-this.nodeSize)) {
+			drawingY = this.GUI.h - this.nodeSize;
+		}
+
+		with (this.context) {
+
+			// draw the touch point
+			beginPath();
+			fillStyle = this.colors.accent;
+			arc(drawingX, drawingY, this.nodeSize, 0, Math.PI*2, true);
+			fill();
+			closePath();
+
+			if (this.clicked) {
+				// draw the emphasis circle
+				beginPath();
+				fillStyle = this.colors.accent;
+				arc(drawingX, drawingY, this.nodeSize*2, 0, Math.PI*2, true);
+				fill();
+				closePath();clearRect(0,this.GUI.h,this.GUI.w,this.height - this.GUI.h)
+			}
+		}
+	}
+
+	this.drawLabel();
+}
+
+// .click() will be fired when the interface is interacted with
+// this.clicked is automatically set to true
+// this.clickPos is already and object with x and y properties detailing click point.
+position.prototype.click = function() {
+	this.val.x = this.clickPos.x;
+	this.val.y = this.clickPos.y;
+	this.scaleNode();
+	this.val["state"] = "click"
+	this.transmit(this.val);
+	this.draw();
+}
+
+// .move() will be fired when the interface is moved over after being clicked
+// this.clickPos is already and object with x and y properties detailing click point.
+position.prototype.move = function() {
+	this.val.x = this.clickPos.x;
+	this.val.y = this.clickPos.y;
+	this.scaleNode();
+	this.val["state"] = "move"
+	this.transmit(this.val);
+	this.draw();
+}
+
+// .release() will be fired on mouse up (unclick)
+position.prototype.release = function() {
+	this.val.x = this.clickPos.x;
+	this.val.y = this.clickPos.y;
+	this.scaleNode();
+	this.val["state"] = "release"
+	this.transmit(this.val);
+	this.draw();
+}
+
+/* TOUCH SPECIFIC EVENTS
+ currently, ontouch, ontouchmove, and ontouchrelease automatically execute .click, .move, and .release
+ so you only need to write one function for these events, and they will be touch compatible by default
+ however if you would like to create a touch-specific event you may define the following functions.
+ in these functions, .clickPos and .clicked will refer to your touch interactions.
+
+position.prototype.touch = function() {
+
+}
+
+position.prototype.touchmove = function() {
+
+}
+
+position.prototype.touchrelease = function() {
+
+}
+
+
+
+
+*/
+
+
+
+/*
+ extra functions pertaining only to this widget
+*/
+
+position.prototype.scaleNode = function() {
+	var actualX = this.val.x - this.nodeSize;
+	var actualY = this.val.y - this.nodeSize;
+	var clippedX = math.clip(actualX/this.actualWid, 0, 1);
+	var clippedY = math.clip(actualY/this.actualHgt, 0, 1);
+	this.val.x = math.prune(clippedX, 3)
+	this.val.y = math.prune(clippedY, 3)
+	this.val.y = math.invert(this.val.y);
+}
+
+/** @method animate
+	Adds animation to the widget.
+	@param {string} [type] Type of animation. Currently accepts "none" or "bounce", in which case the touch node can be tossed and bounces.
+*/
+position.prototype.animate = function(aniType) {
+
+	switch (aniType) {
+		case "bounce":
+			nx.aniItems.push(this.aniBounce.bind(this));
+			break;
+		case "none":
+			nx.aniItems.splice(nx.aniItems.indexOf(this.aniBounce));
+			break;
+	}
+
+}
+
+position.prototype.aniBounce = function() {
+	if (!this.clicked && this.val.x) {
+		this.val.x += (this.deltaMove.x/2)/this.GUI.w;
+		this.val.y -= (this.deltaMove.y/2)/this.GUI.h;
+		this.val["state"] = "animated";
+		if (math.bounce(this.val.x, 0, 1, this.deltaMove.x) != this.deltaMove.x) {
+			this.deltaMove.x = math.bounce(this.val.x, 0, 1, this.deltaMove.x);
+			this.val["state"] = "bounce";
+		}
+		if (this.val.y >= 1 || this.val.y <= 0) {
+			this.deltaMove.y = math.bounce(this.val.y, 0, 1, this.deltaMove.y) * -1;
+			this.val["state"] = "bounce";
+		}
+		this.transmit(this.val);
+		this.draw();
+	}
+}
+
+position.prototype.customDestroy = function() {
+	nx.removeAni(this.aniBounce);
+}
+},{"../core/widget":3,"../utils/math":6,"util":44}],29:[function(require,module,exports){
+var util = require('util');
+var widget = require('../core/widget');
+var math = require('../utils/math')
+
+/**
+	@class range
+	Range slider
+	```html
+	<canvas nx="range"></canvas>
+	```
+	<canvas nx="range" style="margin-left:25px"></canvas>
+*/
+
+var range = module.exports = function (target) {
+	this.defaultSize = { width: 110, height: 35 };
+	widget.call(this, target);
+
+	/** @property {object}  val  Object containing core interactive aspects of widget, which are also its data output. Has the following properties:
+		| &nbsp; | data
+		| --- | ---
+		| *start* | Range start value (float 0-1)
+		| *stop* | Range end value (float 0-1)
+		| *size* | Distance between ends (float 0-1)
+	*/
+	this.val = {
+		start: 0.3,
+		stop: 0.7,
+		size: 0.4
+	}
+
+
+	// handling horiz possibility
+	/** @property {boolean}  hslider  Whether or not the slider is a horizontal slider. Default is false, but set automatically to true if the slider is wider than it is tall. */
+	this.hslider = false;
+	this.handle;
+	this.relhandle;
+	this.cap;
+	this.firsttouch = "start";
+
+	/** @property {string}  mode  Mode of interaction. "edge" mode lets you drag each edge of the range individually. "area" mode (default) lets you drag the range as a whole (with parallel mouse movement) or scale the range as a whole (with transverse mouse movement) */
+	this.mode = "area" // modes: "edge", "area"
+	this.touchdown = new Object();
+	this.init();
+}
+util.inherits(range, widget);
+
+range.prototype.init = function() {
+
+	//decide if hslider or vslider
+	if (this.GUI.h>=this.GUI.w) {
+		this.hslider = false;
+	} else {
+		this.hslider = true;
+	}
+
+	if (this.canvas.getAttribute("label")!=null) {
+		this.label = this.canvas.getAttribute("label");
+	}
+
+	this.draw();
+}
+
+range.prototype.draw = function() {
+	this.erase();
+
+	with (this.context) {
+		fillStyle = this.colors.fill;
+		fillRect(0,0,this.GUI.w,this.GUI.h);
+
+		if (!this.hslider) {
+
+			var x1 = 0;
+			var y1 = this.GUI.h-this.val.stop*this.GUI.h;
+			var x2 = this.GUI.w;
+			var y2 = this.GUI.h-this.val.start*this.GUI.h;
+
+			fillStyle = this.colors.accent;
+			fillRect(x1,y1,x2-x1,y2-y1);
+
+		} else {
+
+			var x1 = this.val.start*this.GUI.w;
+			var y1 = 0;
+			var x2 = this.val.stop*this.GUI.w;
+			var y2 = this.GUI.h;
+
+			fillStyle = this.colors.accent;
+			fillRect(x1,y1,x2-x1,y2-y1);
+		}
+	}
+	this.drawLabel();
+}
+
+range.prototype.click = function() {
+	if (this.mode=="edge") {
+		if (this.hslider) {
+			if (Math.abs(this.clickPos.x-this.val.start*this.GUI.w) < Math.abs(this.clickPos.x-this.val.stop*this.GUI.w)) {
+				this.firsttouch = "start"
+			} else {
+				this.firsttouch = "stop"
+			}
+		} else {
+			if (Math.abs(Math.abs(this.clickPos.y-this.GUI.h)-this.val.start*this.GUI.h) < Math.abs(Math.abs(this.clickPos.y-this.GUI.h)-this.val.stop*this.GUI.h)) {
+				this.firsttouch = "start"
+			} else {
+				this.firsttouch = "stop"
+			}
+		}
+	} else if (this.mode=="area") {
+		this.touchdown = {
+			x: this.clickPos.x,
+			y: this.clickPos.y
+		}
+		this.startval = new Object();
+		this.startval.size = this.val.stop - this.val.start;
+		this.startval.loc = this.val.start + this.startval.size/2;
+	}
+	this.move();
+}
+
+range.prototype.move = function() {
+
+	if (this.mode=="edge") {
+		if (this.hslider) {
+			if (this.firsttouch=="start") {
+				this.val.start = this.clickPos.x/this.GUI.w;
+				if (this.clickPos.touches.length>1) {
+					this.val.stop = this.clickPos.touches[1].x/this.GUI.w;
+				}
+			} else {
+				this.val.stop = this.clickPos.x/this.GUI.w;
+				if (this.clickPos.touches.length>1) {
+					this.val.start = this.clickPos.touches[1].x/this.GUI.w;
+				}
+			}
+		} else {
+			if (this.firsttouch=="start") {
+				this.val.start = math.invert(this.clickPos.y/this.GUI.h);
+				if (this.clickPos.touches.length>1) {
+					this.val.stop = math.invert(this.clickPos.touches[1].y/this.GUI.h);
+				}
+			} else {
+				this.val.stop = math.invert(this.clickPos.y/this.GUI.h);
+				if (this.clickPos.touches.length>1) {
+					this.val.start = math.invert(this.clickPos.touches[1].y/this.GUI.h);
+				}
+			}
+		}
+
+		if (this.val.stop < this.val.start) {
+			this.tempstart = this.val.start;
+			this.val.start = this.val.stop;
+			this.val.stop = this.tempstart;
+			if (this.firsttouch=="start") {
+				this.firsttouch = "stop";
+			} else {
+				this.firsttouch = "start";
+			}
+		}
+		this.val = {
+			start: math.clip(this.val.start, 0, 1),
+			stop: math.clip(this.val.stop, 0, 1),
+		}
+		this.val['size'] = math.prune(math.clip(Math.abs(this.val.stop - this.val.start), 0, 1), 3)
+
+		this.draw();
+
+		this.transmit(this.val);
+
+	} else if (this.mode=="area") {
+
+		if (this.hslider) {
+			var moveloc = this.clickPos.x/this.GUI.w;
+			var movesize = (this.touchdown.y - this.clickPos.y)/this.GUI.h;
+		} else {
+			var moveloc = nx.invert(this.clickPos.y/this.GUI.h);
+			var movesize = (this.touchdown.x - this.clickPos.x)/this.GUI.w;
+		//	moveloc *= -1;
+			movesize *= -1;
+		}
+		movesize /= 3;
+		var size = this.startval.size + movesize;
+		size = math.clip(size,0.001,1);
+
+		this.val = {
+			start: moveloc - size/2,
+			stop: moveloc + size/2
+		}
+
+		this.val.start = math.clip(this.val.start,0,1);
+		this.val.stop = math.clip(this.val.stop,0,1);
+
+		this.draw();
+
+		this.transmit(this.val);
+
+	}
+}
+},{"../core/widget":3,"../utils/math":6,"util":44}],30:[function(require,module,exports){
+var util = require('util');
+var widget = require('../core/widget');
+
+/**
+	@class select
+	HTML-style option selector. Outputs the chosen text string. <br> **Note:** Currently the canvas is actaully replaced by an HTML select object. Any inline style on your canvas may be lost in this transformation. To style the resultant select element, we recommend creating CSS styles for the select object using its ID or the select tag.
+	```html
+	<canvas nx="select" choices="sine,saw,square"></canvas>
+	```
+	<canvas nx="select" choices="sine,saw,square"></canvas>
+*/
+
+var select = module.exports = function (target) {
+	this.defaultSize = { width: 200, height: 30 };
+	widget.call(this, target);
+
+	/** @property {array} choices Desired choices, as an array of strings. Can be initialized with a "choices" HTML attribute of comma-separated text (see example above).
+	```js
+	select1.choices = ["PartA", "PartB", "GoNuts"]
+	select1.init()
+	```
+	*/
+	this.choices = [ ];
+
+	/** @property {object}  val
+		| &nbsp; | data
+		| --- | ---
+		| *value* | Text string of option chosen
+	*/
+	this.val = new Object();
+
+
+	this.canvas.ontouchstart = null;
+	this.canvas.ontouchmove = null;
+	this.canvas.ontouchend = null;
+
+	if (this.canvas.getAttribute("choices")) {
+		this.choices = this.canvas.getAttribute("choices");
+		this.choices = this.choices.split(",");
+	}
+	var htmlstr = '<select id="'+this.canvasID+'" class="nx" nx="select" style="height:'+this.GUI.h+'px;width:'+this.GUI.w+'px;" onchange="'+this.canvasID+'.change(this)"></select><canvas height="1px" width="1px" style="display:none"></canvas>'
+	var canv = this.canvas
+	var cstyle = this.canvas.style
+	var parent = canv.parentNode
+	var newdiv = document.createElement("span")
+	newdiv.innerHTML = htmlstr
+	newdiv.className = "nx"
+	parent.replaceChild(newdiv,canv)
+	this.sel = document.getElementById(this.canvasID)
+	for (var prop in cstyle)
+    	this.sel.style[prop] = cstyle[prop];
+
+	this.canvas = document.getElementById(this.canvasID);
+
+  this.canvas.style.backgroundColor = this.colors.fill;
+  this.canvas.style.border = "solid 2px "+this.colors.border;
+  this.canvas.style.color = this.colors.black;
+  this.canvas.style.fontSize = Math.round(this.GUI.h/2.3) + "px"
+
+  this.canvas.className = ""
+
+}
+util.inherits(select, widget);
+
+select.prototype.init = function() {
+
+  this.canvas.style.backgroundColor = this.colors.fill;
+  this.canvas.style.border = "solid 2px "+this.colors.border;
+  this.canvas.style.color = this.colors.black;
+
+  var optlength = this.canvas.options.length;
+	for (i = 0; i < optlength; i++) {
+	  this.canvas.options[i] = null;
+	}
+
+	for (var i=0;i<this.choices.length;i++) {
+		var option=document.createElement("option");
+		option.text = this.choices[i];
+		option.value = this.choices[i];
+		this.canvas.add(option,null);
+	}
+
+	this.val.text = this.choices[0]
+
+}
+
+select.prototype.change = function(thisselect) {
+	this.val.text = thisselect.value;
+	this.val.value = thisselect.selectedIndex;
+	this.transmit(this.val);
+}
+
+select.prototype.draw = function() {
+
+		// included so that when .set() calls .draw(), this widget updates its value
+		this.canvas.value = this.val.text
+    this.canvas.style.backgroundColor = this.colors.fill;
+    this.canvas.style.color = this.colors.black;
+    this.canvas.style.border = "solid 2px "+this.colors.border;
+
+}
+
+},{"../core/widget":3,"util":44}],31:[function(require,module,exports){
+var math = require('../utils/math')
+var util = require('util');
+var widget = require('../core/widget');
+
+/**
+	@class slider
+	Slider (vertical or horizontal)
+	```html
+	<canvas nx="slider"></canvas>
+	```
+	<canvas nx="slider" style="margin-left:25px"></canvas>
+*/
+
+var slider = module.exports = function (target) {
+	this.defaultSize = { width: 35, height: 110 };
+	widget.call(this, target);
+
+  if (this.canvas.getAttribute("min")!=null) {
+    this.min = parseFloat(this.canvas.getAttribute("min"));
+  } else {
+  	this.min = 0
+  }
+  if (this.canvas.getAttribute("max")!=null) {
+    this.max = parseFloat(this.canvas.getAttribute("max"));
+  } else {
+  	this.max = 1
+  }
+  if (this.canvas.getAttribute("step")!=null) {
+    this.step = parseFloat(this.canvas.getAttribute("step"));
+  } else {
+  	this.step = 0.001
+  }
+
+	/** @property {object}  val
+		| &nbsp; | data
+		| --- | ---
+		| *value* | Slider value (float 0-1)
+	*/
+	this.val.value = nx.scale(0.7,0,1,this.min,this.max)
+
+
+	/** @property {string}  mode   Set "absolute" or "relative" mode. In absolute mode, slider will jump to click/touch position. In relative mode, it will not.
+	```js
+	nx.onload = function() {
+	&nbsp; // Slider will not jump to touch position.
+	&nbsp; slider1.mode = "relative"
+	}
+	```
+	*/
+	this.mode = "absolute";
+
+	/** @property {boolean}  hslider   Whether or not the slider should be horizontal. This is set to true automatically if the canvas is wider than it is tall. To override the default decision, set this property to true to create a horizontal slider, or false to create a vertical slider.
+
+	```js
+	nx.onload = function() {
+	&nbsp; //forces horizontal slider
+	&nbsp; slider1.hslider = true
+	&nbsp; slider1.draw();
+	&nbsp; //forces vertical slider
+	&nbsp; slider2.hslider = false
+	&nbsp; slider2.draw();
+	}
+	```
+	*/
+	this.hslider = false;
+	this.handle;
+	this.relhandle;
+	this.cap;
+
+	this.maxdigits = 3
+
+	this.calculateDigits = nx.calculateDigits;
+
+	this.init();
+}
+util.inherits(slider, widget);
+
+slider.prototype.init = function() {
+
+	//decide if hslider or vslider
+	if (this.GUI.h>=this.GUI.w) {
+		this.hslider = false;
+	} else {
+		this.hslider = true;
+	}
+
+
+	this.draw();
+}
+
+
+slider.prototype.draw = function() {
+
+	var normalval = this.normalize(this.val.value)
+
+	//figure out text size
+	this.digits = this.calculateDigits()
+
+	this.erase();
+
+	with (this.context) {
+		fillStyle = this.colors.fill;
+		fillRect(0,0,this.GUI.w,this.GUI.h);
+
+		if (!this.hslider) {
+
+			var x1 = 0;
+			var y1 = this.GUI.h-normalval*this.GUI.h;
+			var x2 = this.GUI.w;
+			var y2 = this.GUI.h;
+
+			fillStyle = this.colors.accent;
+			fillRect(x1,y1,x2-x1,y2-y1);
+
+			//text
+			var valtextsize = (this.GUI.w / this.digits.total) * 1.2
+			if (valtextsize > 6) {
+
+				// figure out val text location
+		    if (y1 < this.GUI.h - valtextsize/2-5) {
+					fillStyle = this.colors.white
+		    	var texty = this.GUI.h-valtextsize/2-5
+		    } else {
+					fillStyle = this.colors.accent
+		    	var texty = y1 - valtextsize/2-5
+		    }
+		    var textx = this.GUI.w/2
+		    var valtextAlign = "center"
+		    var valtextBaseline = "middle"
+			}
+
+		} else {
+
+			var x1 = 0;
+			var y1 = 0;
+			var x2 = normalval*this.GUI.w;
+			var y2 = this.GUI.h;
+
+			fillStyle = this.colors.accent
+			fillRect(x1,y1,x2-x1,y2-y1)
+
+			//text
+			var valtextsize = this.GUI.h/2
+			if (valtextsize > 6) {
+
+				// figure out val text location
+		    if (x2 > this.digits.total*valtextsize/2) {
+					fillStyle = this.colors.white
+		    	var textx = 5
+		    } else {
+					fillStyle = this.colors.accent
+		    	var textx = x2 + 5
+		    }
+		    var texty = this.GUI.h/2
+		    var valtextAlign = "left"
+		    var valtextBaseline = "middle"
+			}
+
+		}
+
+
+    //TONEEDITOR
+      // don't draw value on canvas, we want to style it
+
+    // var valtext = this.val.value.toFixed(this.digits.decimals)
+    // textBaseline = valtextBaseline
+		// textAlign = valtextAlign
+    // font = valtextsize+"px 'Open Sans'"
+    //
+    // fillText(valtext,textx,texty);
+
+
+		if (this.label) {
+			this.drawLabel()
+		}
+	}
+}
+
+slider.prototype.click = function() {
+	this.move();
+}
+
+slider.prototype.move = function() {
+
+	var normalval = this.normalize(this.val.value)
+
+	if (this.hslider) {
+		this.handle = this.clickPos.x;
+		this.relhandle = this.deltaMove.x;
+		this.cap = this.GUI.w;
+	} else {
+		this.handle = this.clickPos.y;
+		this.relhandle = this.deltaMove.y*-1;
+		this.cap = this.GUI.h
+	}
+
+	if (this.mode=="absolute") {
+		if (this.clicked) {
+			if (!this.hslider) {
+				normalval = Math.abs((math.clip(this.clickPos.y/this.GUI.h, 0, 1) - 1));
+			} else {
+				normalval = math.clip(this.clickPos.x/this.GUI.w, 0, 1);
+			}
+			this.draw();
+		}
+	} else if (this.mode=="relative") {
+		if (this.clicked) {
+			if (!this.hslider) {
+				normalval = math.clip(normalval + ((this.deltaMove.y*-1)/this.GUI.h),0,1);
+			} else {
+				normalval = math.clip(normalval + ((this.deltaMove.x)/this.GUI.w),0,1);
+			}
+			this.draw();
+		}
+	}
+
+	this.val.value = math.prune(this.rangify(normalval),3)
+	this.transmit(this.val);
+}
+},{"../core/widget":3,"../utils/math":6,"util":44}],32:[function(require,module,exports){
+var util = require('util');
+var widget = require('../core/widget');
+
+/**
+	@class string
+	Animated model of a plucked string interface.
+	```html
+	<canvas nx="string"></canvas>
+	```
+	<canvas nx="string" style="margin-left:25px"></canvas>
+*/
+
+var string = module.exports = function (target) {
+	this.defaultSize = { width: 150, height: 75 };
+	widget.call(this, target);
+
+	/** @property {object}  val  Object containing the core interactive aspects of the widget, which are also its data output. Has the following properties:
+		| &nbsp; | data
+		| --- | ---
+		| *string* | Index of the string that is plucked (starts at 0)
+		| *x* | Where on the string the pluck occured (float 0-1);
+	*/
+	this.val = {
+		string: 0,
+		x: 0
+	}
+	/** @property {integer}  numberOfStrings How many strings in the widget. We recommend setting this property with .setStrings() */
+	this.numberOfStrings = 10;
+	this.strings = new Array();
+	this.abovestring = new Array();
+	/** @property {integer}  friction  How quickly the string slows down */
+	this.friction = 1;
+
+	var stringdiv;
+
+	this.init();
+
+	nx.aniItems.push(this.draw.bind(this));
+}
+util.inherits(string, widget);
+
+string.prototype.init = function() {
+	stringdiv = this.GUI.h/(this.numberOfStrings + 1);
+	for (var i=0;i<this.numberOfStrings;i++) {
+		this.strings[i] = {
+			x1: this.lineWidth,
+			y1: stringdiv*(1+i),
+			x2: this.GUI.w - this.lineWidth,
+			y2: stringdiv*(i+1),
+			held: false, // whether or not it's gripped
+			vibrating: false, // whether or not its vibrating
+			force: 0, // amount of force of pull on string
+			maxstretch: 0, // vibration cap (in Y domain)
+			stretch: 0, // current point vibrating in y domain
+			direction: 0, // which direction it's vibrating
+			above: false // is mouse above or below string
+		};
+	}
+	this.draw();
+}
+
+string.prototype.pulse = function() {
+	this.draw();
+}
+
+/* @method setStrings Sets how many strings are in the widget.
+	```js
+	string1.setStrings(20);
+	```
+	*/
+string.prototype.setStrings = function(val) {
+	this.numberOfStrings = val;
+	this.strings = new Array();
+	this.init();
+}
+
+string.prototype.draw = function() {
+	this.erase();
+	with (this.context) {
+		strokeStyle = this.colors.border;
+		fillStyle = this.colors.fill;
+		lineWidth = this.lineWidth;
+	//	stroke();
+		fillRect(0,0,this.GUI.w,this.GUI.h);
+		strokeStyle = this.colors.accent;
+
+		for (var i = 0;i<this.strings.length;i++) {
+
+			var st = this.strings[i];
+
+			if (st.vibrating) {
+				if (st.maxstretch < 0) {
+					st.vibrating = false;
+					st.held = false;
+				}
+				st.stretch = st.stretch + st.direction;
+
+				if (Math.abs(st.stretch) > st.maxstretch) {
+					//st.direction *= (-0.99);
+					st.direction *= -1;
+					st.stretch = st.stretch + st.direction;
+					st.maxstretch = st.maxstretch - this.friction;
+
+					st.direction = (st.direction / Math.abs(st.direction)) * (st.maxstretch/1)
+				}
+
+				beginPath();
+				moveTo(st.x1, st.y1);
+				quadraticCurveTo(this.GUI.w/2, st.y1+st.stretch, st.x2, st.y2);
+				stroke();
+				closePath();
+				st.on = true;
+
+
+			} else if (st.held) {
+					//will draw rounded
+					//if mouse is higher than string and gripup
+					//or if mouse is
+					//	if (this.clickPos.y-st.y1<0 && st.gripup || this.clickPos.y-st.y1>0 && !st.gripup) {
+					beginPath();
+					moveTo(st.x1, st.y1);
+					quadraticCurveTo(this.clickPos.x, this.clickPos.y, st.x2, st.y2);
+					stroke();
+					closePath();
+					st.on = true;
+					/*	} else {
+					beginPath();
+					moveTo(st.x1, st.y1);
+					lineTo(st.x2, st.y2);
+					stroke();
+					closePath();
+				} */
+			} else {
+				beginPath();
+				moveTo(st.x1, st.y1);
+				lineTo(st.x2, st.y2);
+				stroke();
+				closePath();
+				if (st.on) {
+					st.on = false;
+				}
+			}
+		}
+	}
+	this.drawLabel();
+}
+
+string.prototype.click = function() {
+	for (var i = 0;i<this.numberOfStrings;i++) {
+		this.strings[i].above = (this.clickPos.y<this.strings[i].y1);
+	}
+	this.draw();
+}
+
+string.prototype.move = function() {
+	if (this.clicked) {
+		for (var i = 0;i<this.strings.length;i++) {
+
+			//if crosses string
+			if (this.strings[i].above != (this.clickPos.y<this.strings[i].y1) ) {
+				this.strings[i].held = true;
+				this.strings[i].above ^= true;
+			}
+
+			if (this.strings[i].held && Math.abs(this.clickPos.y - this.strings[i].y1) > this.GUI.h/(this.strings.length*3)) {
+
+				this.pluck(i)
+
+			}
+		}
+	}
+}
+
+string.prototype.release = function() {
+	for (var i = 0;i<this.strings.length;i++) {
+		if (this.strings[i].held) {
+			this.pluck(i);
+		}
+	}
+}
+
+string.prototype.pluck = function(which) {
+	var i = which;
+	this.val = {
+		string: i,
+		x: this.clickPos.x/this.GUI.w
+	}
+	this.transmit(this.val);
+	this.strings[i].held = false;
+	this.strings[i].force = this.clickPos.y - this.strings[i].y1;
+	this.strings[i].maxstretch = Math.abs(this.clickPos.y - this.strings[i].y1);
+	this.strings[i].stretch = this.clickPos.y - this.strings[i].y1;
+	this.strings[i].vibrating = true;
+	this.strings[i].direction = (this.clickPos.y - this.strings[i].y1)/Math.abs(this.clickPos.y - this.strings[i].y1) * ((this.clickPos.y - this.strings[i].y1)/-1.2);
+}
+
+string.prototype.customDestroy = function() {
+	nx.removeAni(this.draw.bind(this));
+}
+},{"../core/widget":3,"util":44}],33:[function(require,module,exports){
+var math = require('../utils/math')
+var util = require('util');
+var widget = require('../core/widget');
+
+/**
+	@class tabs
+
+	```html
+	<canvas nx="tabs"></canvas>
+	```
+	<canvas nx="tabs" style="margin-left:25px"></canvas>
+*/
+
+var tabs = module.exports = function(target) {
+
+	this.defaultSize = { width: 150, height: 50 };
+	widget.call(this, target);
+
+	//define unique attributes
+	this.choice = 0;
+	this.val = {
+		index: 0,
+		text: ""
+	}
+	this.tabwid = 0;
+	this.options = ["one", "two", "three"]
+	//init
+	this.init();
+
+}
+
+util.inherits(tabs, widget);
+
+
+tabs.prototype.init = function() {
+	this.draw();
+}
+
+
+tabs.prototype.draw = function() {
+
+	with (this.context) {
+		fillStyle = this.colors.fill;
+		fillRect(0,0,this.GUI.w,this.GUI.h)
+
+		textAlign = "center"
+		textBaseline = "middle"
+		font = "normal "+this.GUI.h/5+"px courier"
+	}
+
+	this.tabwid = this.GUI.w/this.options.length
+
+	for (var i=0;i<this.options.length;i++) {
+		if (i==this.choice) {
+			var tabcol = this.colors.accent;
+			var textcol = this.colors.white;
+		} else {
+			var tabcol = this.colors.fill;
+			var textcol = this.colors.black;
+			globalAlpha = 0.7;
+		}
+		with (this.context) {
+			fillStyle=tabcol;
+			fillRect(this.tabwid*i,0,this.tabwid,this.GUI.h)
+			if (i!=this.options.length-1) {
+				beginPath();
+				moveTo(this.tabwid*(i+1),0)
+				lineTo(this.tabwid*(i+1),this.GUI.h)
+				lineWidth = 1;
+				strokeStyle = this.colors.border
+				stroke()
+				closePath()
+			}
+			fillStyle=textcol;
+			font = this.fontSize+"px "+this.font;
+			fillText(this.options[i],this.tabwid*i+this.tabwid/2,this.GUI.h/2)
+		}
+
+	}
+}
+
+
+tabs.prototype.click = function() {
+	this.choice = ~~(this.clickPos.x / this.tabwid);
+	this.val = {
+		index: this.choice,
+		text: this.options[this.choice]
+	}
+	this.transmit(this.val)
+	this.draw();
+}
+},{"../core/widget":3,"../utils/math":6,"util":44}],34:[function(require,module,exports){
+var util = require('util');
+var widget = require('../core/widget');
+
+/**
+	@class text
+	Text editor. Outputs the typed text string when Enter is pressed. <br> **Note:** Currently the canvas is actaully replaced by an HTML textarea object. Any inline style on your canvas may be lost in this transformation. To style the resultant textarea element, we recommend creating CSS styles for the textarea element using its ID or the textarea tag.
+	```html
+	<canvas nx="text"></canvas>
+	```
+	<canvas nx="text"></canvas>
+*/
+
+var text = module.exports = function (target) {
+	this.defaultSize = { width: 200, height: 100 };
+	widget.call(this, target);
+
+	/** @property {object}  val
+		| &nbsp; | data
+		| --- | ---
+		| *text* | Text string
+	*/
+	this.val = {
+		text: ""
+	}
+
+	var htmlstr = '<textarea id="'+this.canvasID+'" style="height:'+this.GUI.h+'px;width:'+this.GUI.w+'px;" onkeydown="'+this.canvasID+'.change(event,this)"></textarea><canvas height="1px" width="1px" style="display:none"></canvas>'
+	var canv = this.canvas
+	var cstyle = this.canvas.style
+	var parent = canv.parentNode;
+	var newdiv = document.createElement("span");
+	newdiv.innerHTML = htmlstr;
+	newdiv.className = "nx"
+	parent.replaceChild(newdiv,canv)
+	this.el = document.getElementById(this.canvasID)
+
+	for (var prop in cstyle)
+    	this.el.style[prop] = cstyle[prop];
+
+	this.el.style.display = "block"
+	this.el.style.backgroundColor = this.colors.fill
+	this.el.style.border = "none"
+	this.el.style.color = this.colors.black
+	this.el.style.outline = "none"
+	this.el.style.resize = "none"
+	this.el.style.boxSizing = "border-box"
+	this.el.style.padding = "5px"
+	this.el.style.fontFamily = nx.font
+	this.el.style.fontSize = "16px"
+	this.el.className = ""
+
+
+	this.canvas = document.getElementById(this.canvasID);
+
+
+}
+util.inherits(text, widget);
+
+text.prototype.init = function() {
+
+	this.canvas.ontouchstart = null;
+	this.canvas.ontouchmove = null;
+	this.canvas.ontouchend = null;
+
+    this.canvas.style.backgroundColor = this.colors.fill;
+    this.canvas.style.color = this.colors.black;
+
+}
+
+// should have a modified "set" function
+text.prototype.change = function(e,el) {
+	this.val.text = el.value
+	if (e.which=="13") {
+		this.transmit(this.val)
+		this.val.text = ""
+		this.draw()
+		e.preventDefault()
+	}
+}
+
+text.prototype.draw = function() {
+	// needed especially for ghost
+	this.el.value = this.val.text
+
+    this.canvas.style.backgroundColor = this.colors.fill;
+    this.canvas.style.color = this.colors.black;
+}
+},{"../core/widget":3,"util":44}],35:[function(require,module,exports){
+var math = require('../utils/math')
+var util = require('util');
+var widget = require('../core/widget');
+
+/**
+	@class tilt
+	Mobile and Mac/Chrome-compatible tilt sensor. May not work on all devices! <br> **Notes:** Clicking on this widget toggles it inactive or active. <br>
+	We recommend not calling .init() on this object after the original initialization, because it will add additional redundant tilt listeners to your document.
+	```html
+	<canvas nx="tilt"></canvas>
+	```
+	<canvas nx="tilt" style="margin-left:25px"></canvas>
+*/
+
+var tilt = module.exports = function (target) {
+	this.defaultSize = { width: 50, height: 50 };
+	widget.call(this, target);
+
+	this.tiltLR;
+	this.tiltFB;
+	this.z;
+	/** @property {boolean} active Whether or not the tilt widget is on (animating and transmitting data). */
+	this.active = true;
+
+	/** @property {object}  val  Object containing the core interactive aspects of the widget, which are also its data output. Has the following properties:
+		| &nbsp; | data
+		| --- | ---
+		| *x* | X-axis rotation if supported (-1 to 1)
+		| *y* | Y-axis rotation if supported (-1 to 1)
+		| *z* | Z-axis rotation if supported (-1 to 1 or possibly 0 to 360 depending on device)
+	*/
+	this.val = {
+		x: 0,
+		y: 0,
+		z: 0
+	}
+
+	/** @property {string}  text   Text shown on tilt object
+	*/
+
+	this.text = "TILT";
+	this.init();
+
+	this.boundChromeTilt = this.chromeTilt.bind(this)
+	this.boundMozTilt = this.mozTilt.bind(this)
+
+	if (window.DeviceOrientationEvent) {
+		window.addEventListener('deviceorientation', this.boundChromeTilt, false);
+	} else if (window.OrientationEvent) {
+	  	window.addEventListener('MozOrientation', this.boundMozTilt, false);
+	} else {
+	  	console.log("Not supported on your device or browser.")
+	}
+
+}
+util.inherits(tilt, widget);
+
+tilt.prototype.deviceOrientationHandler = function() {
+
+	this.val = {
+		x: math.prune(this.tiltLR/90,3),
+		y: math.prune(this.tiltFB/90,3),
+		z: math.prune(this.z,3)
+	}
+
+	if (this.active) {
+		this.transmit(this.val);
+	}
+
+}
+
+tilt.prototype.chromeTilt = function(eventData) {
+    this.tiltLR = eventData.gamma;
+		this.tiltFB = eventData.beta;
+		this.z = eventData.alpha
+    this.deviceOrientationHandler();
+    this.draw();
+}
+
+tilt.prototype.mozTilt = function(eventData) {
+    this.tiltLR = eventData.x * 90;
+    // y is the front-to-back tilt from -1 to +1, so we need to convert to degrees
+    // We also need to invert the value so tilting the device towards us (forward)
+    // results in a positive value.
+    this.tiltFB = eventData.y * -90;
+    this.z = eventData.z;
+    this.deviceOrientationHandler();
+    this.draw();
+}
+
+tilt.prototype.init = function() {
+	this.draw();
+}
+
+tilt.prototype.draw = function() {
+
+	this.erase();
+
+	with (this.context) {
+		fillStyle = this.colors.fill;
+	    fillRect(0,0,this.GUI.w,this.GUI.h);
+
+		save();
+		translate(this.GUI.w/2,this.GUI.h/2)
+		rotate(-this.val.x*Math.PI/2);
+		translate(-this.GUI.w/2,-this.GUI.h/2)
+	    globalAlpha = 0.4;
+
+	    if (this.active) {
+	    	fillStyle = this.colors.accent;
+	    } else {
+	    	fillStyle = this.colors.border;
+	    }
+
+		fillRect(-this.GUI.w,this.GUI.h*(this.val.y/2)+this.GUI.h/2,this.GUI.w*3,this.GUI.h*2)
+		font = "bold "+this.GUI.h/5+"px "+this.font;
+		textAlign = "center";
+		textBaseline = "middle";
+		fillText(this.text, this.GUI.w/2, this.GUI.h*(this.val.y/2)+this.GUI.h/2-this.GUI.h/15);
+		globalAlpha = 1;
+		restore();
+
+		clearRect(0,this.GUI.h,this.GUI.w,this.height - this.GUI.h)
+	}
+	this.drawLabel();
+}
+
+tilt.prototype.click = function() {
+	this.active = !this.active;
+}
+
+tilt.prototype.customDestroy = function() {
+	this.active = false;
+	window.removeEventListener("deviceorientation",this.boundChromeTilt,false);
+	window.removeEventListener("mozOrientation",this.boundMozTilt,false);
+}
+},{"../core/widget":3,"../utils/math":6,"util":44}],36:[function(require,module,exports){
+var drawing = require('../utils/drawing');
+var util = require('util');
+var widget = require('../core/widget');
+
+/**
+	@class toggle
+	On/off toggle
+	```html
+	<canvas nx="toggle"></canvas>
+	```
+	<canvas nx="toggle" style="margin-left:25px"></canvas>
+*/
+
+var toggle = module.exports = function (target) {
+	this.defaultSize = { width: 50, height: 50 };
+	widget.call(this, target);
+
+	/** @property {object}  val  Object containing the core interactive aspects of the widget, which are also its data output. Has the following properties:
+		| &nbsp; | data
+		| --- | ---
+		| *value*| 1 if on, 0 if off
+	*/
+	this.val = {
+		value: 0
+	}
+	this.init();
+}
+util.inherits(toggle, widget);
+
+toggle.prototype.init = function() {
+	this.draw();
+}
+
+toggle.prototype.draw = function() {
+
+	this.erase()
+
+	with (this.context) {
+		if (this.val.value) {
+			fillStyle = this.colors.accent;
+		//	strokeStyle = this.colors.white;
+		//	strokeAlpha = 0.3
+			strokeStyle = this.colors.accenthl;
+			strokeAlpha = 1
+		} else {
+			fillStyle = this.colors.fill;
+			strokeStyle = this.colors.border;
+			strokeAlpha = 1
+		}
+		lineWidth = Math.sqrt(this.GUI.w)/2;
+		//lineWidth = this.GUI.w / 20;
+
+		fillRect(0,0,this.GUI.w,this.GUI.h);
+		globalAlpha = strokeAlpha
+		strokeRect(lineWidth/2,lineWidth/2,this.GUI.w-lineWidth,this.GUI.h-lineWidth);
+		globalAlpha = 1
+	}
+
+	this.drawLabel();
+
+}
+
+toggle.prototype.click = function() {
+	if (!this.val.value) {
+		this.val.value = 1;
+	} else {
+		this.val.value = 0;
+	}
+	this.draw();
+	this.transmit(this.val);
+}
+},{"../core/widget":3,"../utils/drawing":5,"util":44}],37:[function(require,module,exports){
+var drawing = require('../utils/drawing');
+var util = require('util');
+var widget = require('../core/widget');
+
+/**
+	@class typewriter
+	Computer keyboard listener and visualization. (Desktop only) <br> **Note:** Clicking on the widget toggles it inactive or active, which can be useful if you need to temporarily type without triggering the widget's events.
+	```html
+	<canvas nx="typewriter"></canvas>
+	```
+	<canvas nx="typewriter" style="margin-left:25px"></canvas>
+*/
+
+var typewriter = module.exports = function(target) {
+	this.defaultSize = { width: 300, height: 100 };
+	widget.call(this, target);
+
+
+	this.letter = ""
+	this.keywid = this.GUI.w/14.5;
+	this.keyhgt = this.GUI.h/5
+
+	/** @property {boolean}  active  Whether or not the widget is on (listening for events and transmitting values).*/
+	this.active = true;
+
+	/** @property {object}  val  Object containing the core interactive aspects of the widget, which are also its data output. Has the following properties:
+		| &nbsp; | data
+		| --- | ---
+		| *key* | symbol of key pressed (example: "a")
+		| *ascii* | ascii value of key pressed (example: 48)
+		| *on* | 0 if key is being pressed, 1 if key is being released
+	*/
+	this.val = {
+		key: "",
+		ascii: 0,
+		on: 0
+	}
+
+	this.rows = [
+		[
+			{ symbol: "`", value: 192, width: 1, on: false },
+			{ symbol: "1", value: 49, width: 1, on: false  },
+			{ symbol: "2", value: 50, width: 1, on: false  },
+			{ symbol: "3", value: 51, width: 1, on: false  },
+			{ symbol: "4", value: 52, width: 1, on: false  },
+			{ symbol: "5", value: 53, width: 1, on: false  },
+			{ symbol: "6", value: 54, width: 1, on: false  },
+			{ symbol: "7", value: 55, width: 1, on: false  },
+			{ symbol: "8", value: 56, width: 1, on: false  },
+			{ symbol: "9", value: 57, width: 1, on: false  },
+			{ symbol: "0", value: 48, width: 1, on: false  },
+			{ symbol: "-", value: 189, width: 1, on: false  },
+			{ symbol: "=", value: 187, width: 1, on: false  },
+			{ symbol: "delete", value: 46, width: 1.5, on: false  }
+		],
+		[
+			{ symbol: "tab", value: 9, width: 1.5, on: false  },
+			{ symbol: "q", value: 81, width: 1, on: false  },
+			{ symbol: "w", value: 87, width: 1, on: false  },
+			{ symbol: "e", value: 69, width: 1, on: false  },
+			{ symbol: "r", value: 82, width: 1, on: false  },
+			{ symbol: "t", value: 84, width: 1, on: false  },
+			{ symbol: "y", value: 89, width: 1, on: false  },
+			{ symbol: "u", value: 85, width: 1, on: false  },
+			{ symbol: "i", value: 73, width: 1, on: false  },
+			{ symbol: "o", value: 79, width: 1, on: false  },
+			{ symbol: "p", value: 80, width: 1, on: false  },
+			{ symbol: "[", value: 219, width: 1, on: false  },
+			{ symbol: "]", value: 221, width: 1, on: false  },
+			{ symbol: "\\", value: 220, width: 1, on: false  }
+		],
+		[
+			{ symbol: "caps", value: 20, width: 1.75, on: false  },
+			{ symbol: "a", value: 65, width: 1, on: false  },
+			{ symbol: "s", value: 83, width: 1, on: false  },
+			{ symbol: "d", value: 68, width: 1, on: false  },
+			{ symbol: "f", value: 70, width: 1, on: false  },
+			{ symbol: "g", value: 71, width: 1, on: false  },
+			{ symbol: "h", value: 72, width: 1, on: false  },
+			{ symbol: "j", value: 74, width: 1, on: false  },
+			{ symbol: "k", value: 75, width: 1, on: false  },
+			{ symbol: "l", value: 76, width: 1, on: false  },
+			{ symbol: ";", value: 186, width: 1, on: false  },
+			{ symbol: "'", value: 222, width: 1, on: false  },
+			{ symbol: "enter", value: 13, width: 1.75, on: false }
+		],
+		[
+			{ symbol: "shift", value: 16, width: 2.25, on: false  },
+			{ symbol: "z", value: 90, width: 1, on: false  },
+			{ symbol: "x", value: 88, width: 1, on: false  },
+			{ symbol: "c", value: 67, width: 1, on: false  },
+			{ symbol: "v", value: 86, width: 1, on: false  },
+			{ symbol: "b", value: 66, width: 1, on: false  },
+			{ symbol: "n", value: 78, width: 1, on: false  },
+			{ symbol: "m", value: 77, width: 1, on: false  },
+			{ symbol: ",", value: 188, width: 1, on: false  },
+			{ symbol: ".", value: 190, width: 1, on: false  },
+			{ symbol: "/", value: 191, width: 1, on: false  },
+			{ symbol: "shift", value: 16, width: 2.25, on: false }
+		],
+		[
+			{ symbol: "fn", value: 10, width: 1, on: false  },
+			{ symbol: "ctrl", value: 17, width: 1, on: false  },
+			{ symbol: "opt", value: 10, width: 1, on: false  },
+			{ symbol: "cmd", value: 10, width: 1.25, on: false  },
+			{ symbol: "space", value: 32, width: 5, on: false  },
+			{ symbol: "cmd", value: 10, width: 1, on: false  },
+			{ symbol: "opt", value: 10, width: 1, on: false  },
+			{ symbol: "left", value: 37, width: .81, on: false  },
+			{ symbol: "up", value: 38, width: .81, on: false  },
+			{ symbol: "down", value: 40, width: .81, on: false  },
+			{ symbol: "right", value: 39, width: .81, on: false  }
+		]
+	]
+
+	this.boundType = this.typekey.bind(this);
+	this.boundUntype = this.untype.bind(this);
+	window.addEventListener("keydown", this.boundType);
+	window.addEventListener("keyup", this.boundUntype);
+
+	this.init();
+}
+util.inherits(typewriter, widget);
+
+typewriter.prototype.init = function() {
+
+	this.keywid = this.GUI.w/14.5;
+	this.keyhgt = this.GUI.h/5
+
+	this.draw();
+}
+
+typewriter.prototype.draw = function() {	// erase
+	this.erase();
+
+	if (!this.active) {
+		this.context.globalAlpha = 0.4
+	} else {
+		this.context.globalAlpha = 1
+	}
+
+	with (this.context) {
+
+		strokeStyle = this.colors.borderhl
+		fillStyle = this.colors.accent
+		lineWidth = 1
+
+		for (var i=0;i<this.rows.length;i++) {
+			var currkeyL = 0;
+			for (var j=0;j<this.rows[i].length;j++) {
+
+				if (this.val.key==this.rows[i][j].symbol) {
+					if (this.val.on) {
+						this.rows[i][j].on = true;
+					} else {
+						this.rows[i][j].on = false;
+					}
+				}
+
+				drawing.makeRoundRect(this.context, currkeyL , i*this.keyhgt,this.keywid*this.rows[i][j].width,this.keyhgt,4);
+
+				if (this.rows[i][j].on) {
+					fillStyle = this.colors.accent
+					strokeStyle = this.colors.accent
+					fill()
+					stroke()
+				} else {
+					fillStyle = this.colors.fill
+					strokeStyle = this.colors.borderhl
+
+					fill()
+					stroke()
+				}
+
+				currkeyL += this.keywid*this.rows[i][j].width;
+
+			}
+		}
+
+		if (this.val.on) {
+			this.setFont();
+			fillStyle = this.colors.borderhl;
+			font = this.GUI.h+"px "+this.font;
+			fillText(this.val.key, this.GUI.w/2, this.GUI.h/2);
+
+			globalAlpha = 1
+		}
+
+		if (!this.active) {
+			globalAlpha = 0.7
+			fillStyle = this.colors.borderhl;
+			font = (this.GUI.h/2)+"px courier";
+			textAlign = "center";
+			textBaseline = "middle"
+			fillText("inactive", this.GUI.w/2, this.GUI.h/2);
+		}
+	}
+
+	this.drawLabel();
+}
+
+typewriter.prototype.click = function(e) {
+	this.active = !this.active;
+	this.draw();
+}
+
+typewriter.prototype.typekey = function(e) {
+	if (this.active) {
+		var currKey = e.which;
+		for (var i=0;i<this.rows.length;i++) {
+			for (var j=0;j<this.rows[i].length;j++) {
+				if (currKey == this.rows[i][j].value) {
+					this.val.key = this.rows[i][j].symbol;
+					this.val.on = 1;
+					this.val.ascii = e.which;
+					this.transmit(this.val);
+					break;
+				}
+			}
+		}
+		this.draw();
+	}
+}
+
+typewriter.prototype.untype = function(e) {
+	if (this.active) {
+		var currKey = e.which;
+		for (var i=0;i<this.rows.length;i++) {
+			for (var j=0;j<this.rows[i].length;j++) {
+				if (currKey == this.rows[i][j].value) {
+				//	this.rows[i][j].on = false;
+					this.val.key = this.rows[i][j].symbol;
+					this.val.on = 0;
+					this.val.ascii = e.which;
+					this.transmit(this.val);
+					break;
+				}
+			}
+		}
+		this.draw();
+	}
+}
+
+typewriter.prototype.customDestroy = function() {
+	window.removeEventListener("keydown", this.boundType);
+	window.removeEventListener("keyup", this.boundUntype);
+}
+},{"../core/widget":3,"../utils/drawing":5,"util":44}],38:[function(require,module,exports){
+var math = require('../utils/math')
+var util = require('util');
+var widget = require('../core/widget');
+
+/**
+	@class vinyl
+	For the boom bap
+	```html
+	<canvas nx="vinyl"></canvas>
+	```
+<!--	<canvas nx="vinyl" style="margin-left:25px"></canvas> -->
+*/
+
+var vinyl = module.exports = function (target) {
+	this.defaultSize = { width: 100, height: 100 };
+	widget.call(this, target);
+
+	this.circleSize;
+
+	/** @property speed The rotation increment. Default is 0.05. Not to be confused with .val.speed (see below) which is the data output. During rotation, .speed will always move towards .defaultSpeed */
+	this.speed = 0.05;
+	/** @property defaultSpeed The "steady-state" rotation increment. Default is 0.05. During rotation, if .speed is changed, it will gradually move towards this. */
+	this.defaultspeed = 0.05
+	this.rotation = 0;
+	this.hasMovedOnce = false;
+
+	this.lockResize = true;
+
+	/** @property {object}  val  Object containing the core interactive aspects of the widget, which are also its data output. Has the following properties:
+		| &nbsp; | data
+		| --- | ---
+		| *speed*| Current speed of the record player's rotation. (Normal is 1.)
+	*/
+	this.val = {
+		speed: 0
+	}
+	this.init();
+	nx.aniItems.push(this.spin.bind(this));
+}
+util.inherits(vinyl, widget);
+
+vinyl.prototype.init = function() {
+
+	this.circleSize = (Math.min(this.center.x, this.center.y)-this.lineWidth);
+	this.draw();
+}
+
+vinyl.prototype.draw = function() {
+	this.erase()
+
+	with (this.context) {
+		strokeStyle = this.colors.border;
+		fillStyle = this.colors.fill;
+		fillRect(0,0,this.GUI.w,this.GUI.h)
+
+		//draw main circle
+		beginPath();
+		fillStyle = this.colors.black;
+		arc(this.center.x, this.center.y, this.circleSize-5, 0, Math.PI*2, true);
+		fill();
+		closePath();
+
+
+		//draw circle in center
+		beginPath();
+		fillStyle = this.colors.accent;
+		arc(this.center.x, this.center.y*1, this.circleSize/4, 0, Math.PI*2, false);
+		fill()
+		closePath();
+
+
+		//draw tint
+		beginPath();
+		globalAlpha = 0.5;
+		fillStyle = this.colors.fill;
+		arc(this.center.x, this.center.y, this.circleSize, this.rotation, this.rotation + 0.4, false);
+		lineTo(this.center.x, this.center.y);
+		arc(this.center.x, this.center.y, this.circleSize, this.rotation+Math.PI, this.rotation +Math.PI+ 0.4, false);
+		lineTo(this.center.x, this.center.y);
+		fill();
+		globalAlpha = 1;
+		closePath();
+
+
+		//draw white circle in center
+		beginPath();
+		fillStyle = this.colors.white;
+		arc(this.center.x, this.center.y*1, this.circleSize/16, 0, Math.PI*2, false);
+		fill()
+		closePath();
+
+	}
+
+	this.drawLabel();
+}
+
+vinyl.prototype.click = function(e) {
+	this.hasMovedOnce = false;
+	this.lastRotation = this.rotation
+	this.grabAngle = this.rotation % (Math.PI*2)
+	this.grabPos = math.toPolar(this.clickPos.x-this.center.x,this.clickPos.y-this.center.y).angle
+
+}
+
+vinyl.prototype.move = function() {
+
+	if (!this.hasMovedOnce) {
+		this.hasMovedOnce = true;
+		this.grabAngle = this.rotation % (Math.PI*2)
+		this.grabPos = math.toPolar(this.clickPos.x-this.center.x,this.clickPos.y-this.center.y).angle
+	}
+
+	this.rotation = math.toPolar(this.clickPos.x-this.center.x,this.clickPos.y-this.center.y).angle + this.grabAngle - this.grabPos
+
+
+}
+
+vinyl.prototype.release = function() {
+	this.speed = ((this.rotation - this.lastRotation) + (this.lastRotation-this.lastRotation2))/2 ;
+}
+
+vinyl.prototype.spin = function() {
+
+	if (this.clicked) {
+		this.speed /= 1.1;
+	} else {
+		this.speed = this.speed*0.9 + this.defaultspeed*0.1
+	}
+
+	// may need to math.clip(this.val.speed,-10,10);
+	this.val.speed = (this.rotation - this.lastRotation) * 20; // normalizes it to 1
+
+	this.lastRotation2 = this.lastRotation
+	this.lastRotation = this.rotation
+
+	this.rotation += this.speed
+
+	this.draw();
+
+	this.transmit(this.val)
+
+}
+
+vinyl.prototype.customDestroy = function() {
+	nx.removeAni(this.spin.bind(this));
+}
+},{"../core/widget":3,"../utils/math":6,"util":44}],39:[function(require,module,exports){
+var util = require('util');
+var widget = require('../core/widget');
+var math = require('../utils/math')
+
+/**
+	@class waveform
+	Waveform visualizer and selecter
+	```html
+	<canvas nx="waveform"></canvas>
+	```
+*/
+
+var waveform = module.exports = function (target) {
+	this.defaultSize = { width: 400, height: 125 };
+	widget.call(this, target);
+
+	/** @property {object}  val  Object containing core interactive aspects of widget, which are also its data output. Has the following properties:
+		| &nbsp; | data
+		| --- | ---
+		| *starttime* | Waveform selection start position in milliseconds (integer)
+		| *stoptime* | Waveform selection end position in milliseconds (integer)
+		| *looptime* | Selection size, in milliseconds (integer)
+		| *start* | Waveform selection start, as fraction of waveform (float 0-1)
+		| *stop* | Waveform selection end, as fraction of waveform (float 0-1)
+		| *size* | Selection size, as fraction of waveform (float 0-1)
+	*/
+	this.val = {
+		start: 0,
+		stop: 0,
+		size: 0,
+		starttime: 0,
+		stoptime: 0,
+		looptime: 0
+	}
+
+	this.handle;
+	this.relhandle;
+	this.cap;
+	this.firsttouch = "start";
+
+	/** @property {Array} buffer  Contains multiple arrays of reduced buffer data, for visualization */
+	this.buffer = []
+
+	if (nx.isMobile) {
+		/** @property {integer} definition  Horizontal definition of the visualization. Value of 3 means the waveform will be represented in 3 pixel chunks. Higher numbers (4+) lead to a smaller graphics load. Smaller numbers (1-3) look better. Default is 1 for desktop renders, 3 for mobile renders. */
+		this.definition = 3;
+	} else {
+		this.definition = 1;
+	}
+
+	this.pieces = false;
+
+	/** @property {integer} channels  How many channels in the waveform */
+	this.channels = 1
+	this.rawbuffer = []
+
+	this.times = [
+		{ dur: 10 , format: 1 },
+		{ dur: 50 , format: 1 },
+		{ dur: 100 , format: 1 },
+		{ dur: 200 , format: 1 },
+		{ dur: 500 , format: 1 },
+		{ dur: 1000 , format: 1 },
+		{ dur: 2000 , format: 1 },
+		{ dur: 5000 , format: 1 },
+		{ dur: 10000 , format: 3 },
+		{ dur: 15000 , format: 3 },
+		{ dur: 60000 , format: 3 }, // 1 min
+		{ dur: 120000 , format: 3 }, // 2 mins
+		{ dur: 300000 , format: 3 }, // 5 mins
+		{ dur: 600000 , format: 3 }, // 10 mins
+	]
+	this.timescale = false
+
+	// to do --
+	// // sample rate adjustments
+	// .select(500,1000)
+
+	/** @property {string}  mode  Mode of interaction. "edge" mode lets you drag each edge of the waveform individually. "area" mode (default) lets you drag the waveform as a whole (with parallel mouse movement) or scale the waveform as a whole (with transverse mouse movement) */
+	this.mode = "area" // modes: "edge", "area"
+	this.touchdown = new Object();
+	this.init();
+}
+util.inherits(waveform, widget);
+
+waveform.prototype.init = function() {
+
+	this.pieces = ~~(this.GUI.w/this.definition);
+
+	this.draw();
+}
+
+
+/**
+  @method setBuffer
+  Load a web audio AudioBuffer into the waveform ui, for analysis and visualization.
+  @param {AudioBuffer} [buffer] The buffer to be loaded.
+  */
+waveform.prototype.setBuffer = function(prebuff) {
+
+	this.channels = prebuff.numberOfChannels
+	this.duration = prebuff.duration
+	this.sampleRate = prebuff.sampleRate
+	this.waveHeight = this.GUI.h / this.channels
+
+	// timescale
+	this.durationMS = (this.duration * 1000)
+	this.timescale = 0
+	while (~~(this.durationMS/this.times[this.timescale].dur) > 7 && this.timescale < this.times.length ) {
+		this.timescale++;
+	}
+	this.timescale = this.times[this.timescale]
+
+	this.rawbuffer = []
+	this.buffer = []
+
+	// reduce/crush buffers
+	for (var i=0;i<this.channels;i++) {
+		this.rawbuffer.push(prebuff.getChannelData(0))
+		this.buffer.push([])
+
+		// counts faster (& less accurately) through larger buffers.
+		// for every 5 seconds in the buffer, our counter skips 1.
+		// so a 10 second buffer will only look at every 3rd sample
+		//   when calculating waveform.
+		var countinc = ~~(this.rawbuffer[0].length / (this.sampleRate*5)) + 1
+
+		var groupsize = ~~(this.rawbuffer[i].length/this.pieces)
+		var cmax = 0
+		var cmin = 0
+		var group = 0
+		var vis = []
+		for (var j=0;j<this.rawbuffer[i].length;j += countinc) {
+			if (this.rawbuffer[i][j]>0) {
+				cmax = Math.max(cmax,this.rawbuffer[i][j])
+			} else {
+				cmin = Math.min(cmin,this.rawbuffer[i][j])
+			}
+			if (j > group * groupsize) {
+				this.buffer[i].push([cmax,cmin])
+				group++
+				cmin = 0
+				cmax = 0
+			}
+		}
+	}
+
+	if (this.val.start && this.val.stop) {
+
+	}
+
+	this.val.starttime = Math.round(this.val.start * this.durationMS)
+	this.val.stoptime = Math.round(this.val.stop * this.durationMS)
+	this.val.looptime = Math.round(this.val.size * this.durationMS)
+
+
+	this.draw()
+
+}
+
+/**
+  @method select
+  Set the selection start and end points.
+  @param {integer} [start] Selection start point in milliseconds
+  @param {integer} [end] Selection end point in milliseconds
+  */
+waveform.prototype.select = function(start,stop) {
+	this.val.start = math.clip(start / this.durationMS,0,1)
+	this.val.stop = math.clip(stop / this.durationMS,0,1)
+	this.val.size = this.val.stop - this.val.start
+	this.val.starttime = start
+	this.val.stoptime = stop
+	this.val.looptime = start - stop
+	this.transmit(this.val)
+	this.draw()
+}
+
+
+waveform.prototype.draw = function() {
+	//this.erase();
+
+	with (this.context) {
+		//bg
+		fillStyle = this.colors.fill;
+		fillRect(0,0,this.GUI.w,this.GUI.h);
+
+		//waveform
+		for (var i=0;i<this.buffer.length;i++) {
+			fillStyle = this.colors.black
+			this.waveTop = i*this.waveHeight;
+			this.waveCenter = this.waveTop + this.waveHeight/2
+			for (var j=0;j<this.buffer[i].length;j++) {
+				var ht1 = this.waveCenter - this.buffer[i][j][0]*this.waveHeight
+				var ht2 = this.waveCenter + Math.abs(this.buffer[i][j][1]*this.waveHeight)
+				ht2 = ht2 - ht1
+				fillRect( j*this.definition, ht1 , this.definition, ht2)
+			}
+			this.buffer[i]
+
+		}
+
+		//time bar - top
+		globalAlpha = 0.3
+		fillStyle = this.colors.border
+		fillRect(0,0,this.GUI.w,16)
+		globalAlpha = 1
+
+
+		textBaseline = "middle"
+		textAlign = "left"
+		fontSize = "8px"
+
+		//time lines
+		if (this.timescale) {
+			for (var i=1; i<this.durationMS/this.timescale.dur; i++) {
+				var x = (i * this.timescale.dur) / this.durationMS
+				x *= this.GUI.w
+				fillStyle = this.colors.border
+				fillRect(x,0,1,this.GUI.h)
+				fillStyle = this.colors.black
+				globalAlpha = 0.6
+				fillText(this.msToTime(i * this.timescale.dur,this.timescale.format),x+5,8)
+				globalAlpha = 1
+			}
+		}
+
+
+		// range selection
+		var x1 = this.val.start*this.GUI.w;
+		var y1 = 0;
+		var x2 = this.val.stop*this.GUI.w;
+		var y2 = this.GUI.h;
+
+		fillStyle = this.colors.accent;
+		strokeStyle = this.colors.accent;
+		lineWidth = 2
+		globalAlpha = 0.3
+		fillRect(x1,y1,x2-x1,y2-y1);
+		globalAlpha = 0.7
+		strokeRect(x1,y1-2,x2-x1,y2-y1+4);
+		if (this.durationMS && this.val.looptime) {
+			this.val.size = this.val.stop - this.val.start
+			textAlign = "center"
+			var dur = this.val.looptime
+			if (dur > 1000) {
+				dur /= 1000
+				math.prune(dur,2)
+				dur += ' s'
+			} else {
+				math.prune(dur,0)
+				dur += ' ms'
+			}
+			fillText(dur,x1 + (x2-x1)/2,this.GUI.h/2)
+		}
+
+		globalAlpha = 1
+
+
+	}
+
+}
+
+waveform.prototype.msToTime = function(rawms,format) {
+
+  var format = format ? format : 2
+
+  var s = ~~(rawms / 1000)
+  var secs = s % 60;
+  s = (s - secs) / 60;
+  var mins = s % 60;
+  var hrs = (s - mins) / 60;
+  var ms = rawms % 1000
+
+  //correct digits
+  secs = (secs < 10 && mins) ? secs + '0' : secs;
+  //ms = (ms < 10 && secs) ? ms + '0' : ms;
+
+  if (format==1) {
+  	return secs + '.' + ms;
+  } else if (format==2) {
+  	return mins + ':' + secs + '.' + ms;
+  } else if (format==3) {
+  	return mins + ':' + secs;
+  }
+
+}
+
+waveform.prototype.click = function() {
+	if (this.mode=="edge") {
+		if (Math.abs(this.clickPos.x-this.val.start*this.GUI.w) < Math.abs(this.clickPos.x-this.val.stop*this.GUI.w)) {
+			this.firsttouch = "start"
+		} else {
+			this.firsttouch = "stop"
+		}
+	} else if (this.mode=="area") {
+		this.touchdown = {
+			x: this.clickPos.x,
+			y: this.clickPos.y
+		}
+		this.startval = new Object();
+		this.startval.size = this.val.stop - this.val.start;
+		this.startval.loc = this.val.start + this.startval.size/2;
+	}
+	this.move();
+}
+
+waveform.prototype.move = function() {
+
+	if (this.mode=="edge") {
+		if (this.firsttouch=="start") {
+			this.val.start = this.clickPos.x/this.GUI.w;
+			if (this.clickPos.touches.length>1) {
+				this.val.stop = this.clickPos.touches[1].x/this.GUI.w;
+			}
+		} else {
+			this.val.stop = this.clickPos.x/this.GUI.w;
+			if (this.clickPos.touches.length>1) {
+				this.val.start = this.clickPos.touches[1].x/this.GUI.w;
+			}
+		}
+
+
+		if (this.val.stop < this.val.start) {
+			this.tempstart = this.val.start;
+			this.val.start = this.val.stop;
+			this.val.stop = this.tempstart;
+			if (this.firsttouch=="start") {
+				this.firsttouch = "stop";
+			} else {
+				this.firsttouch = "start";
+			}
+		}
+
+	} else if (this.mode=="area") {
+
+		var moveloc = this.clickPos.x/this.GUI.w;
+		var movesize = (this.touchdown.y - this.clickPos.y)/this.GUI.h;
+
+		movesize /= 4;
+		var size = this.startval.size + movesize;
+		size = math.clip(size,0.001,1);
+
+		this.val = {
+			start: moveloc - size/2,
+			stop: moveloc + size/2,
+		}
+
+	}
+
+	this.val.start = math.clip(this.val.start,0,1);
+	this.val.stop = math.clip(this.val.stop,0,1);
+
+	this.val['size'] = math.clip(Math.abs(this.val.stop - this.val.start), 0, 1)
+
+	if (this.durationMS) {
+		this.val["starttime"] = Math.round(this.val.start * this.durationMS)
+		this.val["stoptime"] = Math.round(this.val.stop * this.durationMS)
+		this.val["looptime"] = Math.round(this.val.size * this.durationMS)
+	}
+
+	this.transmit(this.val);
+	this.draw();
+
+}
+},{"../core/widget":3,"../utils/math":6,"util":44}],40:[function(require,module,exports){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+function EventEmitter() {
+  this._events = this._events || {};
+  this._maxListeners = this._maxListeners || undefined;
+}
+module.exports = EventEmitter;
+
+// Backwards-compat with node 0.10.x
+EventEmitter.EventEmitter = EventEmitter;
+
+EventEmitter.prototype._events = undefined;
+EventEmitter.prototype._maxListeners = undefined;
+
+// By default EventEmitters will print a warning if more than 10 listeners are
+// added to it. This is a useful default which helps finding memory leaks.
+EventEmitter.defaultMaxListeners = 10;
+
+// Obviously not all Emitters should be limited to 10. This function allows
+// that to be increased. Set to zero for unlimited.
+EventEmitter.prototype.setMaxListeners = function(n) {
+  if (!isNumber(n) || n < 0 || isNaN(n))
+    throw TypeError('n must be a positive number');
+  this._maxListeners = n;
+  return this;
+};
+
+EventEmitter.prototype.emit = function(type) {
+  var er, handler, len, args, i, listeners;
+
+  if (!this._events)
+    this._events = {};
+
+  // If there is no 'error' event listener then throw.
+  if (type === 'error') {
+    if (!this._events.error ||
+        (isObject(this._events.error) && !this._events.error.length)) {
+      er = arguments[1];
+      if (er instanceof Error) {
+        throw er; // Unhandled 'error' event
+      }
+      throw TypeError('Uncaught, unspecified "error" event.');
+    }
+  }
+
+  handler = this._events[type];
+
+  if (isUndefined(handler))
+    return false;
+
+  if (isFunction(handler)) {
+    switch (arguments.length) {
+      // fast cases
+      case 1:
+        handler.call(this);
+        break;
+      case 2:
+        handler.call(this, arguments[1]);
+        break;
+      case 3:
+        handler.call(this, arguments[1], arguments[2]);
+        break;
+      // slower
+      default:
+        len = arguments.length;
+        args = new Array(len - 1);
+        for (i = 1; i < len; i++)
+          args[i - 1] = arguments[i];
+        handler.apply(this, args);
+    }
+  } else if (isObject(handler)) {
+    len = arguments.length;
+    args = new Array(len - 1);
+    for (i = 1; i < len; i++)
+      args[i - 1] = arguments[i];
+
+    listeners = handler.slice();
+    len = listeners.length;
+    for (i = 0; i < len; i++)
+      listeners[i].apply(this, args);
+  }
+
+  return true;
+};
+
+EventEmitter.prototype.addListener = function(type, listener) {
+  var m;
+
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  if (!this._events)
+    this._events = {};
+
+  // To avoid recursion in the case that type === "newListener"! Before
+  // adding it to the listeners, first emit "newListener".
+  if (this._events.newListener)
+    this.emit('newListener', type,
+              isFunction(listener.listener) ?
+              listener.listener : listener);
+
+  if (!this._events[type])
+    // Optimize the case of one listener. Don't need the extra array object.
+    this._events[type] = listener;
+  else if (isObject(this._events[type]))
+    // If we've already got an array, just append.
+    this._events[type].push(listener);
+  else
+    // Adding the second element, need to change to array.
+    this._events[type] = [this._events[type], listener];
+
+  // Check for listener leak
+  if (isObject(this._events[type]) && !this._events[type].warned) {
+    var m;
+    if (!isUndefined(this._maxListeners)) {
+      m = this._maxListeners;
+    } else {
+      m = EventEmitter.defaultMaxListeners;
+    }
+
+    if (m && m > 0 && this._events[type].length > m) {
+      this._events[type].warned = true;
+      console.error('(node) warning: possible EventEmitter memory ' +
+                    'leak detected. %d listeners added. ' +
+                    'Use emitter.setMaxListeners() to increase limit.',
+                    this._events[type].length);
+      if (typeof console.trace === 'function') {
+        // not supported in IE 10
+        console.trace();
+      }
+    }
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+
+EventEmitter.prototype.once = function(type, listener) {
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  var fired = false;
+
+  function g() {
+    this.removeListener(type, g);
+
+    if (!fired) {
+      fired = true;
+      listener.apply(this, arguments);
+    }
+  }
+
+  g.listener = listener;
+  this.on(type, g);
+
+  return this;
+};
+
+// emits a 'removeListener' event iff the listener was removed
+EventEmitter.prototype.removeListener = function(type, listener) {
+  var list, position, length, i;
+
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  if (!this._events || !this._events[type])
+    return this;
+
+  list = this._events[type];
+  length = list.length;
+  position = -1;
+
+  if (list === listener ||
+      (isFunction(list.listener) && list.listener === listener)) {
+    delete this._events[type];
+    if (this._events.removeListener)
+      this.emit('removeListener', type, listener);
+
+  } else if (isObject(list)) {
+    for (i = length; i-- > 0;) {
+      if (list[i] === listener ||
+          (list[i].listener && list[i].listener === listener)) {
+        position = i;
+        break;
+      }
+    }
+
+    if (position < 0)
+      return this;
+
+    if (list.length === 1) {
+      list.length = 0;
+      delete this._events[type];
+    } else {
+      list.splice(position, 1);
+    }
+
+    if (this._events.removeListener)
+      this.emit('removeListener', type, listener);
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.removeAllListeners = function(type) {
+  var key, listeners;
+
+  if (!this._events)
+    return this;
+
+  // not listening for removeListener, no need to emit
+  if (!this._events.removeListener) {
+    if (arguments.length === 0)
+      this._events = {};
+    else if (this._events[type])
+      delete this._events[type];
+    return this;
+  }
+
+  // emit removeListener for all listeners on all events
+  if (arguments.length === 0) {
+    for (key in this._events) {
+      if (key === 'removeListener') continue;
+      this.removeAllListeners(key);
+    }
+    this.removeAllListeners('removeListener');
+    this._events = {};
+    return this;
+  }
+
+  listeners = this._events[type];
+
+  if (isFunction(listeners)) {
+    this.removeListener(type, listeners);
+  } else {
+    // LIFO order
+    while (listeners.length)
+      this.removeListener(type, listeners[listeners.length - 1]);
+  }
+  delete this._events[type];
+
+  return this;
+};
+
+EventEmitter.prototype.listeners = function(type) {
+  var ret;
+  if (!this._events || !this._events[type])
+    ret = [];
+  else if (isFunction(this._events[type]))
+    ret = [this._events[type]];
+  else
+    ret = this._events[type].slice();
+  return ret;
+};
+
+EventEmitter.listenerCount = function(emitter, type) {
+  var ret;
+  if (!emitter._events || !emitter._events[type])
+    ret = 0;
+  else if (isFunction(emitter._events[type]))
+    ret = 1;
+  else
+    ret = emitter._events[type].length;
+  return ret;
+};
+
+function isFunction(arg) {
+  return typeof arg === 'function';
+}
+
+function isNumber(arg) {
+  return typeof arg === 'number';
+}
+
+function isObject(arg) {
+  return typeof arg === 'object' && arg !== null;
+}
+
+function isUndefined(arg) {
+  return arg === void 0;
+}
+
+},{}],41:[function(require,module,exports){
+if (typeof Object.create === 'function') {
+  // implementation from standard node.js 'util' module
+  module.exports = function inherits(ctor, superCtor) {
+    ctor.super_ = superCtor
+    ctor.prototype = Object.create(superCtor.prototype, {
+      constructor: {
+        value: ctor,
+        enumerable: false,
+        writable: true,
+        configurable: true
+      }
+    });
+  };
+} else {
+  // old school shim for old browsers
+  module.exports = function inherits(ctor, superCtor) {
+    ctor.super_ = superCtor
+    var TempCtor = function () {}
+    TempCtor.prototype = superCtor.prototype
+    ctor.prototype = new TempCtor()
+    ctor.prototype.constructor = ctor
+  }
+}
+
+},{}],42:[function(require,module,exports){
+// shim for using process in browser
+
+var process = module.exports = {};
+
+process.nextTick = (function () {
+    var canSetImmediate = typeof window !== 'undefined'
+    && window.setImmediate;
+    var canPost = typeof window !== 'undefined'
+    && window.postMessage && window.addEventListener
+    ;
+
+    if (canSetImmediate) {
+        return function (f) { return window.setImmediate(f) };
+    }
+
+    if (canPost) {
+        var queue = [];
+        window.addEventListener('message', function (ev) {
+            var source = ev.source;
+            if ((source === window || source === null) && ev.data === 'process-tick') {
+                ev.stopPropagation();
+                if (queue.length > 0) {
+                    var fn = queue.shift();
+                    fn();
+                }
+            }
+        }, true);
+
+        return function nextTick(fn) {
+            queue.push(fn);
+            window.postMessage('process-tick', '*');
+        };
+    }
+
+    return function nextTick(fn) {
+        setTimeout(fn, 0);
+    };
+})();
+
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+}
+
+// TODO(shtylman)
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+
+},{}],43:[function(require,module,exports){
+module.exports = function isBuffer(arg) {
+  return arg && typeof arg === 'object'
+    && typeof arg.copy === 'function'
+    && typeof arg.fill === 'function'
+    && typeof arg.readUInt8 === 'function';
+}
+},{}],44:[function(require,module,exports){
+(function (process,global){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+var formatRegExp = /%[sdj%]/g;
+exports.format = function(f) {
+  if (!isString(f)) {
+    var objects = [];
+    for (var i = 0; i < arguments.length; i++) {
+      objects.push(inspect(arguments[i]));
+    }
+    return objects.join(' ');
+  }
+
+  var i = 1;
+  var args = arguments;
+  var len = args.length;
+  var str = String(f).replace(formatRegExp, function(x) {
+    if (x === '%%') return '%';
+    if (i >= len) return x;
+    switch (x) {
+      case '%s': return String(args[i++]);
+      case '%d': return Number(args[i++]);
+      case '%j':
+        try {
+          return JSON.stringify(args[i++]);
+        } catch (_) {
+          return '[Circular]';
+        }
+      default:
+        return x;
+    }
+  });
+  for (var x = args[i]; i < len; x = args[++i]) {
+    if (isNull(x) || !isObject(x)) {
+      str += ' ' + x;
+    } else {
+      str += ' ' + inspect(x);
+    }
+  }
+  return str;
+};
+
+
+// Mark that a method should not be used.
+// Returns a modified function which warns once by default.
+// If --no-deprecation is set, then it is a no-op.
+exports.deprecate = function(fn, msg) {
+  // Allow for deprecating things in the process of starting up.
+  if (isUndefined(global.process)) {
+    return function() {
+      return exports.deprecate(fn, msg).apply(this, arguments);
+    };
+  }
+
+  if (process.noDeprecation === true) {
+    return fn;
+  }
+
+  var warned = false;
+  function deprecated() {
+    if (!warned) {
+      if (process.throwDeprecation) {
+        throw new Error(msg);
+      } else if (process.traceDeprecation) {
+        console.trace(msg);
+      } else {
+        console.error(msg);
+      }
+      warned = true;
+    }
+    return fn.apply(this, arguments);
+  }
+
+  return deprecated;
+};
+
+
+var debugs = {};
+var debugEnviron;
+exports.debuglog = function(set) {
+  if (isUndefined(debugEnviron))
+    debugEnviron = process.env.NODE_DEBUG || '';
+  set = set.toUpperCase();
+  if (!debugs[set]) {
+    if (new RegExp('\\b' + set + '\\b', 'i').test(debugEnviron)) {
+      var pid = process.pid;
+      debugs[set] = function() {
+        var msg = exports.format.apply(exports, arguments);
+        console.error('%s %d: %s', set, pid, msg);
+      };
+    } else {
+      debugs[set] = function() {};
+    }
+  }
+  return debugs[set];
+};
+
+
+/**
+ * Echos the value of a value. Trys to print the value out
+ * in the best way possible given the different types.
+ *
+ */
+/* legacy: obj, showHidden, depth, colors*/
+function inspect(obj, opts) {
+  // default options
+  var ctx = {
+    seen: [],
+    stylize: stylizeNoColor
+  };
+  // legacy...
+  if (arguments.length >= 3) ctx.depth = arguments[2];
+  if (arguments.length >= 4) ctx.colors = arguments[3];
+  if (isBoolean(opts)) {
+    // legacy...
+    ctx.showHidden = opts;
+  } else if (opts) {
+    // got an "options" object
+    exports._extend(ctx, opts);
+  }
+  // set default options
+  if (isUndefined(ctx.showHidden)) ctx.showHidden = false;
+  if (isUndefined(ctx.depth)) ctx.depth = 2;
+  if (isUndefined(ctx.colors)) ctx.colors = false;
+  if (isUndefined(ctx.customInspect)) ctx.customInspect = true;
+  if (ctx.colors) ctx.stylize = stylizeWithColor;
+  return formatValue(ctx, obj, ctx.depth);
+}
+exports.inspect = inspect;
+
+
+// http://en.wikipedia.org/wiki/ANSI_escape_code#graphics
+inspect.colors = {
+  'bold' : [1, 22],
+  'italic' : [3, 23],
+  'underline' : [4, 24],
+  'inverse' : [7, 27],
+  'white' : [37, 39],
+  'grey' : [90, 39],
+  'black' : [30, 39],
+  'blue' : [34, 39],
+  'cyan' : [36, 39],
+  'green' : [32, 39],
+  'magenta' : [35, 39],
+  'red' : [31, 39],
+  'yellow' : [33, 39]
+};
+
+// Don't use 'blue' not visible on cmd.exe
+inspect.styles = {
+  'special': 'cyan',
+  'number': 'yellow',
+  'boolean': 'yellow',
+  'undefined': 'grey',
+  'null': 'bold',
+  'string': 'green',
+  'date': 'magenta',
+  // "name": intentionally not styling
+  'regexp': 'red'
+};
+
+
+function stylizeWithColor(str, styleType) {
+  var style = inspect.styles[styleType];
+
+  if (style) {
+    return '\u001b[' + inspect.colors[style][0] + 'm' + str +
+           '\u001b[' + inspect.colors[style][1] + 'm';
+  } else {
+    return str;
+  }
+}
+
+
+function stylizeNoColor(str, styleType) {
+  return str;
+}
+
+
+function arrayToHash(array) {
+  var hash = {};
+
+  array.forEach(function(val, idx) {
+    hash[val] = true;
+  });
+
+  return hash;
+}
+
+
+function formatValue(ctx, value, recurseTimes) {
+  // Provide a hook for user-specified inspect functions.
+  // Check that value is an object with an inspect function on it
+  if (ctx.customInspect &&
+      value &&
+      isFunction(value.inspect) &&
+      // Filter out the util module, it's inspect function is special
+      value.inspect !== exports.inspect &&
+      // Also filter out any prototype objects using the circular check.
+      !(value.constructor && value.constructor.prototype === value)) {
+    var ret = value.inspect(recurseTimes, ctx);
+    if (!isString(ret)) {
+      ret = formatValue(ctx, ret, recurseTimes);
+    }
+    return ret;
+  }
+
+  // Primitive types cannot have properties
+  var primitive = formatPrimitive(ctx, value);
+  if (primitive) {
+    return primitive;
+  }
+
+  // Look up the keys of the object.
+  var keys = Object.keys(value);
+  var visibleKeys = arrayToHash(keys);
+
+  if (ctx.showHidden) {
+    keys = Object.getOwnPropertyNames(value);
+  }
+
+  // IE doesn't make error fields non-enumerable
+  // http://msdn.microsoft.com/en-us/library/ie/dww52sbt(v=vs.94).aspx
+  if (isError(value)
+      && (keys.indexOf('message') >= 0 || keys.indexOf('description') >= 0)) {
+    return formatError(value);
+  }
+
+  // Some type of object without properties can be shortcutted.
+  if (keys.length === 0) {
+    if (isFunction(value)) {
+      var name = value.name ? ': ' + value.name : '';
+      return ctx.stylize('[Function' + name + ']', 'special');
+    }
+    if (isRegExp(value)) {
+      return ctx.stylize(RegExp.prototype.toString.call(value), 'regexp');
+    }
+    if (isDate(value)) {
+      return ctx.stylize(Date.prototype.toString.call(value), 'date');
+    }
+    if (isError(value)) {
+      return formatError(value);
+    }
+  }
+
+  var base = '', array = false, braces = ['{', '}'];
+
+  // Make Array say that they are Array
+  if (isArray(value)) {
+    array = true;
+    braces = ['[', ']'];
+  }
+
+  // Make functions say that they are functions
+  if (isFunction(value)) {
+    var n = value.name ? ': ' + value.name : '';
+    base = ' [Function' + n + ']';
+  }
+
+  // Make RegExps say that they are RegExps
+  if (isRegExp(value)) {
+    base = ' ' + RegExp.prototype.toString.call(value);
+  }
+
+  // Make dates with properties first say the date
+  if (isDate(value)) {
+    base = ' ' + Date.prototype.toUTCString.call(value);
+  }
+
+  // Make error with message first say the error
+  if (isError(value)) {
+    base = ' ' + formatError(value);
+  }
+
+  if (keys.length === 0 && (!array || value.length == 0)) {
+    return braces[0] + base + braces[1];
+  }
+
+  if (recurseTimes < 0) {
+    if (isRegExp(value)) {
+      return ctx.stylize(RegExp.prototype.toString.call(value), 'regexp');
+    } else {
+      return ctx.stylize('[Object]', 'special');
+    }
+  }
+
+  ctx.seen.push(value);
+
+  var output;
+  if (array) {
+    output = formatArray(ctx, value, recurseTimes, visibleKeys, keys);
+  } else {
+    output = keys.map(function(key) {
+      return formatProperty(ctx, value, recurseTimes, visibleKeys, key, array);
+    });
+  }
+
+  ctx.seen.pop();
+
+  return reduceToSingleString(output, base, braces);
+}
+
+
+function formatPrimitive(ctx, value) {
+  if (isUndefined(value))
+    return ctx.stylize('undefined', 'undefined');
+  if (isString(value)) {
+    var simple = '\'' + JSON.stringify(value).replace(/^"|"$/g, '')
+                                             .replace(/'/g, "\\'")
+                                             .replace(/\\"/g, '"') + '\'';
+    return ctx.stylize(simple, 'string');
+  }
+  if (isNumber(value))
+    return ctx.stylize('' + value, 'number');
+  if (isBoolean(value))
+    return ctx.stylize('' + value, 'boolean');
+  // For some reason typeof null is "object", so special case here.
+  if (isNull(value))
+    return ctx.stylize('null', 'null');
+}
+
+
+function formatError(value) {
+  return '[' + Error.prototype.toString.call(value) + ']';
+}
+
+
+function formatArray(ctx, value, recurseTimes, visibleKeys, keys) {
+  var output = [];
+  for (var i = 0, l = value.length; i < l; ++i) {
+    if (hasOwnProperty(value, String(i))) {
+      output.push(formatProperty(ctx, value, recurseTimes, visibleKeys,
+          String(i), true));
+    } else {
+      output.push('');
+    }
+  }
+  keys.forEach(function(key) {
+    if (!key.match(/^\d+$/)) {
+      output.push(formatProperty(ctx, value, recurseTimes, visibleKeys,
+          key, true));
+    }
+  });
+  return output;
+}
+
+
+function formatProperty(ctx, value, recurseTimes, visibleKeys, key, array) {
+  var name, str, desc;
+  desc = Object.getOwnPropertyDescriptor(value, key) || { value: value[key] };
+  if (desc.get) {
+    if (desc.set) {
+      str = ctx.stylize('[Getter/Setter]', 'special');
+    } else {
+      str = ctx.stylize('[Getter]', 'special');
+    }
+  } else {
+    if (desc.set) {
+      str = ctx.stylize('[Setter]', 'special');
+    }
+  }
+  if (!hasOwnProperty(visibleKeys, key)) {
+    name = '[' + key + ']';
+  }
+  if (!str) {
+    if (ctx.seen.indexOf(desc.value) < 0) {
+      if (isNull(recurseTimes)) {
+        str = formatValue(ctx, desc.value, null);
+      } else {
+        str = formatValue(ctx, desc.value, recurseTimes - 1);
+      }
+      if (str.indexOf('\n') > -1) {
+        if (array) {
+          str = str.split('\n').map(function(line) {
+            return '  ' + line;
+          }).join('\n').substr(2);
+        } else {
+          str = '\n' + str.split('\n').map(function(line) {
+            return '   ' + line;
+          }).join('\n');
+        }
+      }
+    } else {
+      str = ctx.stylize('[Circular]', 'special');
+    }
+  }
+  if (isUndefined(name)) {
+    if (array && key.match(/^\d+$/)) {
+      return str;
+    }
+    name = JSON.stringify('' + key);
+    if (name.match(/^"([a-zA-Z_][a-zA-Z_0-9]*)"$/)) {
+      name = name.substr(1, name.length - 2);
+      name = ctx.stylize(name, 'name');
+    } else {
+      name = name.replace(/'/g, "\\'")
+                 .replace(/\\"/g, '"')
+                 .replace(/(^"|"$)/g, "'");
+      name = ctx.stylize(name, 'string');
+    }
+  }
+
+  return name + ': ' + str;
+}
+
+
+function reduceToSingleString(output, base, braces) {
+  var numLinesEst = 0;
+  var length = output.reduce(function(prev, cur) {
+    numLinesEst++;
+    if (cur.indexOf('\n') >= 0) numLinesEst++;
+    return prev + cur.replace(/\u001b\[\d\d?m/g, '').length + 1;
+  }, 0);
+
+  if (length > 60) {
+    return braces[0] +
+           (base === '' ? '' : base + '\n ') +
+           ' ' +
+           output.join(',\n  ') +
+           ' ' +
+           braces[1];
+  }
+
+  return braces[0] + base + ' ' + output.join(', ') + ' ' + braces[1];
+}
+
+
+// NOTE: These type checking functions intentionally don't use `instanceof`
+// because it is fragile and can be easily faked with `Object.create()`.
+function isArray(ar) {
+  return Array.isArray(ar);
+}
+exports.isArray = isArray;
+
+function isBoolean(arg) {
+  return typeof arg === 'boolean';
+}
+exports.isBoolean = isBoolean;
+
+function isNull(arg) {
+  return arg === null;
+}
+exports.isNull = isNull;
+
+function isNullOrUndefined(arg) {
+  return arg == null;
+}
+exports.isNullOrUndefined = isNullOrUndefined;
+
+function isNumber(arg) {
+  return typeof arg === 'number';
+}
+exports.isNumber = isNumber;
+
+function isString(arg) {
+  return typeof arg === 'string';
+}
+exports.isString = isString;
+
+function isSymbol(arg) {
+  return typeof arg === 'symbol';
+}
+exports.isSymbol = isSymbol;
+
+function isUndefined(arg) {
+  return arg === void 0;
+}
+exports.isUndefined = isUndefined;
+
+function isRegExp(re) {
+  return isObject(re) && objectToString(re) === '[object RegExp]';
+}
+exports.isRegExp = isRegExp;
+
+function isObject(arg) {
+  return typeof arg === 'object' && arg !== null;
+}
+exports.isObject = isObject;
+
+function isDate(d) {
+  return isObject(d) && objectToString(d) === '[object Date]';
+}
+exports.isDate = isDate;
+
+function isError(e) {
+  return isObject(e) &&
+      (objectToString(e) === '[object Error]' || e instanceof Error);
+}
+exports.isError = isError;
+
+function isFunction(arg) {
+  return typeof arg === 'function';
+}
+exports.isFunction = isFunction;
+
+function isPrimitive(arg) {
+  return arg === null ||
+         typeof arg === 'boolean' ||
+         typeof arg === 'number' ||
+         typeof arg === 'string' ||
+         typeof arg === 'symbol' ||  // ES6 symbol
+         typeof arg === 'undefined';
+}
+exports.isPrimitive = isPrimitive;
+
+exports.isBuffer = require('./support/isBuffer');
+
+function objectToString(o) {
+  return Object.prototype.toString.call(o);
+}
+
+
+function pad(n) {
+  return n < 10 ? '0' + n.toString(10) : n.toString(10);
+}
+
+
+var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
+              'Oct', 'Nov', 'Dec'];
+
+// 26 Feb 16:19:34
+function timestamp() {
+  var d = new Date();
+  var time = [pad(d.getHours()),
+              pad(d.getMinutes()),
+              pad(d.getSeconds())].join(':');
+  return [d.getDate(), months[d.getMonth()], time].join(' ');
+}
+
+
+// log is just a thin wrapper to console.log that prepends a timestamp
+exports.log = function() {
+  console.log('%s - %s', timestamp(), exports.format.apply(exports, arguments));
+};
+
+
+exports.inherits = require('inherits');
+
+exports._extend = function(origin, add) {
+  // Don't do anything if add isn't an object
+  if (!add || !isObject(add)) return origin;
+
+  var keys = Object.keys(add);
+  var i = keys.length;
+  while (i--) {
+    origin[keys[i]] = add[keys[i]];
+  }
+  return origin;
+};
+
+function hasOwnProperty(obj, prop) {
+  return Object.prototype.hasOwnProperty.call(obj, prop);
+}
+
+}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./support/isBuffer":43,"_process":42,"inherits":41}],45:[function(require,module,exports){
+var hasOwn = Object.prototype.hasOwnProperty;
+var toString = Object.prototype.toString;
+var undefined;
+
+var isPlainObject = function isPlainObject(obj) {
+	'use strict';
+	if (!obj || toString.call(obj) !== '[object Object]') {
+		return false;
+	}
+
+	var has_own_constructor = hasOwn.call(obj, 'constructor');
+	var has_is_property_of_method = obj.constructor && obj.constructor.prototype && hasOwn.call(obj.constructor.prototype, 'isPrototypeOf');
+	// Not own constructor property must be Object
+	if (obj.constructor && !has_own_constructor && !has_is_property_of_method) {
+		return false;
+	}
+
+	// Own properties are enumerated firstly, so to speed up,
+	// if last one is own, then all properties are own.
+	var key;
+	for (key in obj) {}
+
+	return key === undefined || hasOwn.call(obj, key);
+};
+
+module.exports = function extend() {
+	'use strict';
+	var options, name, src, copy, copyIsArray, clone,
+		target = arguments[0],
+		i = 1,
+		length = arguments.length,
+		deep = false;
+
+	// Handle a deep copy situation
+	if (typeof target === 'boolean') {
+		deep = target;
+		target = arguments[1] || {};
+		// skip the boolean and the target
+		i = 2;
+	} else if ((typeof target !== 'object' && typeof target !== 'function') || target == null) {
+		target = {};
+	}
+
+	for (; i < length; ++i) {
+		options = arguments[i];
+		// Only deal with non-null/undefined values
+		if (options != null) {
+			// Extend the base object
+			for (name in options) {
+				src = target[name];
+				copy = options[name];
+
+				// Prevent never-ending loop
+				if (target === copy) {
+					continue;
+				}
+
+				// Recurse if we're merging plain objects or arrays
+				if (deep && copy && (isPlainObject(copy) || (copyIsArray = Array.isArray(copy)))) {
+					if (copyIsArray) {
+						copyIsArray = false;
+						clone = src && Array.isArray(src) ? src : [];
+					} else {
+						clone = src && isPlainObject(src) ? src : {};
+					}
+
+					// Never move original objects, clone them
+					target[name] = extend(deep, clone, copy);
+
+				// Don't bring in undefined values
+				} else if (copy !== undefined) {
+					target[name] = copy;
+				}
+			}
+		}
+	}
+
+	// Return the modified object
+	return target;
+};
+
+
+},{}],46:[function(require,module,exports){
+/* Web Font Loader v1.6.10 - (c) Adobe Systems, Google. License: Apache 2.0 */
+(function(){function aa(a,b,c){return a.call.apply(a.bind,arguments)}function ba(a,b,c){if(!a)throw Error();if(2<arguments.length){var d=Array.prototype.slice.call(arguments,2);return function(){var c=Array.prototype.slice.call(arguments);Array.prototype.unshift.apply(c,d);return a.apply(b,c)}}return function(){return a.apply(b,arguments)}}function n(a,b,c){n=Function.prototype.bind&&-1!=Function.prototype.bind.toString().indexOf("native code")?aa:ba;return n.apply(null,arguments)}var p=Date.now||function(){return+new Date};function q(a,b){this.F=a;this.k=b||a;this.H=this.k.document}var ca=!!window.FontFace;q.prototype.createElement=function(a,b,c){a=this.H.createElement(a);if(b)for(var d in b)b.hasOwnProperty(d)&&("style"==d?a.style.cssText=b[d]:a.setAttribute(d,b[d]));c&&a.appendChild(this.H.createTextNode(c));return a};function s(a,b,c){a=a.H.getElementsByTagName(b)[0];a||(a=document.documentElement);a.insertBefore(c,a.lastChild)}
+function t(a,b,c){b=b||[];c=c||[];for(var d=a.className.split(/\s+/),e=0;e<b.length;e+=1){for(var f=!1,g=0;g<d.length;g+=1)if(b[e]===d[g]){f=!0;break}f||d.push(b[e])}b=[];for(e=0;e<d.length;e+=1){f=!1;for(g=0;g<c.length;g+=1)if(d[e]===c[g]){f=!0;break}f||b.push(d[e])}a.className=b.join(" ").replace(/\s+/g," ").replace(/^\s+|\s+$/,"")}function u(a,b){for(var c=a.className.split(/\s+/),d=0,e=c.length;d<e;d++)if(c[d]==b)return!0;return!1}
+function v(a){if("string"===typeof a.fa)return a.fa;var b=a.k.location.protocol;"about:"==b&&(b=a.F.location.protocol);return"https:"==b?"https:":"http:"}function x(a,b,c){function d(){l&&e&&f&&(l(g),l=null)}b=a.createElement("link",{rel:"stylesheet",href:b,media:"all"});var e=!1,f=!0,g=null,l=c||null;ca?(b.onload=function(){e=!0;d()},b.onerror=function(){e=!0;g=Error("Stylesheet failed to load");d()}):setTimeout(function(){e=!0;d()},0);s(a,"head",b)}
+function y(a,b,c,d){var e=a.H.getElementsByTagName("head")[0];if(e){var f=a.createElement("script",{src:b}),g=!1;f.onload=f.onreadystatechange=function(){g||this.readyState&&"loaded"!=this.readyState&&"complete"!=this.readyState||(g=!0,c&&c(null),f.onload=f.onreadystatechange=null,"HEAD"==f.parentNode.tagName&&e.removeChild(f))};e.appendChild(f);setTimeout(function(){g||(g=!0,c&&c(Error("Script load timeout")))},d||5E3);return f}return null};function z(){this.S=0;this.K=null}function A(a){a.S++;return function(){a.S--;B(a)}}function C(a,b){a.K=b;B(a)}function B(a){0==a.S&&a.K&&(a.K(),a.K=null)};function D(a){this.ea=a||"-"}D.prototype.d=function(a){for(var b=[],c=0;c<arguments.length;c++)b.push(arguments[c].replace(/[\W_]+/g,"").toLowerCase());return b.join(this.ea)};function E(a,b){this.Q=a;this.M=4;this.L="n";var c=(b||"n4").match(/^([nio])([1-9])$/i);c&&(this.L=c[1],this.M=parseInt(c[2],10))}E.prototype.getName=function(){return this.Q};function da(a){return G(a)+" "+(a.M+"00")+" 300px "+H(a.Q)}function H(a){var b=[];a=a.split(/,\s*/);for(var c=0;c<a.length;c++){var d=a[c].replace(/['"]/g,"");-1!=d.indexOf(" ")||/^\d/.test(d)?b.push("'"+d+"'"):b.push(d)}return b.join(",")}function I(a){return a.L+a.M}
+function G(a){var b="normal";"o"===a.L?b="oblique":"i"===a.L&&(b="italic");return b}function ea(a){var b=4,c="n",d=null;a&&((d=a.match(/(normal|oblique|italic)/i))&&d[1]&&(c=d[1].substr(0,1).toLowerCase()),(d=a.match(/([1-9]00|normal|bold)/i))&&d[1]&&(/bold/i.test(d[1])?b=7:/[1-9]00/.test(d[1])&&(b=parseInt(d[1].substr(0,1),10))));return c+b};function fa(a,b){this.a=a;this.j=a.k.document.documentElement;this.O=b;this.g="wf";this.e=new D("-");this.da=!1!==b.events;this.u=!1!==b.classes}function ga(a){a.u&&t(a.j,[a.e.d(a.g,"loading")]);J(a,"loading")}function K(a){if(a.u){var b=u(a.j,a.e.d(a.g,"active")),c=[],d=[a.e.d(a.g,"loading")];b||c.push(a.e.d(a.g,"inactive"));t(a.j,c,d)}J(a,"inactive")}function J(a,b,c){if(a.da&&a.O[b])if(c)a.O[b](c.getName(),I(c));else a.O[b]()};function ha(){this.t={}}function ia(a,b,c){var d=[],e;for(e in b)if(b.hasOwnProperty(e)){var f=a.t[e];f&&d.push(f(b[e],c))}return d};function L(a,b){this.a=a;this.h=b;this.m=this.a.createElement("span",{"aria-hidden":"true"},this.h)}function M(a,b){var c=a.m,d;d="display:block;position:absolute;top:-9999px;left:-9999px;font-size:300px;width:auto;height:auto;line-height:normal;margin:0;padding:0;font-variant:normal;white-space:nowrap;font-family:"+H(b.Q)+";"+("font-style:"+G(b)+";font-weight:"+(b.M+"00")+";");c.style.cssText=d}function N(a){s(a.a,"body",a.m)}L.prototype.remove=function(){var a=this.m;a.parentNode&&a.parentNode.removeChild(a)};function O(a,b,c,d,e,f){this.G=a;this.J=b;this.f=d;this.a=c;this.v=e||3E3;this.h=f||void 0}O.prototype.start=function(){var a=this.a.k.document,b=this;Promise.race([new Promise(function(a,d){setTimeout(function(){d(b.f)},b.v)}),a.fonts.load(da(this.f),this.h)]).then(function(a){1===a.length?b.G(b.f):b.J(b.f)},function(){b.J(b.f)})};function P(a,b,c,d,e,f,g){this.G=a;this.J=b;this.a=c;this.f=d;this.h=g||"BESbswy";this.s={};this.v=e||3E3;this.Z=f||null;this.D=this.C=this.A=this.w=null;this.w=new L(this.a,this.h);this.A=new L(this.a,this.h);this.C=new L(this.a,this.h);this.D=new L(this.a,this.h);M(this.w,new E(this.f.getName()+",serif",I(this.f)));M(this.A,new E(this.f.getName()+",sans-serif",I(this.f)));M(this.C,new E("serif",I(this.f)));M(this.D,new E("sans-serif",I(this.f)));N(this.w);N(this.A);N(this.C);N(this.D)}
+var Q={ia:"serif",ha:"sans-serif"},R=null;function S(){if(null===R){var a=/AppleWebKit\/([0-9]+)(?:\.([0-9]+))/.exec(window.navigator.userAgent);R=!!a&&(536>parseInt(a[1],10)||536===parseInt(a[1],10)&&11>=parseInt(a[2],10))}return R}P.prototype.start=function(){this.s.serif=this.C.m.offsetWidth;this.s["sans-serif"]=this.D.m.offsetWidth;this.ga=p();T(this)};function ja(a,b,c){for(var d in Q)if(Q.hasOwnProperty(d)&&b===a.s[Q[d]]&&c===a.s[Q[d]])return!0;return!1}
+function T(a){var b=a.w.m.offsetWidth,c=a.A.m.offsetWidth,d;(d=b===a.s.serif&&c===a.s["sans-serif"])||(d=S()&&ja(a,b,c));d?p()-a.ga>=a.v?S()&&ja(a,b,c)&&(null===a.Z||a.Z.hasOwnProperty(a.f.getName()))?U(a,a.G):U(a,a.J):ka(a):U(a,a.G)}function ka(a){setTimeout(n(function(){T(this)},a),50)}function U(a,b){setTimeout(n(function(){this.w.remove();this.A.remove();this.C.remove();this.D.remove();b(this.f)},a),0)};function V(a,b,c){this.a=a;this.p=b;this.P=0;this.ba=this.Y=!1;this.v=c}var la=!!window.FontFace;V.prototype.V=function(a){var b=this.p;b.u&&t(b.j,[b.e.d(b.g,a.getName(),I(a).toString(),"active")],[b.e.d(b.g,a.getName(),I(a).toString(),"loading"),b.e.d(b.g,a.getName(),I(a).toString(),"inactive")]);J(b,"fontactive",a);this.ba=!0;ma(this)};
+V.prototype.W=function(a){var b=this.p;if(b.u){var c=u(b.j,b.e.d(b.g,a.getName(),I(a).toString(),"active")),d=[],e=[b.e.d(b.g,a.getName(),I(a).toString(),"loading")];c||d.push(b.e.d(b.g,a.getName(),I(a).toString(),"inactive"));t(b.j,d,e)}J(b,"fontinactive",a);ma(this)};function ma(a){0==--a.P&&a.Y&&(a.ba?(a=a.p,a.u&&t(a.j,[a.e.d(a.g,"active")],[a.e.d(a.g,"loading"),a.e.d(a.g,"inactive")]),J(a,"active")):K(a.p))};function na(a){this.F=a;this.q=new ha;this.$=0;this.T=this.U=!0}na.prototype.load=function(a){this.a=new q(this.F,a.context||this.F);this.U=!1!==a.events;this.T=!1!==a.classes;oa(this,new fa(this.a,a),a)};
+function pa(a,b,c,d,e){var f=0==--a.$;(a.T||a.U)&&setTimeout(function(){var a=e||null,l=d||null||{};if(0===c.length&&f)K(b.p);else{b.P+=c.length;f&&(b.Y=f);var h,k=[];for(h=0;h<c.length;h++){var m=c[h],w=l[m.getName()],r=b.p,F=m;r.u&&t(r.j,[r.e.d(r.g,F.getName(),I(F).toString(),"loading")]);J(r,"fontloading",F);r=null;r=la?new O(n(b.V,b),n(b.W,b),b.a,m,b.v,w):new P(n(b.V,b),n(b.W,b),b.a,m,b.v,a,w);k.push(r)}for(h=0;h<k.length;h++)k[h].start()}},0)}
+function oa(a,b,c){var d=[],e=c.timeout;ga(b);var d=ia(a.q,c,a.a),f=new V(a.a,b,e);a.$=d.length;b=0;for(c=d.length;b<c;b++)d[b].load(function(b,c,d){pa(a,f,b,c,d)})};function qa(a,b,c){this.N=a?a:b+ra;this.o=[];this.R=[];this.ca=c||""}var ra="//fonts.googleapis.com/css";function sa(a,b){for(var c=b.length,d=0;d<c;d++){var e=b[d].split(":");3==e.length&&a.R.push(e.pop());var f="";2==e.length&&""!=e[1]&&(f=":");a.o.push(e.join(f))}}
+qa.prototype.d=function(){if(0==this.o.length)throw Error("No fonts to load!");if(-1!=this.N.indexOf("kit="))return this.N;for(var a=this.o.length,b=[],c=0;c<a;c++)b.push(this.o[c].replace(/ /g,"+"));a=this.N+"?family="+b.join("%7C");0<this.R.length&&(a+="&subset="+this.R.join(","));0<this.ca.length&&(a+="&text="+encodeURIComponent(this.ca));return a};function ta(a){this.o=a;this.aa=[];this.I={}}
+var ua={latin:"BESbswy",cyrillic:"&#1081;&#1103;&#1046;",greek:"&#945;&#946;&#931;",khmer:"&#x1780;&#x1781;&#x1782;",Hanuman:"&#x1780;&#x1781;&#x1782;"},va={thin:"1",extralight:"2","extra-light":"2",ultralight:"2","ultra-light":"2",light:"3",regular:"4",book:"4",medium:"5","semi-bold":"6",semibold:"6","demi-bold":"6",demibold:"6",bold:"7","extra-bold":"8",extrabold:"8","ultra-bold":"8",ultrabold:"8",black:"9",heavy:"9",l:"3",r:"4",b:"7"},wa={i:"i",italic:"i",n:"n",normal:"n"},xa=/^(thin|(?:(?:extra|ultra)-?)?light|regular|book|medium|(?:(?:semi|demi|extra|ultra)-?)?bold|black|heavy|l|r|b|[1-9]00)?(n|i|normal|italic)?$/;
+ta.prototype.parse=function(){for(var a=this.o.length,b=0;b<a;b++){var c=this.o[b].split(":"),d=c[0].replace(/\+/g," "),e=["n4"];if(2<=c.length){var f;var g=c[1];f=[];if(g)for(var g=g.split(","),l=g.length,h=0;h<l;h++){var k;k=g[h];if(k.match(/^[\w-]+$/))if(k=xa.exec(k.toLowerCase()),null==k)k="";else{var m;m=k[1];if(null==m||""==m)m="4";else{var w=va[m];m=w?w:isNaN(m)?"4":m.substr(0,1)}k=k[2];k=[null==k||""==k?"n":wa[k],m].join("")}else k="";k&&f.push(k)}0<f.length&&(e=f);3==c.length&&(c=c[2],f=
+[],c=c?c.split(","):f,0<c.length&&(c=ua[c[0]])&&(this.I[d]=c))}this.I[d]||(c=ua[d])&&(this.I[d]=c);for(c=0;c<e.length;c+=1)this.aa.push(new E(d,e[c]))}};function ya(a,b){this.a=a;this.c=b}var za={Arimo:!0,Cousine:!0,Tinos:!0};ya.prototype.load=function(a){var b=new z,c=this.a,d=new qa(this.c.api,v(c),this.c.text),e=this.c.families;sa(d,e);var f=new ta(e);f.parse();x(c,d.d(),A(b));C(b,function(){a(f.aa,f.I,za)})};function W(a,b){this.a=a;this.c=b;this.X=[]}W.prototype.B=function(a){var b=this.a;return v(this.a)+(this.c.api||"//f.fontdeck.com/s/css/js/")+(b.k.location.hostname||b.F.location.hostname)+"/"+a+".js"};
+W.prototype.load=function(a){var b=this.c.id,c=this.a.k,d=this;b?(c.__webfontfontdeckmodule__||(c.__webfontfontdeckmodule__={}),c.__webfontfontdeckmodule__[b]=function(b,c){for(var g=0,l=c.fonts.length;g<l;++g){var h=c.fonts[g];d.X.push(new E(h.name,ea("font-weight:"+h.weight+";font-style:"+h.style)))}a(d.X)},y(this.a,this.B(b),function(b){b&&a([])})):a([])};function X(a,b){this.a=a;this.c=b}X.prototype.B=function(a){return(this.c.api||"https://use.typekit.net")+"/"+a+".js"};X.prototype.load=function(a){var b=this.c.id,c=this.a.k;b?y(this.a,this.B(b),function(b){if(b)a([]);else if(c.Typekit&&c.Typekit.config&&c.Typekit.config.fn){b=c.Typekit.config.fn;for(var e=[],f=0;f<b.length;f+=2)for(var g=b[f],l=b[f+1],h=0;h<l.length;h++)e.push(new E(g,l[h]));try{c.Typekit.load({events:!1,classes:!1,async:!0})}catch(k){}a(e)}},2E3):a([])};function Y(a,b){this.a=a;this.c=b}Y.prototype.B=function(a,b){var c=v(this.a),d=(this.c.api||"fast.fonts.net/jsapi").replace(/^.*http(s?):(\/\/)?/,"");return c+"//"+d+"/"+a+".js"+(b?"?v="+b:"")};
+Y.prototype.load=function(a){function b(){if(e["__mti_fntLst"+c]){var d=e["__mti_fntLst"+c](),g=[],l;if(d)for(var h=0;h<d.length;h++){var k=d[h].fontfamily;void 0!=d[h].fontStyle&&void 0!=d[h].fontWeight?(l=d[h].fontStyle+d[h].fontWeight,g.push(new E(k,l))):g.push(new E(k))}a(g)}else setTimeout(function(){b()},50)}var c=this.c.projectId,d=this.c.version;if(c){var e=this.a.k;y(this.a,this.B(c,d),function(c){c?a([]):b()}).id="__MonotypeAPIScript__"+c}else a([])};function Aa(a,b){this.a=a;this.c=b}Aa.prototype.load=function(a){var b,c,d=this.c.urls||[],e=this.c.families||[],f=this.c.testStrings||{},g=new z;b=0;for(c=d.length;b<c;b++)x(this.a,d[b],A(g));var l=[];b=0;for(c=e.length;b<c;b++)if(d=e[b].split(":"),d[1])for(var h=d[1].split(","),k=0;k<h.length;k+=1)l.push(new E(d[0],h[k]));else l.push(new E(d[0]));C(g,function(){a(l,f)})};var Z=new na(window);Z.q.t.custom=function(a,b){return new Aa(b,a)};Z.q.t.fontdeck=function(a,b){return new W(b,a)};Z.q.t.monotype=function(a,b){return new Y(b,a)};Z.q.t.typekit=function(a,b){return new X(b,a)};Z.q.t.google=function(a,b){return new ya(b,a)};var $={load:n(Z.load,Z)}; true?!(__WEBPACK_AMD_DEFINE_RESULT__ = function(){return $}.call(exports, __webpack_require__, exports, module),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__)):"undefined"!==typeof module&&module.exports?module.exports=$:(window.WebFont=$,window.WebFontConfig&&Z.load(window.WebFontConfig));}());
+
+
+},{}]},{},[1]);
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
+// INITIALIZE EVERYTHING
+
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+  __webpack_require__(0),
+  __webpack_require__(10),
+  __webpack_require__(1),
+  __webpack_require__(9),
+  __webpack_require__(7),
+  __webpack_require__(6),
+  __webpack_require__(2),
+  __webpack_require__(3),
+  __webpack_require__(8)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, NexusUI, ToneEditor, State, Listen) {
+  // incorporate state-saving methods
+  // utils.extend(ToneEditor, State)
+  ToneEditor.initialized = false
+
+  // ONLY called from API methods when ToneEditor.initialized = false
+  ToneEditor.init = function() {
+    // set base nx style
+    function initNexus() {
+      nx.colorize('accent','#FFF')
+      nx.colorize('fill','rgba(0,0,0,0)')
+      nx.colorize('white','rgba(0,0,0,0)')
+      nx.globalWidgets = false
+    }
+    initNexus()
+
+    // start keyboard/mouse listeners
+    var listeners = Listen()
+
+    // inject HTML
+    ToneEditor.draw()
+
+    // init complete
+    ToneEditor.initialized = true
+  }
+
+  // export global variable
+  window.ToneEditor = ToneEditor
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__))
+
+
+// // expose ToneEditor
+// window.ToneEditor = ToneEditor
+
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var map = {
+	"./Menu.js": 13,
+	"./Slider.js": 14,
+	"./Toggle.js": 15
+};
+function webpackContext(req) {
+	return __webpack_require__(webpackContextResolve(req));
+};
+function webpackContextResolve(req) {
+	var id = map[req];
+	if(!(id + 1)) // check for number or string
+		throw new Error("Cannot find module '" + req + "'.");
+	return id;
+};
+webpackContext.keys = function webpackContextKeys() {
+	return Object.keys(map);
+};
+webpackContext.resolve = webpackContextResolve;
+module.exports = webpackContext;
+webpackContext.id = 12;
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_RESULT__;
+// pass a UIElement object into this function to add superpowers relevant to the UIType
+
+!(__WEBPACK_AMD_DEFINE_RESULT__ = function(){
+
+
+  function Menu(UIElement) {
+    var ui = UIElement
+    var meta = ui.meta
+
+    // BUILD HTML
+    var tempContainer = document.createElement('div')
+    tempContainer.innerHTML = __webpack_require__(30)
+
+    // INJECT VALUES INTO TEMPLATE
+    tempContainer.querySelector('.parameter-name').innerHTML = ui.name
+
+    // STORE ELEMENT AND DITCH tempContainer
+    ui.element = tempContainer.firstElementChild
+    ui.element.setAttribute('id', this.id)
+    ui.valueElement = ui.element.querySelector('div.value')
+
+    ui.menuElement = ui.element.getElementsByTagName('select')[0]
+
+    var menuOptions = ''
+    meta.menuItems.forEach( function(option) {
+      menuOptions+='<option value="'+option+'">'+option+'</option>'
+    })
+    ui.menuElement.innerHTML = menuOptions
+
+    ui.valueElement.addEventListener('keydown', function(e) {
+      if (e.keyCode === 13) {
+        var value = this.innerHTML
+        ui.applyValue( value )
+        ui.valueElement.setAttribute('contenteditable', false)
+      }
+    })
+
+    ui.menuElement.onchange = function() {
+      ui.applyValue(ui.value)
+      // prevent typing from changing the selection
+      this.blur()
+    }
+
+    ui.applyValue = function(value) {
+      if (ui.initialized === true && ui.overwritten === false) {
+        ui.element.classList.add('overwritten')
+        ToneEditor._editedParameters.push(ui)
+        ToneEditor._updateEditCount()
+        ui.overwritten = true
+      }
+
+      var options = ui.menuElement.children
+      for (var i = 0; i < options.length; i++) {
+        if (options[i].value === value) {
+          options[i].setAttribute('selected', '')
+        } else {
+          options[i].removeAttribute('selected')
+        }
+      }
+
+      ui.parentToneComponent.set(ui.parameterName, value)
+      ui.valueElement.innerHTML = value
+    }
+
+    ui.applyValue( ui.getValue() )
+
+    return ui
+  }
+
+  module.exports = Menu
+
+}.call(exports, __webpack_require__, exports, module),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__))
+
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+// pass a UIElement object into this function to add superpowers relevant to the UIType
+
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils){
+
+
+  function Slider(ui) {
+    var meta = ui.meta
+
+    ui.applyValue = function(value, triggeredByUi) {
+      if (ui.initialized === true && ui.overwritten === false) {
+        ui.element.addClass('overwritten')
+        // ToneEditor._editedParameters.push(ui)
+        // ToneEditor._updateEditCount()
+        ui.overwritten = true
+      }
+
+      // round value if appropriate
+      if (meta.integer) value = Math.round( value )
+
+      ui.parentToneComponent.set(ui.parameterName, ui.value)
+      if (!triggeredByUi) {
+        ui.nxWidget.set({value: value})
+      }
+      ui.valueElement.innerHTML = nx.prune(value, 2)
+    }
+
+    // BUILD HTML
+    var tempContainer = document.createElement('div')
+    tempContainer.innerHTML = __webpack_require__(31)
+
+    // INJECT VALUES INTO TEMPLATE
+    tempContainer.querySelector('.parameter-name').innerHTML = ui.name
+    tempContainer.querySelector('.unit').innerHTML = meta.unit
+
+    if (ui.isSignal) {
+      tempContainer.firstElementChild.classList.add('signal')
+    }
+
+    // STORE ELEMENT AND DITCH tempContainer
+    ui.element = tempContainer.firstElementChild
+    ui.element.setAttribute('id', ui.id)
+
+    //CREATE nxWidget AFTER ELEMENT IS IN DOM
+    ui.parentComponent.deferUntilDrawn(function() {
+      ui.nxWidget = nx.add( meta.uiType, {
+        parent: ui.element,
+        name: ui.id+'_slider',
+        w: '100%',
+        h: '100%'
+      })
+
+      utils.extend(ui.nxWidget, {
+        hslider: true,
+        mode: 'relative',
+        labelSize: 0,
+        min: meta.min,
+        max: meta.max,
+        canvas: ui.element.querySelector('canvas')
+      })
+
+      // WHEN SLIDER SETS VALUE
+      ui.nxWidget.on('value', function(value) {
+        ui.applyValue(value, true)
+        ui.valueElement.innerHTML = nx.prune(ui.getValue(), 2)
+        ui.valueElement.setAttribute('contenteditable', false)
+      })
+
+      //ON CREATION, GET TONE, SET VALUE/SLIDER
+      var value = ui.getValue()
+
+      // CHECK IF PARAMETER IS CONTROLLED BY ANOTHER SIGNAL
+      if (ui.toneParameter.overridden) {
+        var blocker = document.createElement('div')
+        blocker.classList.add('blocker')
+        ui.element.classList.add('overridden-by-signal')
+        ui.element.appendChild(blocker)
+
+      } else {
+
+        ui.applyValue(value)
+      }
+      ui.initialized = true
+
+    }) // END DEFERRED CALLBACK
+
+
+
+    //SETUP VALUE ELEMENT
+    ui.valueElement = ui.element.querySelector('div.value')
+    ui.valueElement.addEventListener('mouseover', function(e) {
+      if (ToneEditor.mouseIsDown) {
+        e.preventDefault()
+      }
+    })
+
+    // ui.nxWidget.draw()
+
+    // WHEN ELEMENT SETS VALUE
+    ui.valueElement.addEventListener('keydown', function(e) {
+      switch(e.which){
+        //ENTER - apply value
+        case 13:
+          var value = ui.valueElement.innerHTML
+          ui.applyValue(parseFloat(value))
+          ui.valueElement.setAttribute('contenteditable', false)
+          break
+
+        //DELETE
+        case 8:
+          break
+
+        //UP - increment down
+        case 38:
+          var incrementAmount = 1
+          if (Keyboard.shiftIsDown) incrementAmount = 10
+          if (Keyboard.optionIsDown) incrementAmount = 0.1
+          if (Keyboard.shiftIsDown && Keyboard.optionIsDown) incrementAmount = 100
+          var value = parseFloat(ui.valueElement.innerHTML)
+          ui.applyValue(value + incrementAmount)
+          document.execCommand('selectAll',false,null)
+          break
+
+        //DOWN - increment down
+        case 40:
+          var incrementAmount = 1
+          if (Keyboard.shiftIsDown) incrementAmount = 10
+          if (Keyboard.optionIsDown) incrementAmount = 0.1
+          if (Keyboard.shiftIsDown && Keyboard.optionIsDown) incrementAmount = 100
+          var value = parseFloat(ui.valueElement.innerHTML)
+          ui.applyValue(value - incrementAmount)
+          document.execCommand('selectAll',false,null)
+          break
+
+        // ESC - revert to previous value
+        case 27:
+          var value = parseFloat(ui.valueElement.getAttribute('data-previous-value'))
+          ui.applyValue(value)
+          ui.valueElement.blur()
+          ui.valueElement.setAttribute('contenteditable', false)
+          break
+
+        //NUMBERS
+        default:
+          if (e.which >= 48 && e.which <= 57 || e.which === 189 /* negative symbol */ ) {
+
+          } else {
+            e.preventDefault()
+          }
+      }
+    })
+
+
+
+    return ui
+  }
+
+  module.exports = Slider
+
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__))
+
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_RESULT__;
+// pass a UIElement object into this function to add superpowers relevant to the UIType
+
+!(__WEBPACK_AMD_DEFINE_RESULT__ = function(){
+
+
+  function Toggle(ui) {
+    var meta = ui.meta
+
+    var tempContainer = document.createElement('div')
+    tempContainer.innerHTML = __webpack_require__(32)
+
+    // INJECT VALUES INTO TEMPLATE
+    tempContainer.querySelector('.parameter-name').innerHTML = ui.name
+
+    // STORE ELEMENT AND DITCH tempContainer
+    ui.element = tempContainer.firstElementChild
+    ui.element.setAttribute('id', ui.id)
+    ui.valueElement = ui.element.querySelector('input.toggle')
+
+    ui.applyValue = function(value) {
+      if (ui.initialized === true && ui.overwritten === false) {
+        ui.element.classList.add('overwritten')
+        ToneEditor._editedParameters.push(ui)
+        ToneEditor._updateEditCount()
+        ui.overwritten = true
+      }
+
+      ui.parentToneComponent.set(ui.parameterName, ui.value)
+      ui.valueElement.value = value
+    }
+
+    return ui
+  }
+
+  module.exports = Toggle
+
+}.call(exports, __webpack_require__, exports, module),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__))
+
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0),__webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, ToneEditor, Keyboard){
+
+  var UIElement = function( parameterName, parentComponent, options) {
+    var options = options || {}
+
+    this.parentComponent = parentComponent
+    this.parentToneComponent = parentComponent.toneComponent
+
+    this.name = parameterName
+    this.toneParameter = this.parentToneComponent[parameterName]
+    this.nxWidget = false
+    this.overwritten = false
+    this.initialized = false
+
+    this.element = undefined
+
+    // make id from the id of parents
+    this.id = parentComponent.id+'_'+parameterName
+
+    var _this = this
+
+    // var meta = utils.getMeta(_this.toneParameter.units) || utils.getMeta(parameterName) || utils.getMeta('default')
+
+    var meta = utils.getMeta(this)
+    this.meta = meta
+
+    // if options.uiType is defined, override meta.uiType
+    if (options.uiType && meta.isDefault) meta.uiType = options.uiType
+
+    this.isSignal = utils.isSignal(_this.toneParameter)
+
+    if (meta.uiType === 'hidden') {
+      this.hidden = true
+    } else {
+      // console.log('./Templates/UIElement/'+meta.uiType.capitalize()+'.js')
+      __webpack_require__(12)("./"+meta.uiType.capitalize()+'.js')
+    }
+  //   if (meta.uiType === 'slider') {
+  //
+  //     require('./Templates/UIElement/Slider.js')(this)
+  //     // this.applyValue( this.getValue() )
+  //
+  //   } else if (meta.uiType === 'menu') {
+  //
+  //     require('./Templates/UIElement/Menu.js')(this)
+  //     // this.applyValue( this.getValue() )
+  //
+  //   } else if (meta.uiType === 'toggle') {
+  //
+  //     require('./Templates/UIElement/Toggle.js')(this)
+  //     // this.applyValue( this.getValue() )
+  //
+  //   } else if (meta.uiType === 'hidden') {
+  //     // tells parentComponent to delete this immediately
+  //     this.hidden = true
+  //   }
+  }
+
+  UIElement.prototype.getValue = function() {
+    console.log(this.parentToneComponent.get(this.parameterName)[this.parameterValue])
+    return this.parentToneComponent.get(this.parameterName)[this.parameterValue]
+  }
+
+  UIElement.prototype.draw = function() {
+    console.log(this, this.element)
+    return this.element
+  }
+
+
+  module.exports = UIElement
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__))
+
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_RESULT__;// Get the Tone classes of any Tone object
+
+!(__WEBPACK_AMD_DEFINE_RESULT__ = function(utils) {
+
+  // Instances of Tone.AMSynth inherit both Instrument and AMSynth
+  var Classes = {
+    Instrument: ["AMSynth", "DuoSynth", "FMSynth", "MembraneSynth", "MetalSynth", "MonoSynth", "Monophonic", "NoiseSynth", "PluckSynth", "PolySynth", "Sampler", "Synth"],
+    Effect: ["AutoFilter", "AutoPanner", "AutoWah", "BitCrusher", "Chebyshev", "Chorus", "Convolver", "Distortion", "FeedbackDelay", "FeedbackEffect", "Freeverb", "JCReverb", "MidSideEffect", "Phaser", "PingPongDelay", "PitchShift", "StereoEffect", "StereoFeedbackEffect", "StereoWidener", "StereoXFeedbackEffect", "Tremolo", "Vibrato"],
+    Source: ["AMOscillator", "BufferSource", "FMOscillator", "FatOscillator", "GrainPlayer", "MultiPlayer", "Noise", "OmniOscillator", "Oscillator", "PWMOscillator", "Player", "PulseOscillator", "UserMedia"]
+  }
+
+  // instances of the rest only inherit Tone
+  var extras = []
+
+  // add Component category
+  extras.push("AmplitudeEnvelope", "Analyser", "Compressor", "CrossFade", "EQ3", "Envelope", "FeedbackCombFilter", "Filter", "Follower", "FrequencyEnvelope", "Gate", "LFO", "Limiter", "LowpassCombFilter", "Merge", "Meter", "MidSideCompressor", "MidSideMerge", "MidSideSplit", "Mono", "MultibandCompressor", "MultibandSplit", "PanVol", "Panner", "Panner3D", "ScaledEnvelope", "Split", "Volume")
+
+  // add Signal category
+  extras.push("Abs", "Add", "AudioToGain", "EqualPowerGain", "Expr", "GainToAudio", "GreaterThan", "GreaterThanZero", "Modulo", "Multiply", "Negate", "Normalize", "Pow", "Scale", "ScaleExp", "Signal", "SignalBase", "Subtract", "TimelineSignal", "WaveShaper", "Zero")
+
+  function classify( toneComponent ) {
+    var heritage = []
+    for (var categoryName in Classes) {
+      if (toneComponent instanceof Tone[categoryName]) {
+        heritage.push(categoryName)
+
+        for (var i=0; i<Classes[categoryName].length; i++) {
+          if (toneComponent instanceof Tone[Classes[categoryName][i]] ) {
+            heritage.push( Classes[categoryName][i] )
+          }
+        }
+      }
+    }
+
+    // fallback: check extras
+    if (heritage.length === 0) {
+      for (var i = 0; i<extras.length; i++) {
+        if (toneComponent instanceof Tone[extras[i]]) {
+          heritage.push(extras[i])
+        }
+      }
+
+    }
+
+    if (heritage.length === 0) {
+      if (toneComponent === Tone.Transport) {
+        heritage = ['Transport']
+      } else if (toneComponent === Tone.Master) {
+        heritage = ['Master']
+      }
+
+    }
+    return heritage
+  }
+
+  module.exports = classify
+}.call(exports, __webpack_require__, exports, module),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__))
+
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_RESULT__ = function() {
+
+  // guess metadata for a parameter, based on...
+
+  // class
+    // units
+      // name (last resort)
+        // if all of these fail, use defaults
+
+
+  // CHECK BASED ON PARAMETER NAME
+  var fromName = {
+    // INSTRUMENT
+    'portamento': {
+      uiType: 'slider',
+      unit: 's',
+      min: 0,
+      max: 5
+    },
+    // EFFECTS
+    'roomSize': {
+      uiType: 'slider',
+      unit: '',
+      min: 0,
+      max: 1
+    },
+    'wet': {
+      uiType: 'slider',
+      unit: '',
+      min: 0,
+      max: 1
+    },
+    'phase': {
+      uiType: 'slider',
+      unit: 'deg',
+      min: 0,
+      max: 360
+    },
+    'volume': {
+      uiType: 'slider',
+      unit: 'dB',
+      min: -100,
+      max: 10
+    },
+    'default': {
+      uiType: 'slider',
+      unit: '',
+      min: 0,
+      max: 100,
+      isDefault: true
+    }
+  }
+
+  // CHECK BASED ON CLASS
+  var fromClass = {
+    // INSTRUMENT
+
+    // EFFECT
+    'Filter': {
+      'type': {
+        uiType: 'menu',
+        unit: 'dB',
+        menuItems: ["lowpass", "highpass", "bandpass", "lowshelf", "highshelf", "notch", "allpass", "peaking"]
+      },
+      'rolloff': {
+        uiType: 'menu',
+        unit: 'dB',
+        menuItems: [-12, -24, -48, -96]
+      },
+      'frequency': fromName.frequency
+    },
+
+    // COMPONENT
+    'Oscillator': {
+      'frequency': fromName.frequency,
+      'detune': fromName.detune,
+      'type': {
+        uiType: 'menu',
+        menuItems: ['sine', 'square', 'triangle', 'sawtooth']
+      },
+      'phase': fromName.phase,
+      'volume': fromName.volume
+    },
+
+    // CORE
+    'Transport': {
+      'bpm': {
+        uiType: 'slider',
+        unit: 'bpm',
+        min: 0,
+        max: 200
+      },
+      'swing': {
+        uiType: 'slider',
+        unit: '',
+        min: 0,
+        max: 1
+      },
+      'timeSignature': {
+        uiType: 'slider',
+        unit: '',
+        min: 1,
+        max: 16,
+        integer: true
+      },
+      'loopStart': {
+        uiType: 'slider',
+        unit: 's',
+        min: 0,
+        max: 300,
+      },
+      'loopEnd': {
+        uiType: 'slider',
+        unit: 's',
+        min: 0,
+        max: 300,
+      },
+      'PPQ': {
+        uiType: 'hidden'
+      }
+    }
+
+  }
+
+  // CHECK BASED ON UNIT
+  var fromUnit = {
+    'frequency': {
+      uiType: 'slider',
+      unit: 'hz',
+      min: 0,
+      max: 20000
+    },
+    'db': {
+      uiType: 'slider',
+      unit: 'dB',
+      min: -100,
+      max: 10
+    },
+    'cents': {
+      uiType: 'slider', // add 'cslider' later
+      unit: 'c',
+      min: -100,
+      max: 100
+    }
+  }
+
+  module.exports = function (uiElement) {
+    var parentComponent = uiElement.parentComponent
+    var name = uiElement.name
+    var toneParam = uiElement.toneParameter
+
+    var meta = {}
+
+    var classMeta = fromClass[ parentComponent.heritage[1] ] || fromClass[ parentComponent.heritage[2] ] || fromClass[ parentComponent.heritage[0] ]
+
+    if (classMeta !== undefined && classMeta[name] !== undefined) {
+      meta = classMeta[name]
+
+    } else if (fromUnit[toneParam.units] !== undefined) {
+      meta = fromUnit[toneParam.units]
+
+    } else if (fromName[name] !== undefined) {
+      meta = fromName[name]
+
+    } else {
+      meta = fromName.default
+    }
+
+    return meta
+  }
+
+}.call(exports, __webpack_require__, exports, module),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__))
+
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports) {
+
+
+// needs testing and work
+module.exports = function(toneComponent) {
+  // try instanceof Tone.Signal
+
+  // return (toneComponent.unit === !undefined)
+  return toneComponent instanceof Tone.Signal
+}
+
+
+/***/ }),
+/* 20 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var require;var require;/*!
  * clipboard.js v1.6.1
  * https://zenorocha.github.io/clipboard.js
  *
  * Licensed MIT © Zeno Rocha
  */
-!function(i){t.exports=i()}(function(){var t;return function t(i,e,n){function o(h,a){if(!e[h]){if(!i[h]){var g="function"==typeof s&&s;if(!a&&g)return s(h,!0);if(r)return s(h,!0);var l=new Error("Cannot find module '"+h+"'");throw l.code="MODULE_NOT_FOUND",l}var I=e[h]={exports:{}};i[h][0].call(I.exports,function(t){var e=i[h][1][t];return o(e||t)},I,I.exports,t,i,e,n)}return e[h].exports}for(var r="function"==typeof s&&s,h=0;h<n.length;h++)o(n[h]);return o}({1:[function(t,i,e){function s(t,i){for(;t&&t.nodeType!==n;){if(t.matches(i))return t;t=t.parentNode}}var n=9;if("undefined"!=typeof Element&&!Element.prototype.matches){var o=Element.prototype;o.matches=o.matchesSelector||o.mozMatchesSelector||o.msMatchesSelector||o.oMatchesSelector||o.webkitMatchesSelector}i.exports=s},{}],2:[function(t,i,e){function s(t,i,e,s,o){var r=n.apply(this,arguments);return t.addEventListener(e,r,o),{destroy:function(){t.removeEventListener(e,r,o)}}}function n(t,i,e,s){return function(e){e.delegateTarget=o(e.target,i),e.delegateTarget&&s.call(t,e)}}var o=t("./closest");i.exports=s},{"./closest":1}],3:[function(t,i,e){e.node=function(t){return void 0!==t&&t instanceof HTMLElement&&1===t.nodeType},e.nodeList=function(t){var i=Object.prototype.toString.call(t);return void 0!==t&&("[object NodeList]"===i||"[object HTMLCollection]"===i)&&"length"in t&&(0===t.length||e.node(t[0]))},e.string=function(t){return"string"==typeof t||t instanceof String},e.fn=function(t){return"[object Function]"===Object.prototype.toString.call(t)}},{}],4:[function(t,i,e){function s(t,i,e){if(!t&&!i&&!e)throw new Error("Missing required arguments");if(!h.string(i))throw new TypeError("Second argument must be a String");if(!h.fn(e))throw new TypeError("Third argument must be a Function");if(h.node(t))return n(t,i,e);if(h.nodeList(t))return o(t,i,e);if(h.string(t))return r(t,i,e);throw new TypeError("First argument must be a String, HTMLElement, HTMLCollection, or NodeList")}function n(t,i,e){return t.addEventListener(i,e),{destroy:function(){t.removeEventListener(i,e)}}}function o(t,i,e){return Array.prototype.forEach.call(t,function(t){t.addEventListener(i,e)}),{destroy:function(){Array.prototype.forEach.call(t,function(t){t.removeEventListener(i,e)})}}}function r(t,i,e){return a(document.body,t,i,e)}var h=t("./is"),a=t("delegate");i.exports=s},{"./is":3,delegate:2}],5:[function(t,i,e){function s(t){var i;if("SELECT"===t.nodeName)t.focus(),i=t.value;else if("INPUT"===t.nodeName||"TEXTAREA"===t.nodeName){var e=t.hasAttribute("readonly");e||t.setAttribute("readonly",""),t.select(),t.setSelectionRange(0,t.value.length),e||t.removeAttribute("readonly"),i=t.value}else{t.hasAttribute("contenteditable")&&t.focus();var s=window.getSelection(),n=document.createRange();n.selectNodeContents(t),s.removeAllRanges(),s.addRange(n),i=s.toString()}return i}i.exports=s},{}],6:[function(t,i,e){function s(){}s.prototype={on:function(t,i,e){var s=this.e||(this.e={});return(s[t]||(s[t]=[])).push({fn:i,ctx:e}),this},once:function(t,i,e){function s(){n.off(t,s),i.apply(e,arguments)}var n=this;return s._=i,this.on(t,s,e)},emit:function(t){var i=[].slice.call(arguments,1),e=((this.e||(this.e={}))[t]||[]).slice(),s=0,n=e.length;for(s;s<n;s++)e[s].fn.apply(e[s].ctx,i);return this},off:function(t,i){var e=this.e||(this.e={}),s=e[t],n=[];if(s&&i)for(var o=0,r=s.length;o<r;o++)s[o].fn!==i&&s[o].fn._!==i&&n.push(s[o]);return n.length?e[t]=n:delete e[t],this}},i.exports=s},{}],7:[function(i,e,s){!function(n,o){if("function"==typeof t&&t.amd)t(["module","select"],o);else if(void 0!==s)o(e,i("select"));else{var r={exports:{}};o(r,n.select),n.clipboardAction=r.exports}}(this,function(t,i){"use strict";function e(t,i){if(!(t instanceof i))throw new TypeError("Cannot call a class as a function")}var s=function(t){return t&&t.__esModule?t:{default:t}}(i),n="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"==typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t},o=function(){function t(t,i){for(var e=0;e<i.length;e++){var s=i[e];s.enumerable=s.enumerable||!1,s.configurable=!0,"value"in s&&(s.writable=!0),Object.defineProperty(t,s.key,s)}}return function(i,e,s){return e&&t(i.prototype,e),s&&t(i,s),i}}(),r=function(){function t(i){e(this,t),this.resolveOptions(i),this.initSelection()}return o(t,[{key:"resolveOptions",value:function(){var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{};this.action=t.action,this.emitter=t.emitter,this.target=t.target,this.text=t.text,this.trigger=t.trigger,this.selectedText=""}},{key:"initSelection",value:function(){this.text?this.selectFake():this.target&&this.selectTarget()}},{key:"selectFake",value:function(){var t=this,i="rtl"==document.documentElement.getAttribute("dir");this.removeFake(),this.fakeHandlerCallback=function(){return t.removeFake()},this.fakeHandler=document.body.addEventListener("click",this.fakeHandlerCallback)||!0,this.fakeElem=document.createElement("textarea"),this.fakeElem.style.fontSize="12pt",this.fakeElem.style.border="0",this.fakeElem.style.padding="0",this.fakeElem.style.margin="0",this.fakeElem.style.position="absolute",this.fakeElem.style[i?"right":"left"]="-9999px";var e=window.pageYOffset||document.documentElement.scrollTop;this.fakeElem.style.top=e+"px",this.fakeElem.setAttribute("readonly",""),this.fakeElem.value=this.text,document.body.appendChild(this.fakeElem),this.selectedText=(0,s.default)(this.fakeElem),this.copyText()}},{key:"removeFake",value:function(){this.fakeHandler&&(document.body.removeEventListener("click",this.fakeHandlerCallback),this.fakeHandler=null,this.fakeHandlerCallback=null),this.fakeElem&&(document.body.removeChild(this.fakeElem),this.fakeElem=null)}},{key:"selectTarget",value:function(){this.selectedText=(0,s.default)(this.target),this.copyText()}},{key:"copyText",value:function(){var t=void 0;try{t=document.execCommand(this.action)}catch(i){t=!1}this.handleResult(t)}},{key:"handleResult",value:function(t){this.emitter.emit(t?"success":"error",{action:this.action,text:this.selectedText,trigger:this.trigger,clearSelection:this.clearSelection.bind(this)})}},{key:"clearSelection",value:function(){this.target&&this.target.blur(),window.getSelection().removeAllRanges()}},{key:"destroy",value:function(){this.removeFake()}},{key:"action",set:function(){var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:"copy";if(this._action=t,"copy"!==this._action&&"cut"!==this._action)throw new Error('Invalid "action" value, use either "copy" or "cut"')},get:function(){return this._action}},{key:"target",set:function(t){if(void 0!==t){if(!t||"object"!==(void 0===t?"undefined":n(t))||1!==t.nodeType)throw new Error('Invalid "target" value, use a valid Element');if("copy"===this.action&&t.hasAttribute("disabled"))throw new Error('Invalid "target" attribute. Please use "readonly" instead of "disabled" attribute');if("cut"===this.action&&(t.hasAttribute("readonly")||t.hasAttribute("disabled")))throw new Error('Invalid "target" attribute. You can\'t cut text from elements with "readonly" or "disabled" attributes');this._target=t}},get:function(){return this._target}}]),t}();t.exports=r})},{select:5}],8:[function(i,e,s){!function(n,o){if("function"==typeof t&&t.amd)t(["module","./clipboard-action","tiny-emitter","good-listener"],o);else if(void 0!==s)o(e,i("./clipboard-action"),i("tiny-emitter"),i("good-listener"));else{var r={exports:{}};o(r,n.clipboardAction,n.tinyEmitter,n.goodListener),n.clipboard=r.exports}}(this,function(t,i,e,s){"use strict";function n(t){return t&&t.__esModule?t:{default:t}}function o(t,i){if(!(t instanceof i))throw new TypeError("Cannot call a class as a function")}function r(t,i){if(!t)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return!i||"object"!=typeof i&&"function"!=typeof i?t:i}function h(t,i){if("function"!=typeof i&&null!==i)throw new TypeError("Super expression must either be null or a function, not "+typeof i);t.prototype=Object.create(i&&i.prototype,{constructor:{value:t,enumerable:!1,writable:!0,configurable:!0}}),i&&(Object.setPrototypeOf?Object.setPrototypeOf(t,i):t.__proto__=i)}function a(t,i){var e="data-clipboard-"+t;if(i.hasAttribute(e))return i.getAttribute(e)}var g=n(i),l=n(e),I=n(s),A=function(){function t(t,i){for(var e=0;e<i.length;e++){var s=i[e];s.enumerable=s.enumerable||!1,s.configurable=!0,"value"in s&&(s.writable=!0),Object.defineProperty(t,s.key,s)}}return function(i,e,s){return e&&t(i.prototype,e),s&&t(i,s),i}}(),c=function(t){function i(t,e){o(this,i);var s=r(this,(i.__proto__||Object.getPrototypeOf(i)).call(this));return s.resolveOptions(e),s.listenClick(t),s}return h(i,t),A(i,[{key:"resolveOptions",value:function(){var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{};this.action="function"==typeof t.action?t.action:this.defaultAction,this.target="function"==typeof t.target?t.target:this.defaultTarget,this.text="function"==typeof t.text?t.text:this.defaultText}},{key:"listenClick",value:function(t){var i=this;this.listener=(0,I.default)(t,"click",function(t){return i.onClick(t)})}},{key:"onClick",value:function(t){var i=t.delegateTarget||t.currentTarget;this.clipboardAction&&(this.clipboardAction=null),this.clipboardAction=new g.default({action:this.action(i),target:this.target(i),text:this.text(i),trigger:i,emitter:this})}},{key:"defaultAction",value:function(t){return a("action",t)}},{key:"defaultTarget",value:function(t){var i=a("target",t);if(i)return document.querySelector(i)}},{key:"defaultText",value:function(t){return a("text",t)}},{key:"destroy",value:function(){this.listener.destroy(),this.clipboardAction&&(this.clipboardAction.destroy(),this.clipboardAction=null)}}],[{key:"isSupported",value:function(){var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:["copy","cut"],i="string"==typeof t?[t]:t,e=!!document.queryCommandSupported;return i.forEach(function(t){e=e&&!!document.queryCommandSupported(t)}),e}}]),i}(l.default);t.exports=c})},{"./clipboard-action":7,"good-listener":4,"tiny-emitter":6}]},{},[8])(8)})},function(t,i,e){"use strict";function s(t){var i=t.length;if(i%4>0)throw new Error("Invalid string. Length must be a multiple of 4");return"="===t[i-2]?2:"="===t[i-1]?1:0}function n(t){return 3*t.length/4-s(t)}function o(t){var i,e,n,o,r,h,a=t.length;r=s(t),h=new I(3*a/4-r),n=r>0?a-4:a;var g=0;for(i=0,e=0;i<n;i+=4,e+=3)o=l[t.charCodeAt(i)]<<18|l[t.charCodeAt(i+1)]<<12|l[t.charCodeAt(i+2)]<<6|l[t.charCodeAt(i+3)],h[g++]=o>>16&255,h[g++]=o>>8&255,h[g++]=255&o;return 2===r?(o=l[t.charCodeAt(i)]<<2|l[t.charCodeAt(i+1)]>>4,h[g++]=255&o):1===r&&(o=l[t.charCodeAt(i)]<<10|l[t.charCodeAt(i+1)]<<4|l[t.charCodeAt(i+2)]>>2,h[g++]=o>>8&255,h[g++]=255&o),h}function r(t){return g[t>>18&63]+g[t>>12&63]+g[t>>6&63]+g[63&t]}function h(t,i,e){for(var s,n=[],o=i;o<e;o+=3)s=(t[o]<<16)+(t[o+1]<<8)+t[o+2],n.push(r(s));return n.join("")}function a(t){for(var i,e=t.length,s=e%3,n="",o=[],r=0,a=e-s;r<a;r+=16383)o.push(h(t,r,r+16383>a?a:r+16383));return 1===s?(i=t[e-1],n+=g[i>>2],n+=g[i<<4&63],n+="=="):2===s&&(i=(t[e-2]<<8)+t[e-1],n+=g[i>>10],n+=g[i>>4&63],n+=g[i<<2&63],n+="="),o.push(n),o.join("")}i.byteLength=n,i.toByteArray=o,i.fromByteArray=a;for(var g=[],l=[],I="undefined"!=typeof Uint8Array?Uint8Array:Array,A="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/",c=0,C=A.length;c<C;++c)g[c]=A[c],l[A.charCodeAt(c)]=c;l["-".charCodeAt(0)]=62,l["_".charCodeAt(0)]=63},function(t,i,e){"use strict";(function(t){function s(){return o.TYPED_ARRAY_SUPPORT?2147483647:1073741823}function n(t,i){if(s()<i)throw new RangeError("Invalid typed array length");return o.TYPED_ARRAY_SUPPORT?(t=new Uint8Array(i),t.__proto__=o.prototype):(null===t&&(t=new o(i)),t.length=i),t}function o(t,i,e){if(!(o.TYPED_ARRAY_SUPPORT||this instanceof o))return new o(t,i,e);if("number"==typeof t){if("string"==typeof i)throw new Error("If encoding is specified then the first argument must be a string");return g(this,t)}return r(this,t,i,e)}function r(t,i,e,s){if("number"==typeof i)throw new TypeError('"value" argument must not be a number');return"undefined"!=typeof ArrayBuffer&&i instanceof ArrayBuffer?A(t,i,e,s):"string"==typeof i?l(t,i,e):c(t,i)}function h(t){if("number"!=typeof t)throw new TypeError('"size" argument must be a number');if(t<0)throw new RangeError('"size" argument must not be negative')}function a(t,i,e,s){return h(i),i<=0?n(t,i):void 0!==e?"string"==typeof s?n(t,i).fill(e,s):n(t,i).fill(e):n(t,i)}function g(t,i){if(h(i),t=n(t,i<0?0:0|C(i)),!o.TYPED_ARRAY_SUPPORT)for(var e=0;e<i;++e)t[e]=0;return t}function l(t,i,e){if("string"==typeof e&&""!==e||(e="utf8"),!o.isEncoding(e))throw new TypeError('"encoding" must be a valid string encoding');var s=0|d(i,e);t=n(t,s);var r=t.write(i,e);return r!==s&&(t=t.slice(0,r)),t}function I(t,i){var e=i.length<0?0:0|C(i.length);t=n(t,e);for(var s=0;s<e;s+=1)t[s]=255&i[s];return t}function A(t,i,e,s){if(i.byteLength,e<0||i.byteLength<e)throw new RangeError("'offset' is out of bounds");if(i.byteLength<e+(s||0))throw new RangeError("'length' is out of bounds");return i=void 0===e&&void 0===s?new Uint8Array(i):void 0===s?new Uint8Array(i,e):new Uint8Array(i,e,s),o.TYPED_ARRAY_SUPPORT?(t=i,t.__proto__=o.prototype):t=I(t,i),t}function c(t,i){if(o.isBuffer(i)){var e=0|C(i.length);return t=n(t,e),0===t.length?t:(i.copy(t,0,0,e),t)}if(i){if("undefined"!=typeof ArrayBuffer&&i.buffer instanceof ArrayBuffer||"length"in i)return"number"!=typeof i.length||X(i.length)?n(t,0):I(t,i);if("Buffer"===i.type&&Q(i.data))return I(t,i.data)}throw new TypeError("First argument must be a string, Buffer, ArrayBuffer, Array, or array-like object.")}function C(t){if(t>=s())throw new RangeError("Attempt to allocate Buffer larger than maximum size: 0x"+s().toString(16)+" bytes");return 0|t}function u(t){return+t!=t&&(t=0),o.alloc(+t)}function d(t,i){if(o.isBuffer(t))return t.length;if("undefined"!=typeof ArrayBuffer&&"function"==typeof ArrayBuffer.isView&&(ArrayBuffer.isView(t)||t instanceof ArrayBuffer))return t.byteLength;"string"!=typeof t&&(t=""+t);var e=t.length;if(0===e)return 0;for(var s=!1;;)switch(i){case"ascii":case"latin1":case"binary":return e;case"utf8":case"utf-8":case void 0:return W(t).length;case"ucs2":case"ucs-2":case"utf16le":case"utf-16le":return 2*e;case"hex":return e>>>1;case"base64":return V(t).length;default:if(s)return W(t).length;i=(""+i).toLowerCase(),s=!0}}function p(t,i,e){var s=!1;if((void 0===i||i<0)&&(i=0),i>this.length)return"";if((void 0===e||e>this.length)&&(e=this.length),e<=0)return"";if(e>>>=0,i>>>=0,e<=i)return"";for(t||(t="utf8");;)switch(t){case"hex":return M(this,i,e);case"utf8":case"utf-8":return T(this,i,e);case"ascii":return G(this,i,e);case"latin1":case"binary":return E(this,i,e);case"base64":return U(this,i,e);case"ucs2":case"ucs-2":case"utf16le":case"utf-16le":return z(this,i,e);default:if(s)throw new TypeError("Unknown encoding: "+t);t=(t+"").toLowerCase(),s=!0}}function f(t,i,e){var s=t[i];t[i]=t[e],t[e]=s}function v(t,i,e,s,n){if(0===t.length)return-1;if("string"==typeof e?(s=e,e=0):e>2147483647?e=2147483647:e<-2147483648&&(e=-2147483648),e=+e,isNaN(e)&&(e=n?0:t.length-1),e<0&&(e=t.length+e),e>=t.length){if(n)return-1;e=t.length-1}else if(e<0){if(!n)return-1;e=0}if("string"==typeof i&&(i=o.from(i,s)),o.isBuffer(i))return 0===i.length?-1:m(t,i,e,s,n);if("number"==typeof i)return i&=255,o.TYPED_ARRAY_SUPPORT&&"function"==typeof Uint8Array.prototype.indexOf?n?Uint8Array.prototype.indexOf.call(t,i,e):Uint8Array.prototype.lastIndexOf.call(t,i,e):m(t,[i],e,s,n);throw new TypeError("val must be string, number or Buffer")}function m(t,i,e,s,n){function o(t,i){return 1===r?t[i]:t.readUInt16BE(i*r)}var r=1,h=t.length,a=i.length;if(void 0!==s&&("ucs2"===(s=String(s).toLowerCase())||"ucs-2"===s||"utf16le"===s||"utf-16le"===s)){if(t.length<2||i.length<2)return-1;r=2,h/=2,a/=2,e/=2}var g;if(n){var l=-1;for(g=e;g<h;g++)if(o(t,g)===o(i,-1===l?0:g-l)){if(-1===l&&(l=g),g-l+1===a)return l*r}else-1!==l&&(g-=g-l),l=-1}else for(e+a>h&&(e=h-a),g=e;g>=0;g--){for(var I=!0,A=0;A<a;A++)if(o(t,g+A)!==o(i,A)){I=!1;break}if(I)return g}return-1}function y(t,i,e,s){e=Number(e)||0;var n=t.length-e;s?(s=Number(s))>n&&(s=n):s=n;var o=i.length;if(o%2!=0)throw new TypeError("Invalid hex string");s>o/2&&(s=o/2);for(var r=0;r<s;++r){var h=parseInt(i.substr(2*r,2),16);if(isNaN(h))return r;t[e+r]=h}return r}function w(t,i,e,s){return Z(W(i,t.length-e),t,e,s)}function b(t,i,e,s){return Z(Y(i),t,e,s)}function x(t,i,e,s){return b(t,i,e,s)}function k(t,i,e,s){return Z(V(i),t,e,s)}function S(t,i,e,s){return Z(H(i,t.length-e),t,e,s)}function U(t,i,e){return 0===i&&e===t.length?K.fromByteArray(t):K.fromByteArray(t.slice(i,e))}function T(t,i,e){e=Math.min(t.length,e);for(var s=[],n=i;n<e;){var o=t[n],r=null,h=o>239?4:o>223?3:o>191?2:1;if(n+h<=e){var a,g,l,I;switch(h){case 1:o<128&&(r=o);break;case 2:a=t[n+1],128==(192&a)&&(I=(31&o)<<6|63&a)>127&&(r=I);break;case 3:a=t[n+1],g=t[n+2],128==(192&a)&&128==(192&g)&&(I=(15&o)<<12|(63&a)<<6|63&g)>2047&&(I<55296||I>57343)&&(r=I);break;case 4:a=t[n+1],g=t[n+2],l=t[n+3],128==(192&a)&&128==(192&g)&&128==(192&l)&&(I=(15&o)<<18|(63&a)<<12|(63&g)<<6|63&l)>65535&&I<1114112&&(r=I)}}null===r?(r=65533,h=1):r>65535&&(r-=65536,s.push(r>>>10&1023|55296),r=56320|1023&r),s.push(r),n+=h}return P(s)}function P(t){var i=t.length;if(i<=$)return String.fromCharCode.apply(String,t);for(var e="",s=0;s<i;)e+=String.fromCharCode.apply(String,t.slice(s,s+=$));return e}function G(t,i,e){var s="";e=Math.min(t.length,e);for(var n=i;n<e;++n)s+=String.fromCharCode(127&t[n]);return s}function E(t,i,e){var s="";e=Math.min(t.length,e);for(var n=i;n<e;++n)s+=String.fromCharCode(t[n]);return s}function M(t,i,e){var s=t.length;(!i||i<0)&&(i=0),(!e||e<0||e>s)&&(e=s);for(var n="",o=i;o<e;++o)n+=q(t[o]);return n}function z(t,i,e){for(var s=t.slice(i,e),n="",o=0;o<s.length;o+=2)n+=String.fromCharCode(s[o]+256*s[o+1]);return n}function R(t,i,e){if(t%1!=0||t<0)throw new RangeError("offset is not uint");if(t+i>e)throw new RangeError("Trying to access beyond buffer length")}function _(t,i,e,s,n,r){if(!o.isBuffer(t))throw new TypeError('"buffer" argument must be a Buffer instance');if(i>n||i<r)throw new RangeError('"value" argument is out of bounds');if(e+s>t.length)throw new RangeError("Index out of range")}function L(t,i,e,s){i<0&&(i=65535+i+1);for(var n=0,o=Math.min(t.length-e,2);n<o;++n)t[e+n]=(i&255<<8*(s?n:1-n))>>>8*(s?n:1-n)}function j(t,i,e,s){i<0&&(i=4294967295+i+1);for(var n=0,o=Math.min(t.length-e,4);n<o;++n)t[e+n]=i>>>8*(s?n:3-n)&255}function O(t,i,e,s,n,o){if(e+s>t.length)throw new RangeError("Index out of range");if(e<0)throw new RangeError("Index out of range")}function B(t,i,e,s,n){return n||O(t,i,e,4,3.4028234663852886e38,-3.4028234663852886e38),J.write(t,i,e,s,23,4),e+4}function F(t,i,e,s,n){return n||O(t,i,e,8,1.7976931348623157e308,-1.7976931348623157e308),J.write(t,i,e,s,52,8),e+8}function D(t){if(t=N(t).replace(tt,""),t.length<2)return"";for(;t.length%4!=0;)t+="=";return t}function N(t){return t.trim?t.trim():t.replace(/^\s+|\s+$/g,"")}function q(t){return t<16?"0"+t.toString(16):t.toString(16)}function W(t,i){i=i||1/0;for(var e,s=t.length,n=null,o=[],r=0;r<s;++r){if((e=t.charCodeAt(r))>55295&&e<57344){if(!n){if(e>56319){(i-=3)>-1&&o.push(239,191,189);continue}if(r+1===s){(i-=3)>-1&&o.push(239,191,189);continue}n=e;continue}if(e<56320){(i-=3)>-1&&o.push(239,191,189),n=e;continue}e=65536+(n-55296<<10|e-56320)}else n&&(i-=3)>-1&&o.push(239,191,189);if(n=null,e<128){if((i-=1)<0)break;o.push(e)}else if(e<2048){if((i-=2)<0)break;o.push(e>>6|192,63&e|128)}else if(e<65536){if((i-=3)<0)break;o.push(e>>12|224,e>>6&63|128,63&e|128)}else{if(!(e<1114112))throw new Error("Invalid code point");if((i-=4)<0)break;o.push(e>>18|240,e>>12&63|128,e>>6&63|128,63&e|128)}}return o}function Y(t){for(var i=[],e=0;e<t.length;++e)i.push(255&t.charCodeAt(e));return i}function H(t,i){for(var e,s,n,o=[],r=0;r<t.length&&!((i-=2)<0);++r)e=t.charCodeAt(r),s=e>>8,n=e%256,o.push(n),o.push(s);return o}function V(t){return K.toByteArray(D(t))}function Z(t,i,e,s){for(var n=0;n<s&&!(n+e>=i.length||n>=t.length);++n)i[n+e]=t[n];return n}function X(t){return t!==t}/*!
+!function(e){if(true)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var t;t="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof self?self:this,t.Clipboard=e()}}(function(){var e,t,n;return function e(t,n,o){function i(a,c){if(!n[a]){if(!t[a]){var l="function"==typeof require&&require;if(!c&&l)return require(a,!0);if(r)return require(a,!0);var u=new Error("Cannot find module '"+a+"'");throw u.code="MODULE_NOT_FOUND",u}var s=n[a]={exports:{}};t[a][0].call(s.exports,function(e){var n=t[a][1][e];return i(n?n:e)},s,s.exports,e,t,n,o)}return n[a].exports}for(var r="function"==typeof require&&require,a=0;a<o.length;a++)i(o[a]);return i}({1:[function(e,t,n){function o(e,t){for(;e&&e.nodeType!==i;){if(e.matches(t))return e;e=e.parentNode}}var i=9;if("undefined"!=typeof Element&&!Element.prototype.matches){var r=Element.prototype;r.matches=r.matchesSelector||r.mozMatchesSelector||r.msMatchesSelector||r.oMatchesSelector||r.webkitMatchesSelector}t.exports=o},{}],2:[function(e,t,n){function o(e,t,n,o,r){var a=i.apply(this,arguments);return e.addEventListener(n,a,r),{destroy:function(){e.removeEventListener(n,a,r)}}}function i(e,t,n,o){return function(n){n.delegateTarget=r(n.target,t),n.delegateTarget&&o.call(e,n)}}var r=e("./closest");t.exports=o},{"./closest":1}],3:[function(e,t,n){n.node=function(e){return void 0!==e&&e instanceof HTMLElement&&1===e.nodeType},n.nodeList=function(e){var t=Object.prototype.toString.call(e);return void 0!==e&&("[object NodeList]"===t||"[object HTMLCollection]"===t)&&"length"in e&&(0===e.length||n.node(e[0]))},n.string=function(e){return"string"==typeof e||e instanceof String},n.fn=function(e){var t=Object.prototype.toString.call(e);return"[object Function]"===t}},{}],4:[function(e,t,n){function o(e,t,n){if(!e&&!t&&!n)throw new Error("Missing required arguments");if(!c.string(t))throw new TypeError("Second argument must be a String");if(!c.fn(n))throw new TypeError("Third argument must be a Function");if(c.node(e))return i(e,t,n);if(c.nodeList(e))return r(e,t,n);if(c.string(e))return a(e,t,n);throw new TypeError("First argument must be a String, HTMLElement, HTMLCollection, or NodeList")}function i(e,t,n){return e.addEventListener(t,n),{destroy:function(){e.removeEventListener(t,n)}}}function r(e,t,n){return Array.prototype.forEach.call(e,function(e){e.addEventListener(t,n)}),{destroy:function(){Array.prototype.forEach.call(e,function(e){e.removeEventListener(t,n)})}}}function a(e,t,n){return l(document.body,e,t,n)}var c=e("./is"),l=e("delegate");t.exports=o},{"./is":3,delegate:2}],5:[function(e,t,n){function o(e){var t;if("SELECT"===e.nodeName)e.focus(),t=e.value;else if("INPUT"===e.nodeName||"TEXTAREA"===e.nodeName){var n=e.hasAttribute("readonly");n||e.setAttribute("readonly",""),e.select(),e.setSelectionRange(0,e.value.length),n||e.removeAttribute("readonly"),t=e.value}else{e.hasAttribute("contenteditable")&&e.focus();var o=window.getSelection(),i=document.createRange();i.selectNodeContents(e),o.removeAllRanges(),o.addRange(i),t=o.toString()}return t}t.exports=o},{}],6:[function(e,t,n){function o(){}o.prototype={on:function(e,t,n){var o=this.e||(this.e={});return(o[e]||(o[e]=[])).push({fn:t,ctx:n}),this},once:function(e,t,n){function o(){i.off(e,o),t.apply(n,arguments)}var i=this;return o._=t,this.on(e,o,n)},emit:function(e){var t=[].slice.call(arguments,1),n=((this.e||(this.e={}))[e]||[]).slice(),o=0,i=n.length;for(o;o<i;o++)n[o].fn.apply(n[o].ctx,t);return this},off:function(e,t){var n=this.e||(this.e={}),o=n[e],i=[];if(o&&t)for(var r=0,a=o.length;r<a;r++)o[r].fn!==t&&o[r].fn._!==t&&i.push(o[r]);return i.length?n[e]=i:delete n[e],this}},t.exports=o},{}],7:[function(t,n,o){!function(i,r){if("function"==typeof e&&e.amd)e(["module","select"],r);else if("undefined"!=typeof o)r(n,t("select"));else{var a={exports:{}};r(a,i.select),i.clipboardAction=a.exports}}(this,function(e,t){"use strict";function n(e){return e&&e.__esModule?e:{default:e}}function o(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}var i=n(t),r="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e},a=function(){function e(e,t){for(var n=0;n<t.length;n++){var o=t[n];o.enumerable=o.enumerable||!1,o.configurable=!0,"value"in o&&(o.writable=!0),Object.defineProperty(e,o.key,o)}}return function(t,n,o){return n&&e(t.prototype,n),o&&e(t,o),t}}(),c=function(){function e(t){o(this,e),this.resolveOptions(t),this.initSelection()}return a(e,[{key:"resolveOptions",value:function e(){var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{};this.action=t.action,this.emitter=t.emitter,this.target=t.target,this.text=t.text,this.trigger=t.trigger,this.selectedText=""}},{key:"initSelection",value:function e(){this.text?this.selectFake():this.target&&this.selectTarget()}},{key:"selectFake",value:function e(){var t=this,n="rtl"==document.documentElement.getAttribute("dir");this.removeFake(),this.fakeHandlerCallback=function(){return t.removeFake()},this.fakeHandler=document.body.addEventListener("click",this.fakeHandlerCallback)||!0,this.fakeElem=document.createElement("textarea"),this.fakeElem.style.fontSize="12pt",this.fakeElem.style.border="0",this.fakeElem.style.padding="0",this.fakeElem.style.margin="0",this.fakeElem.style.position="absolute",this.fakeElem.style[n?"right":"left"]="-9999px";var o=window.pageYOffset||document.documentElement.scrollTop;this.fakeElem.style.top=o+"px",this.fakeElem.setAttribute("readonly",""),this.fakeElem.value=this.text,document.body.appendChild(this.fakeElem),this.selectedText=(0,i.default)(this.fakeElem),this.copyText()}},{key:"removeFake",value:function e(){this.fakeHandler&&(document.body.removeEventListener("click",this.fakeHandlerCallback),this.fakeHandler=null,this.fakeHandlerCallback=null),this.fakeElem&&(document.body.removeChild(this.fakeElem),this.fakeElem=null)}},{key:"selectTarget",value:function e(){this.selectedText=(0,i.default)(this.target),this.copyText()}},{key:"copyText",value:function e(){var t=void 0;try{t=document.execCommand(this.action)}catch(e){t=!1}this.handleResult(t)}},{key:"handleResult",value:function e(t){this.emitter.emit(t?"success":"error",{action:this.action,text:this.selectedText,trigger:this.trigger,clearSelection:this.clearSelection.bind(this)})}},{key:"clearSelection",value:function e(){this.target&&this.target.blur(),window.getSelection().removeAllRanges()}},{key:"destroy",value:function e(){this.removeFake()}},{key:"action",set:function e(){var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:"copy";if(this._action=t,"copy"!==this._action&&"cut"!==this._action)throw new Error('Invalid "action" value, use either "copy" or "cut"')},get:function e(){return this._action}},{key:"target",set:function e(t){if(void 0!==t){if(!t||"object"!==("undefined"==typeof t?"undefined":r(t))||1!==t.nodeType)throw new Error('Invalid "target" value, use a valid Element');if("copy"===this.action&&t.hasAttribute("disabled"))throw new Error('Invalid "target" attribute. Please use "readonly" instead of "disabled" attribute');if("cut"===this.action&&(t.hasAttribute("readonly")||t.hasAttribute("disabled")))throw new Error('Invalid "target" attribute. You can\'t cut text from elements with "readonly" or "disabled" attributes');this._target=t}},get:function e(){return this._target}}]),e}();e.exports=c})},{select:5}],8:[function(t,n,o){!function(i,r){if("function"==typeof e&&e.amd)e(["module","./clipboard-action","tiny-emitter","good-listener"],r);else if("undefined"!=typeof o)r(n,t("./clipboard-action"),t("tiny-emitter"),t("good-listener"));else{var a={exports:{}};r(a,i.clipboardAction,i.tinyEmitter,i.goodListener),i.clipboard=a.exports}}(this,function(e,t,n,o){"use strict";function i(e){return e&&e.__esModule?e:{default:e}}function r(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}function a(e,t){if(!e)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return!t||"object"!=typeof t&&"function"!=typeof t?e:t}function c(e,t){if("function"!=typeof t&&null!==t)throw new TypeError("Super expression must either be null or a function, not "+typeof t);e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,enumerable:!1,writable:!0,configurable:!0}}),t&&(Object.setPrototypeOf?Object.setPrototypeOf(e,t):e.__proto__=t)}function l(e,t){var n="data-clipboard-"+e;if(t.hasAttribute(n))return t.getAttribute(n)}var u=i(t),s=i(n),f=i(o),d=function(){function e(e,t){for(var n=0;n<t.length;n++){var o=t[n];o.enumerable=o.enumerable||!1,o.configurable=!0,"value"in o&&(o.writable=!0),Object.defineProperty(e,o.key,o)}}return function(t,n,o){return n&&e(t.prototype,n),o&&e(t,o),t}}(),h=function(e){function t(e,n){r(this,t);var o=a(this,(t.__proto__||Object.getPrototypeOf(t)).call(this));return o.resolveOptions(n),o.listenClick(e),o}return c(t,e),d(t,[{key:"resolveOptions",value:function e(){var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{};this.action="function"==typeof t.action?t.action:this.defaultAction,this.target="function"==typeof t.target?t.target:this.defaultTarget,this.text="function"==typeof t.text?t.text:this.defaultText}},{key:"listenClick",value:function e(t){var n=this;this.listener=(0,f.default)(t,"click",function(e){return n.onClick(e)})}},{key:"onClick",value:function e(t){var n=t.delegateTarget||t.currentTarget;this.clipboardAction&&(this.clipboardAction=null),this.clipboardAction=new u.default({action:this.action(n),target:this.target(n),text:this.text(n),trigger:n,emitter:this})}},{key:"defaultAction",value:function e(t){return l("action",t)}},{key:"defaultTarget",value:function e(t){var n=l("target",t);if(n)return document.querySelector(n)}},{key:"defaultText",value:function e(t){return l("text",t)}},{key:"destroy",value:function e(){this.listener.destroy(),this.clipboardAction&&(this.clipboardAction.destroy(),this.clipboardAction=null)}}],[{key:"isSupported",value:function e(){var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:["copy","cut"],n="string"==typeof t?[t]:t,o=!!document.queryCommandSupported;return n.forEach(function(e){o=o&&!!document.queryCommandSupported(e)}),o}}]),t}(s.default);e.exports=h})},{"./clipboard-action":7,"good-listener":4,"tiny-emitter":6}]},{},[8])(8)});
+
+/***/ }),
+/* 21 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.byteLength = byteLength
+exports.toByteArray = toByteArray
+exports.fromByteArray = fromByteArray
+
+var lookup = []
+var revLookup = []
+var Arr = typeof Uint8Array !== 'undefined' ? Uint8Array : Array
+
+var code = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+for (var i = 0, len = code.length; i < len; ++i) {
+  lookup[i] = code[i]
+  revLookup[code.charCodeAt(i)] = i
+}
+
+revLookup['-'.charCodeAt(0)] = 62
+revLookup['_'.charCodeAt(0)] = 63
+
+function placeHoldersCount (b64) {
+  var len = b64.length
+  if (len % 4 > 0) {
+    throw new Error('Invalid string. Length must be a multiple of 4')
+  }
+
+  // the number of equal signs (place holders)
+  // if there are two placeholders, than the two characters before it
+  // represent one byte
+  // if there is only one, then the three characters before it represent 2 bytes
+  // this is just a cheap hack to not do indexOf twice
+  return b64[len - 2] === '=' ? 2 : b64[len - 1] === '=' ? 1 : 0
+}
+
+function byteLength (b64) {
+  // base64 is 4/3 + up to two characters of the original data
+  return b64.length * 3 / 4 - placeHoldersCount(b64)
+}
+
+function toByteArray (b64) {
+  var i, j, l, tmp, placeHolders, arr
+  var len = b64.length
+  placeHolders = placeHoldersCount(b64)
+
+  arr = new Arr(len * 3 / 4 - placeHolders)
+
+  // if there are placeholders, only get up to the last complete 4 chars
+  l = placeHolders > 0 ? len - 4 : len
+
+  var L = 0
+
+  for (i = 0, j = 0; i < l; i += 4, j += 3) {
+    tmp = (revLookup[b64.charCodeAt(i)] << 18) | (revLookup[b64.charCodeAt(i + 1)] << 12) | (revLookup[b64.charCodeAt(i + 2)] << 6) | revLookup[b64.charCodeAt(i + 3)]
+    arr[L++] = (tmp >> 16) & 0xFF
+    arr[L++] = (tmp >> 8) & 0xFF
+    arr[L++] = tmp & 0xFF
+  }
+
+  if (placeHolders === 2) {
+    tmp = (revLookup[b64.charCodeAt(i)] << 2) | (revLookup[b64.charCodeAt(i + 1)] >> 4)
+    arr[L++] = tmp & 0xFF
+  } else if (placeHolders === 1) {
+    tmp = (revLookup[b64.charCodeAt(i)] << 10) | (revLookup[b64.charCodeAt(i + 1)] << 4) | (revLookup[b64.charCodeAt(i + 2)] >> 2)
+    arr[L++] = (tmp >> 8) & 0xFF
+    arr[L++] = tmp & 0xFF
+  }
+
+  return arr
+}
+
+function tripletToBase64 (num) {
+  return lookup[num >> 18 & 0x3F] + lookup[num >> 12 & 0x3F] + lookup[num >> 6 & 0x3F] + lookup[num & 0x3F]
+}
+
+function encodeChunk (uint8, start, end) {
+  var tmp
+  var output = []
+  for (var i = start; i < end; i += 3) {
+    tmp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2])
+    output.push(tripletToBase64(tmp))
+  }
+  return output.join('')
+}
+
+function fromByteArray (uint8) {
+  var tmp
+  var len = uint8.length
+  var extraBytes = len % 3 // if we have 1 byte left, pad 2 bytes
+  var output = ''
+  var parts = []
+  var maxChunkLength = 16383 // must be multiple of 3
+
+  // go through the array every three bytes, we'll deal with trailing stuff later
+  for (var i = 0, len2 = len - extraBytes; i < len2; i += maxChunkLength) {
+    parts.push(encodeChunk(uint8, i, (i + maxChunkLength) > len2 ? len2 : (i + maxChunkLength)))
+  }
+
+  // pad the end with zeros, but make sure to not forget the extra bytes
+  if (extraBytes === 1) {
+    tmp = uint8[len - 1]
+    output += lookup[tmp >> 2]
+    output += lookup[(tmp << 4) & 0x3F]
+    output += '=='
+  } else if (extraBytes === 2) {
+    tmp = (uint8[len - 2] << 8) + (uint8[len - 1])
+    output += lookup[tmp >> 10]
+    output += lookup[(tmp >> 4) & 0x3F]
+    output += lookup[(tmp << 2) & 0x3F]
+    output += '='
+  }
+
+  parts.push(output)
+
+  return parts.join('')
+}
+
+
+/***/ }),
+/* 22 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(global) {/*!
  * The buffer module from node.js, for the browser.
  *
  * @author   Feross Aboukhadijeh <feross@feross.org> <http://feross.org>
  * @license  MIT
  */
-var K=e(16),J=e(26),Q=e(18);i.Buffer=o,i.SlowBuffer=u,i.INSPECT_MAX_BYTES=50,o.TYPED_ARRAY_SUPPORT=void 0!==t.TYPED_ARRAY_SUPPORT?t.TYPED_ARRAY_SUPPORT:function(){try{var t=new Uint8Array(1);return t.__proto__={__proto__:Uint8Array.prototype,foo:function(){return 42}},42===t.foo()&&"function"==typeof t.subarray&&0===t.subarray(1,1).byteLength}catch(t){return!1}}(),i.kMaxLength=s(),o.poolSize=8192,o._augment=function(t){return t.__proto__=o.prototype,t},o.from=function(t,i,e){return r(null,t,i,e)},o.TYPED_ARRAY_SUPPORT&&(o.prototype.__proto__=Uint8Array.prototype,o.__proto__=Uint8Array,"undefined"!=typeof Symbol&&Symbol.species&&o[Symbol.species]===o&&Object.defineProperty(o,Symbol.species,{value:null,configurable:!0})),o.alloc=function(t,i,e){return a(null,t,i,e)},o.allocUnsafe=function(t){return g(null,t)},o.allocUnsafeSlow=function(t){return g(null,t)},o.isBuffer=function(t){return!(null==t||!t._isBuffer)},o.compare=function(t,i){if(!o.isBuffer(t)||!o.isBuffer(i))throw new TypeError("Arguments must be Buffers");if(t===i)return 0;for(var e=t.length,s=i.length,n=0,r=Math.min(e,s);n<r;++n)if(t[n]!==i[n]){e=t[n],s=i[n];break}return e<s?-1:s<e?1:0},o.isEncoding=function(t){switch(String(t).toLowerCase()){case"hex":case"utf8":case"utf-8":case"ascii":case"latin1":case"binary":case"base64":case"ucs2":case"ucs-2":case"utf16le":case"utf-16le":return!0;default:return!1}},o.concat=function(t,i){if(!Q(t))throw new TypeError('"list" argument must be an Array of Buffers');if(0===t.length)return o.alloc(0);var e;if(void 0===i)for(i=0,e=0;e<t.length;++e)i+=t[e].length;var s=o.allocUnsafe(i),n=0;for(e=0;e<t.length;++e){var r=t[e];if(!o.isBuffer(r))throw new TypeError('"list" argument must be an Array of Buffers');r.copy(s,n),n+=r.length}return s},o.byteLength=d,o.prototype._isBuffer=!0,o.prototype.swap16=function(){var t=this.length;if(t%2!=0)throw new RangeError("Buffer size must be a multiple of 16-bits");for(var i=0;i<t;i+=2)f(this,i,i+1);return this},o.prototype.swap32=function(){var t=this.length;if(t%4!=0)throw new RangeError("Buffer size must be a multiple of 32-bits");for(var i=0;i<t;i+=4)f(this,i,i+3),f(this,i+1,i+2);return this},o.prototype.swap64=function(){var t=this.length;if(t%8!=0)throw new RangeError("Buffer size must be a multiple of 64-bits");for(var i=0;i<t;i+=8)f(this,i,i+7),f(this,i+1,i+6),f(this,i+2,i+5),f(this,i+3,i+4);return this},o.prototype.toString=function(){var t=0|this.length;return 0===t?"":0===arguments.length?T(this,0,t):p.apply(this,arguments)},o.prototype.equals=function(t){if(!o.isBuffer(t))throw new TypeError("Argument must be a Buffer");return this===t||0===o.compare(this,t)},o.prototype.inspect=function(){var t="",e=i.INSPECT_MAX_BYTES;return this.length>0&&(t=this.toString("hex",0,e).match(/.{2}/g).join(" "),this.length>e&&(t+=" ... ")),"<Buffer "+t+">"},o.prototype.compare=function(t,i,e,s,n){if(!o.isBuffer(t))throw new TypeError("Argument must be a Buffer");if(void 0===i&&(i=0),void 0===e&&(e=t?t.length:0),void 0===s&&(s=0),void 0===n&&(n=this.length),i<0||e>t.length||s<0||n>this.length)throw new RangeError("out of range index");if(s>=n&&i>=e)return 0;if(s>=n)return-1;if(i>=e)return 1;if(i>>>=0,e>>>=0,s>>>=0,n>>>=0,this===t)return 0;for(var r=n-s,h=e-i,a=Math.min(r,h),g=this.slice(s,n),l=t.slice(i,e),I=0;I<a;++I)if(g[I]!==l[I]){r=g[I],h=l[I];break}return r<h?-1:h<r?1:0},o.prototype.includes=function(t,i,e){return-1!==this.indexOf(t,i,e)},o.prototype.indexOf=function(t,i,e){return v(this,t,i,e,!0)},o.prototype.lastIndexOf=function(t,i,e){return v(this,t,i,e,!1)},o.prototype.write=function(t,i,e,s){if(void 0===i)s="utf8",e=this.length,i=0;else if(void 0===e&&"string"==typeof i)s=i,e=this.length,i=0;else{if(!isFinite(i))throw new Error("Buffer.write(string, encoding, offset[, length]) is no longer supported");i|=0,isFinite(e)?(e|=0,void 0===s&&(s="utf8")):(s=e,e=void 0)}var n=this.length-i;if((void 0===e||e>n)&&(e=n),t.length>0&&(e<0||i<0)||i>this.length)throw new RangeError("Attempt to write outside buffer bounds");s||(s="utf8");for(var o=!1;;)switch(s){case"hex":return y(this,t,i,e);case"utf8":case"utf-8":return w(this,t,i,e);case"ascii":return b(this,t,i,e);case"latin1":case"binary":return x(this,t,i,e);case"base64":return k(this,t,i,e);case"ucs2":case"ucs-2":case"utf16le":case"utf-16le":return S(this,t,i,e);default:if(o)throw new TypeError("Unknown encoding: "+s);s=(""+s).toLowerCase(),o=!0}},o.prototype.toJSON=function(){return{type:"Buffer",data:Array.prototype.slice.call(this._arr||this,0)}};var $=4096;o.prototype.slice=function(t,i){var e=this.length;t=~~t,i=void 0===i?e:~~i,t<0?(t+=e)<0&&(t=0):t>e&&(t=e),i<0?(i+=e)<0&&(i=0):i>e&&(i=e),i<t&&(i=t);var s;if(o.TYPED_ARRAY_SUPPORT)s=this.subarray(t,i),s.__proto__=o.prototype;else{var n=i-t;s=new o(n,void 0);for(var r=0;r<n;++r)s[r]=this[r+t]}return s},o.prototype.readUIntLE=function(t,i,e){t|=0,i|=0,e||R(t,i,this.length);for(var s=this[t],n=1,o=0;++o<i&&(n*=256);)s+=this[t+o]*n;return s},o.prototype.readUIntBE=function(t,i,e){t|=0,i|=0,e||R(t,i,this.length);for(var s=this[t+--i],n=1;i>0&&(n*=256);)s+=this[t+--i]*n;return s},o.prototype.readUInt8=function(t,i){return i||R(t,1,this.length),this[t]},o.prototype.readUInt16LE=function(t,i){return i||R(t,2,this.length),this[t]|this[t+1]<<8},o.prototype.readUInt16BE=function(t,i){return i||R(t,2,this.length),this[t]<<8|this[t+1]},o.prototype.readUInt32LE=function(t,i){return i||R(t,4,this.length),(this[t]|this[t+1]<<8|this[t+2]<<16)+16777216*this[t+3]},o.prototype.readUInt32BE=function(t,i){return i||R(t,4,this.length),16777216*this[t]+(this[t+1]<<16|this[t+2]<<8|this[t+3])},o.prototype.readIntLE=function(t,i,e){t|=0,i|=0,e||R(t,i,this.length);for(var s=this[t],n=1,o=0;++o<i&&(n*=256);)s+=this[t+o]*n;return n*=128,s>=n&&(s-=Math.pow(2,8*i)),s},o.prototype.readIntBE=function(t,i,e){t|=0,i|=0,e||R(t,i,this.length);for(var s=i,n=1,o=this[t+--s];s>0&&(n*=256);)o+=this[t+--s]*n;return n*=128,o>=n&&(o-=Math.pow(2,8*i)),o},o.prototype.readInt8=function(t,i){return i||R(t,1,this.length),128&this[t]?-1*(255-this[t]+1):this[t]},o.prototype.readInt16LE=function(t,i){i||R(t,2,this.length);var e=this[t]|this[t+1]<<8;return 32768&e?4294901760|e:e},o.prototype.readInt16BE=function(t,i){i||R(t,2,this.length);var e=this[t+1]|this[t]<<8;return 32768&e?4294901760|e:e},o.prototype.readInt32LE=function(t,i){return i||R(t,4,this.length),this[t]|this[t+1]<<8|this[t+2]<<16|this[t+3]<<24},o.prototype.readInt32BE=function(t,i){return i||R(t,4,this.length),this[t]<<24|this[t+1]<<16|this[t+2]<<8|this[t+3]},o.prototype.readFloatLE=function(t,i){return i||R(t,4,this.length),J.read(this,t,!0,23,4)},o.prototype.readFloatBE=function(t,i){return i||R(t,4,this.length),J.read(this,t,!1,23,4)},o.prototype.readDoubleLE=function(t,i){return i||R(t,8,this.length),J.read(this,t,!0,52,8)},o.prototype.readDoubleBE=function(t,i){return i||R(t,8,this.length),J.read(this,t,!1,52,8)},o.prototype.writeUIntLE=function(t,i,e,s){if(t=+t,i|=0,e|=0,!s){_(this,t,i,e,Math.pow(2,8*e)-1,0)}var n=1,o=0;for(this[i]=255&t;++o<e&&(n*=256);)this[i+o]=t/n&255;return i+e},o.prototype.writeUIntBE=function(t,i,e,s){if(t=+t,i|=0,e|=0,!s){_(this,t,i,e,Math.pow(2,8*e)-1,0)}var n=e-1,o=1;for(this[i+n]=255&t;--n>=0&&(o*=256);)this[i+n]=t/o&255;return i+e},o.prototype.writeUInt8=function(t,i,e){return t=+t,i|=0,e||_(this,t,i,1,255,0),o.TYPED_ARRAY_SUPPORT||(t=Math.floor(t)),this[i]=255&t,i+1},o.prototype.writeUInt16LE=function(t,i,e){return t=+t,i|=0,e||_(this,t,i,2,65535,0),o.TYPED_ARRAY_SUPPORT?(this[i]=255&t,this[i+1]=t>>>8):L(this,t,i,!0),i+2},o.prototype.writeUInt16BE=function(t,i,e){return t=+t,i|=0,e||_(this,t,i,2,65535,0),o.TYPED_ARRAY_SUPPORT?(this[i]=t>>>8,this[i+1]=255&t):L(this,t,i,!1),i+2},o.prototype.writeUInt32LE=function(t,i,e){return t=+t,i|=0,e||_(this,t,i,4,4294967295,0),o.TYPED_ARRAY_SUPPORT?(this[i+3]=t>>>24,this[i+2]=t>>>16,this[i+1]=t>>>8,this[i]=255&t):j(this,t,i,!0),i+4},o.prototype.writeUInt32BE=function(t,i,e){return t=+t,i|=0,e||_(this,t,i,4,4294967295,0),o.TYPED_ARRAY_SUPPORT?(this[i]=t>>>24,this[i+1]=t>>>16,this[i+2]=t>>>8,this[i+3]=255&t):j(this,t,i,!1),i+4},o.prototype.writeIntLE=function(t,i,e,s){if(t=+t,i|=0,!s){var n=Math.pow(2,8*e-1);_(this,t,i,e,n-1,-n)}var o=0,r=1,h=0;for(this[i]=255&t;++o<e&&(r*=256);)t<0&&0===h&&0!==this[i+o-1]&&(h=1),this[i+o]=(t/r>>0)-h&255;return i+e},o.prototype.writeIntBE=function(t,i,e,s){if(t=+t,i|=0,!s){var n=Math.pow(2,8*e-1);_(this,t,i,e,n-1,-n)}var o=e-1,r=1,h=0;for(this[i+o]=255&t;--o>=0&&(r*=256);)t<0&&0===h&&0!==this[i+o+1]&&(h=1),this[i+o]=(t/r>>0)-h&255;return i+e},o.prototype.writeInt8=function(t,i,e){return t=+t,i|=0,e||_(this,t,i,1,127,-128),o.TYPED_ARRAY_SUPPORT||(t=Math.floor(t)),t<0&&(t=255+t+1),this[i]=255&t,i+1},o.prototype.writeInt16LE=function(t,i,e){return t=+t,i|=0,e||_(this,t,i,2,32767,-32768),o.TYPED_ARRAY_SUPPORT?(this[i]=255&t,this[i+1]=t>>>8):L(this,t,i,!0),i+2},o.prototype.writeInt16BE=function(t,i,e){return t=+t,i|=0,e||_(this,t,i,2,32767,-32768),o.TYPED_ARRAY_SUPPORT?(this[i]=t>>>8,this[i+1]=255&t):L(this,t,i,!1),i+2},o.prototype.writeInt32LE=function(t,i,e){return t=+t,i|=0,e||_(this,t,i,4,2147483647,-2147483648),o.TYPED_ARRAY_SUPPORT?(this[i]=255&t,this[i+1]=t>>>8,this[i+2]=t>>>16,this[i+3]=t>>>24):j(this,t,i,!0),i+4},o.prototype.writeInt32BE=function(t,i,e){return t=+t,i|=0,e||_(this,t,i,4,2147483647,-2147483648),t<0&&(t=4294967295+t+1),o.TYPED_ARRAY_SUPPORT?(this[i]=t>>>24,this[i+1]=t>>>16,this[i+2]=t>>>8,this[i+3]=255&t):j(this,t,i,!1),i+4},o.prototype.writeFloatLE=function(t,i,e){return B(this,t,i,!0,e)},o.prototype.writeFloatBE=function(t,i,e){return B(this,t,i,!1,e)},o.prototype.writeDoubleLE=function(t,i,e){return F(this,t,i,!0,e)},o.prototype.writeDoubleBE=function(t,i,e){return F(this,t,i,!1,e)},o.prototype.copy=function(t,i,e,s){if(e||(e=0),s||0===s||(s=this.length),i>=t.length&&(i=t.length),i||(i=0),s>0&&s<e&&(s=e),s===e)return 0;if(0===t.length||0===this.length)return 0;if(i<0)throw new RangeError("targetStart out of bounds");if(e<0||e>=this.length)throw new RangeError("sourceStart out of bounds");if(s<0)throw new RangeError("sourceEnd out of bounds");s>this.length&&(s=this.length),t.length-i<s-e&&(s=t.length-i+e);var n,r=s-e;if(this===t&&e<i&&i<s)for(n=r-1;n>=0;--n)t[n+i]=this[n+e];else if(r<1e3||!o.TYPED_ARRAY_SUPPORT)for(n=0;n<r;++n)t[n+i]=this[n+e];else Uint8Array.prototype.set.call(t,this.subarray(e,e+r),i);return r},o.prototype.fill=function(t,i,e,s){if("string"==typeof t){if("string"==typeof i?(s=i,i=0,e=this.length):"string"==typeof e&&(s=e,e=this.length),1===t.length){var n=t.charCodeAt(0);n<256&&(t=n)}if(void 0!==s&&"string"!=typeof s)throw new TypeError("encoding must be a string");if("string"==typeof s&&!o.isEncoding(s))throw new TypeError("Unknown encoding: "+s)}else"number"==typeof t&&(t&=255);if(i<0||this.length<i||this.length<e)throw new RangeError("Out of range index");if(e<=i)return this;i>>>=0,e=void 0===e?this.length:e>>>0,t||(t=0);var r;if("number"==typeof t)for(r=i;r<e;++r)this[r]=t;else{var h=o.isBuffer(t)?t:W(new o(t,s).toString()),a=h.length;for(r=0;r<e-i;++r)this[r+i]=h[r%a]}return this};var tt=/[^+\/0-9A-Za-z-_]/g}).call(i,e(5))},function(t,i){var e={}.toString;t.exports=Array.isArray||function(t){return"[object Array]"==e.call(t)}},function(t,i,e){i=t.exports=e(20)(void 0),i.push([t.i,"@import url(https://fonts.googleapis.com/css?family=Inconsolata);",""]),i.push([t.i,"html {\n  position: fixed;\n  width: 100vw;\n  height: 100vh;\n  margin: 0; }\n\nbody {\n  margin: 0;\n  position: fixed;\n  overflow: hidden;\n  width: 100vw;\n  height: 100vh; }\n\ndiv.tone-editor_container {\n  position: relative;\n  width: 260px;\n  height: 100vh;\n  position: fixed;\n  top: 0;\n  left: 0;\n  background: white;\n  padding: 10px;\n  box-shadow: 2px 0px 8px rgba(0, 0, 0, 0.14); }\n  div.tone-editor_container * {\n    user-select: none;\n    font-family: 'Inconsolata'; }\n  div.tone-editor_container div.header {\n    width: 100%;\n    display: flex;\n    justify-content: flex-start; }\n    div.tone-editor_container div.header * {\n      margin-right: 4px; }\n    div.tone-editor_container div.header h3 {\n      opacity: 0.5;\n      display: inline-block;\n      margin: 4px 6px 4px 0; }\n    div.tone-editor_container div.header div.keyboard-button {\n      display: block;\n      cursor: pointer; }\n    div.tone-editor_container div.header .copy-all {\n      display: block;\n      cursor: pointer; }\n  div.tone-editor_container svg.keyboard {\n    width: 100%;\n    margin-bottom: 6px;\n    transition: height 0.15s;\n    cursor: pointer; }\n    div.tone-editor_container svg.keyboard g#labels {\n      opacity: 0.4; }\n  div.tone-editor_container svg.keyboard.collapsed {\n    height: 0;\n    margin-bottom: 0;\n    transition: height 0.15s; }\n  div.tone-editor_container div.component {\n    position: relative;\n    background: darkGray;\n    padding-left: 6px;\n    font-size: 16px;\n    max-height: 24px;\n    border-bottom: 1px solid rgba(0, 0, 0, 0.1);\n    border-top: 1px solid rgba(255, 255, 255, 0.5);\n    box-shadow: 2px 2px 8px rgba(100, 100, 100, 0.2);\n    overflow: hidden;\n    border-radius: 4px;\n    margin-bottom: 10px; }\n  div.tone-editor_container div.component.expanded {\n    max-height: 3000px;\n    padding-bottom: 4px; }\n  div.tone-editor_container .keyboard-target-button.active {\n    opacity: 1; }\n  div.tone-editor_container div.subcomponent {\n    position: relative;\n    background: darkGray;\n    font-size: 16px;\n    max-height: 24px;\n    border-bottom: 1px solid rgba(0, 0, 0, 0.1);\n    background-color: rgba(0, 0, 0, 0.2);\n    overflow: hidden; }\n    div.tone-editor_container div.subcomponent div.component-header h3.component-name {\n      margin-left: 12px;\n      font-weight: 200; }\n  div.tone-editor_container div.subcomponent.expanded {\n    max-height: 3000px; }\n  div.tone-editor_container div.component-header {\n    position: relative;\n    width: 100%;\n    display: flex;\n    align-items: center;\n    height: 24px; }\n    div.tone-editor_container div.component-header h3 {\n      margin: 0;\n      font-size: 16px; }\n    div.tone-editor_container div.component-header h3.component-name {\n      font-weight: 800;\n      margin-left: 2px;\n      margin-bottom: 1px; }\n    div.tone-editor_container div.component-header a.component-class {\n      margin-left: 10px;\n      opacity: 0.4;\n      font-weight: 200;\n      cursor: pointer;\n      margin-left: 6px;\n      opacity: 0.4;\n      font-weight: 200;\n      cursor: pointer;\n      font-size: 13px;\n      flex-grow: 0;\n      margin-bottom: 0px;\n      text-overflow: ellipsis; }\n    div.tone-editor_container div.component-header a.component-class:hover {\n      text-decoration: underline;\n      cursor: pointer; }\n    div.tone-editor_container div.component-header .expand-triangle {\n      width: 13px;\n      height: 26px;\n      background-image: url("+e(31)+');\n      background-size: contain;\n      background-position: center;\n      background-repeat: no-repeat;\n      position: absolute;\n      right: 7px;\n      top: -1px;\n      opacity: 0.9;\n      cursor: pointer;\n      transition: transform 0.05s; }\n    div.tone-editor_container div.component-header .expand-triangle.expanded {\n      transform: rotateZ(-90deg);\n      transition: transform 0.05s; }\n    div.tone-editor_container div.component-header .expand-triangle.expanded:hover {\n      opacity: 1; }\n    div.tone-editor_container div.component-header .extra-buttons {\n      margin-left: 10px;\n      overflow: hidden;\n      transition: opacity 0.15s;\n      display: flex; }\n      div.tone-editor_container div.component-header .extra-buttons * {\n        cursor: pointer;\n        opacity: 0;\n        transition: opacity 0.15s;\n        margin-right: 4px; }\n      div.tone-editor_container div.component-header .extra-buttons .keyboard-target-button.active {\n        opacity: 1; }\n  div.tone-editor_container .component-header:hover .extra-buttons > * {\n    opacity: 0.75;\n    transition: opacity 0.15s; }\n  div.tone-editor_container .parameter-group {\n    width: 100%;\n    max-height: calc(100vh - 100px);\n    background-color: rgba(255, 255, 255, 0.2);\n    box-sizing: border-box;\n    overflow-y: scroll; }\n    div.tone-editor_container .parameter-group .parameter:hover .parameter-name, div.tone-editor_container .parameter-group .parameter:hover .value {\n      color: rgba(0, 0, 0, 0.6); }\n    div.tone-editor_container .parameter-group .parameter::before {\n      position: absolute;\n      content: "";\n      display: block;\n      width: 100%;\n      height: 1px;\n      top: 0px;\n      background: rgba(0, 0, 0, 0.1);\n      z-index: 10; }\n    div.tone-editor_container .parameter-group .parameter.overwritten .parameter-name {\n      font-style: italic; }\n    div.tone-editor_container .parameter-group .parameter.overwritten canvas {\n      opacity: 1; }\n    div.tone-editor_container .parameter-group .parameter.overridden-by-signal {\n      pointer-events: none; }\n      div.tone-editor_container .parameter-group .parameter.overridden-by-signal .blocker {\n        width: 100%;\n        height: 100%;\n        position: absolute;\n        top: 0;\n        left: 0;\n        background-image: url('+e(30)+');\n        background-size: contain;\n        opacity: 0.7;\n        pointer-events: none; }\n      div.tone-editor_container .parameter-group .parameter.overridden-by-signal canvas {\n        opacity: 0; }\n    div.tone-editor_container .parameter-group .parameter {\n      position: relative;\n      width: 100%;\n      height: 30px;\n      box-sizing: border-box;\n      display: flex;\n      align-items: center;\n      justify-content: space-between;\n      color: rgba(0, 0, 0, 0.5);\n      font-weight: 200;\n      overflow: hidden; }\n      div.tone-editor_container .parameter-group .parameter canvas {\n        position: absolute;\n        left: 0;\n        top: 0;\n        opacity: 0.5;\n        filter: drop-shadow(1px 0px 2px rgba(0, 0, 0, 0.2)); }\n      div.tone-editor_container .parameter-group .parameter .parameter-name {\n        margin-left: 10px;\n        z-index: 1;\n        position: relative;\n        top: -1px;\n        pointer-events: none; }\n      div.tone-editor_container .parameter-group .parameter .parameter-value {\n        margin-right: 10px;\n        display: flex;\n        font-size: 16px;\n        z-index: 1;\n        position: relative;\n        top: -1px; }\n        div.tone-editor_container .parameter-group .parameter .parameter-value div.value {\n          min-width: 20px;\n          width: auto;\n          margin-right: 2px;\n          padding: 0 2px 0 2px;\n          text-align: right;\n          font-size: 16px;\n          display: block;\n          cursor: text; }\n        div.tone-editor_container .parameter-group .parameter .parameter-value div.value::selection {\n          font-size: 40px;\n          background: yellow;\n          opacity: 1; }\n        div.tone-editor_container .parameter-group .parameter .parameter-value div.value:hover {\n          background: rgba(0, 0, 0, 0.15);\n          cursor: text; }\n        div.tone-editor_container .parameter-group .parameter .parameter-value div.value:focus {\n          background: rgba(0, 0, 0, 0.15);\n          color: rgba(0, 0, 0, 0.6);\n          outline: none; }\n        div.tone-editor_container .parameter-group .parameter .parameter-value div.unit {\n          opacity: 0.7;\n          min-width: 17px; }\n    div.tone-editor_container .parameter-group .parameter.signal .parameter-name::after {\n      content: "~";\n      display: inline-block;\n      font-size: 22px;\n      font-weight: bold;\n      position: relative;\n      top: 2px;\n      opacity: 0.8; }\n    div.tone-editor_container .parameter-group .parameter.signal:hover .parameter-name::after {\n      animation: signal-icon-spin 0.8s infinite linear; }\n    div.tone-editor_container .parameter-group div.menu {\n      cursor: pointer;\n      background: rgba(255, 255, 255, 0.5); }\n      div.tone-editor_container .parameter-group div.menu div.value {\n        cursor: pointer; }\n      div.tone-editor_container .parameter-group div.menu span.menu-icon {\n        width: 1px;\n        position: relative;\n        top: 4px;\n        height: 11px;\n        border: dotted rgba(0, 0, 0, 0.2) 3px;\n        box-sizing: border-box; }\n      div.tone-editor_container .parameter-group div.menu select {\n        background: white;\n        border: none;\n        opacity: 0;\n        width: 100%;\n        height: 100%;\n        position: absolute;\n        top: 0;\n        left: 0; }\n    div.tone-editor_container .parameter-group div.cslider {\n      cursor: ew-resize; }\n      div.tone-editor_container .parameter-group div.cslider div.cslider-inner {\n        position: absolute;\n        top: 0;\n        left: 50%;\n        height: 100%;\n        width: 60px;\n        opacity: 0.5;\n        background: #c8c8c8;\n        box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.3);\n        background: white; }\n      div.tone-editor_container .parameter-group div.cslider div.center-line {\n        width: 1px;\n        height: 100%;\n        position: absolute;\n        left: 50%;\n        border: dashed rgba(0, 0, 0, 0.3) 1px;\n        box-sizing: border-box;\n        pointer-events: none; }\n    div.tone-editor_container .parameter-group div.hslider {\n      cursor: ew-resize; }\n      div.tone-editor_container .parameter-group div.hslider div.hslider-inner {\n        position: absolute;\n        top: 0;\n        left: 0;\n        height: 100%;\n        width: 60%;\n        background: #c8c8c8;\n        box-shadow: 2px 0px 2px rgba(0, 0, 0, 0.1);\n        background: white;\n        opacity: 0.5; }\n\n@keyframes signal-icon-spin {\n  0% {\n    transform: rotateX(0deg); }\n  50% {\n    transform: rotateX(50deg); }\n  100% {\n    transform: rotateX(0deg); } }\n',""])},function(t,i,e){(function(i){function e(t,i){var e=t[1]||"",n=t[3];if(!n)return e;if(i){var o=s(n);return[e].concat(n.sources.map(function(t){return"/*# sourceURL="+n.sourceRoot+t+" */"})).concat([o]).join("\n")}return[e].join("\n")}function s(t){return"/*# sourceMappingURL=data:application/json;charset=utf-8;base64,"+new i(JSON.stringify(t)).toString("base64")+" */"}t.exports=function(t){var i=[];return i.toString=function(){return this.map(function(i){var s=e(i,t);return i[2]?"@media "+i[2]+"{"+s+"}":s}).join("")},i.i=function(t,e){"string"==typeof t&&(t=[[null,t,""]]);for(var s={},n=0;n<this.length;n++){var o=this[n][0];"number"==typeof o&&(s[o]=!0)}for(n=0;n<t.length;n++){var r=t[n];"number"==typeof r[0]&&s[r[0]]||(e&&!r[2]?r[2]=e:e&&(r[2]="("+r[2]+") and ("+e+")"),i.push(r))}},i}}).call(i,e(17).Buffer)},function(t,i){t.exports='<div class="component expanded"> <div class=component-header> <h3 class=component-name>Name</h3><a class=component-class>Class</a><div class=extra-buttons><div class=keyboard-target-button>🎹</div><div class=copy-button>📋</div></div><div class="expand-triangle expanded"></div> </div> <div class=parameter-group> </div> </div> '},function(t,i){t.exports='<div class="parameter menu"> <div class=parameter-name>NAME</div> <div class=parameter-value> <div class=value contenteditable=true>VALUE</div><span class=menu-icon></span> </div> <select> </select> </div> '},function(t,i){t.exports='<div class="parameter hslider"> <div class=parameter-name>NAME</div> <div class=parameter-value> <div class=value contenteditable=false></div> <div class=unit>UNIT</div> </div> </div> '},function(t,i){t.exports="<div class=subcomponent style=background:#add8e6> <div class=component-header> <h3 class=component-name>envelope</h3><a class=component-class>Envelope</a><div class=expand-triangle></div> </div> <div class=parameter-group> </div> </div> "},function(t,i){t.exports='<div class=tone-editor_container> <div class=header><h3>Tone.js</h3><div class=keyboard-button>🎹</div><div class="copy-button copy-all">📋</div></div> <svg class="keyboard collapsed" width=402px viewBox="0 0 402 108" version=1.1 xmlns=http://www.w3.org/2000/svg xmlns:xlink=http://www.w3.org/1999/xlink> <g id=Page-1 stroke=none stroke-width=1 fill=none fill-rule=evenodd> <g id=keyboard transform="translate(1.000000, 1.000000)"> <g id=white-keys stroke=#979797 stroke-width=0.5 fill=#FFFFFF> <rect id=Rectangle-3 x=0 y=0 width=36.3636364 height=106></rect> <rect id=Rectangle-3-Copy-6 x=218.181818 y=0 width=36.3636364 height=106></rect> <rect id=Rectangle-3-Copy-3 x=109.090909 y=0 width=36.3636364 height=106></rect> <rect id=Rectangle-3-Copy-7 x=327.272727 y=0 width=36.3636364 height=106></rect> <rect id=Rectangle-3-Copy x=36.3636364 y=0 width=36.3636364 height=106></rect> <rect id=Rectangle-3-Copy-8 x=254.545455 y=0 width=36.3636364 height=106></rect> <rect id=Rectangle-3-Copy-4 x=145.454545 y=0 width=36.3636364 height=106></rect> <rect id=Rectangle-3-Copy-9 x=364 y=0 width=36.3636364 height=106></rect> <rect id=Rectangle-3-Copy-2 x=72.7272727 y=0 width=36.3636364 height=106></rect> <rect id=Rectangle-3-Copy-10 x=290.909091 y=0 width=36.3636364 height=106></rect> <rect id=Rectangle-3-Copy-5 x=181.818182 y=0 width=36.3636364 height=106></rect> </g> <g id=black-keys transform="translate(22.000000, 0.000000)" stroke=#979797 stroke-width=0.5 fill=#494949> <rect id=Rectangle-3-Copy-11 x=3.55271368e-15 y=0 width=29.1204057 height=64.4568302></rect> <rect id=Rectangle-3-Copy-12 x=36 y=0 width=29.1204057 height=64.4568302></rect> <rect id=Rectangle-3-Copy-14 x=109 y=0 width=29.1204057 height=64.4568302></rect> <rect id=Rectangle-3-Copy-15 x=145 y=0 width=29.1204057 height=64.4568302></rect> <rect id=Rectangle-3-Copy-16 x=182 y=0 width=29.1204057 height=64.4568302></rect> <rect id=Rectangle-3-Copy-17 x=254 y=0 width=29.1204057 height=64.4568302></rect> <rect id=Rectangle-3-Copy-18 x=291 y=0 width=29.1204057 height=64.4568302></rect> </g> <g id=labels transform="translate(5.000000, 35.249990)" font-size=24 font-family="Inconsolata-Bold, Inconsolata" letter-spacing=1.24347818 font-weight=bold> <text id=A fill=#5E5E5E> <tspan x=7.51701689 y=61.8296296>A</tspan> </text> <text id=J fill=#5E5E5E> <tspan x=225.698835 y=61.8296296>J</tspan> </text> <text id=F fill=#5E5E5E> <tspan x=116.607926 y=61.8296296>F</tspan> </text> <text id=; fill=#5E5E5E> <tspan x=334.789744 y=61.8296296>;</tspan> </text> <text id=S fill=#5E5E5E> <tspan x=43.8806533 y=61.8296296>S</tspan> </text> <text id=K fill=#5E5E5E> <tspan x=262.062471 y=61.8296296>K</tspan> </text> <text id=G fill=#5E5E5E> <tspan x=152.971562 y=61.8296296>G</tspan> </text> <text id=‘ fill=#5E5E5E> <tspan x=370.77539 y=61.8296296>‘</tspan> </text> <text id=D fill=#5E5E5E> <tspan x=78.330414 y=61.8296296>D</tspan> </text> <text id=L fill=#5E5E5E> <tspan x=296.512232 y=61.8296296>L</tspan> </text> <text id=H fill=#5E5E5E> <tspan x=187.421323 y=61.8296296>H</tspan> </text> <text id=W fill=#FFFFFF> <tspan x=25.1068314 y=21.1808804>W</tspan> </text> <text id=E fill=#FFFFFF> <tspan x=61.1068314 y=21.1808804>E</tspan> </text> <text id=T fill=#FFFFFF> <tspan x=134.106831 y=21.1808804>T</tspan> </text> <text id=Y fill=#FFFFFF> <tspan x=170.106831 y=21.1808804>Y</tspan> </text> <text id=U fill=#FFFFFF> <tspan x=207.106831 y=21.1808804>U</tspan> </text> <text id=O fill=#FFFFFF> <tspan x=279.106831 y=21.1808804>O</tspan> </text> <text id=P fill=#FFFFFF> <tspan x=316.106831 y=21.1808804>P</tspan> </text> </g> </g> </g> </svg> <div class=component-container> </div> <div class=copy-all></div> </div> '},function(t,i){i.read=function(t,i,e,s,n){var o,r,h=8*n-s-1,a=(1<<h)-1,g=a>>1,l=-7,I=e?n-1:0,A=e?-1:1,c=t[i+I];for(I+=A,o=c&(1<<-l)-1,c>>=-l,l+=h;l>0;o=256*o+t[i+I],I+=A,l-=8);for(r=o&(1<<-l)-1,o>>=-l,l+=s;l>0;r=256*r+t[i+I],I+=A,l-=8);if(0===o)o=1-g;else{if(o===a)return r?NaN:1/0*(c?-1:1);r+=Math.pow(2,s),o-=g}return(c?-1:1)*r*Math.pow(2,o-s)},i.write=function(t,i,e,s,n,o){var r,h,a,g=8*o-n-1,l=(1<<g)-1,I=l>>1,A=23===n?Math.pow(2,-24)-Math.pow(2,-77):0,c=s?0:o-1,C=s?1:-1,u=i<0||0===i&&1/i<0?1:0;for(i=Math.abs(i),isNaN(i)||i===1/0?(h=isNaN(i)?1:0,r=l):(r=Math.floor(Math.log(i)/Math.LN2),i*(a=Math.pow(2,-r))<1&&(r--,a*=2),i+=r+I>=1?A/a:A*Math.pow(2,1-I),i*a>=2&&(r++,a/=2),r+I>=l?(h=0,r=l):r+I>=1?(h=(i*a-1)*Math.pow(2,n),r+=I):(h=i*Math.pow(2,I-1)*Math.pow(2,n),r=0));n>=8;t[e+c]=255&h,c+=C,h/=256,n-=8);for(r=r<<n|h,g+=n;g>0;t[e+c]=255&r,c+=C,r/=256,g-=8);t[e+c-C]|=128*u}},function(t,i,e){function s(t,i){for(var e=0;e<t.length;e++){var s=t[e],n=C[s.id];if(n){n.refs++;for(var o=0;o<n.parts.length;o++)n.parts[o](s.parts[o]);for(;o<s.parts.length;o++)n.parts.push(l(s.parts[o],i))}else{for(var r=[],o=0;o<s.parts.length;o++)r.push(l(s.parts[o],i));C[s.id]={id:s.id,refs:1,parts:r}}}}function n(t,i){for(var e=[],s={},n=0;n<t.length;n++){var o=t[n],r=i.base?o[0]+i.base:o[0],h=o[1],a=o[2],g=o[3],l={css:h,media:a,sourceMap:g};s[r]?s[r].parts.push(l):e.push(s[r]={id:r,parts:[l]})}return e}function o(t,i){var e=d(t.insertInto);if(!e)throw new Error("Couldn't find a style target. This probably means that the value for the 'insertInto' parameter is invalid.");var s=v[v.length-1];if("top"===t.insertAt)s?s.nextSibling?e.insertBefore(i,s.nextSibling):e.appendChild(i):e.insertBefore(i,e.firstChild),v.push(i);else{if("bottom"!==t.insertAt)throw new Error("Invalid value for parameter 'insertAt'. Must be 'top' or 'bottom'.");e.appendChild(i)}}function r(t){t.parentNode.removeChild(t);var i=v.indexOf(t);i>=0&&v.splice(i,1)}function h(t){var i=document.createElement("style");return t.attrs.type="text/css",g(i,t.attrs),o(t,i),i}function a(t){var i=document.createElement("link");return t.attrs.type="text/css",t.attrs.rel="stylesheet",g(i,t.attrs),o(t,i),i}function g(t,i){Object.keys(i).forEach(function(e){t.setAttribute(e,i[e])})}function l(t,i){var e,s,n,o;if(i.transform&&t.css){if(!(o=i.transform(t.css)))return function(){};t.css=o}if(i.singleton){var g=f++;e=p||(p=h(i)),s=I.bind(null,e,g,!1),n=I.bind(null,e,g,!0)}else t.sourceMap&&"function"==typeof URL&&"function"==typeof URL.createObjectURL&&"function"==typeof URL.revokeObjectURL&&"function"==typeof Blob&&"function"==typeof btoa?(e=a(i),s=c.bind(null,e,i),n=function(){r(e),e.href&&URL.revokeObjectURL(e.href)}):(e=h(i),s=A.bind(null,e),n=function(){r(e)});return s(t),function(i){if(i){if(i.css===t.css&&i.media===t.media&&i.sourceMap===t.sourceMap)return;s(t=i)}else n()}}function I(t,i,e,s){var n=e?"":s.css;if(t.styleSheet)t.styleSheet.cssText=y(i,n);else{var o=document.createTextNode(n),r=t.childNodes;r[i]&&t.removeChild(r[i]),r.length?t.insertBefore(o,r[i]):t.appendChild(o)}}function A(t,i){var e=i.css,s=i.media;if(s&&t.setAttribute("media",s),t.styleSheet)t.styleSheet.cssText=e;else{for(;t.firstChild;)t.removeChild(t.firstChild);t.appendChild(document.createTextNode(e))}}function c(t,i,e){var s=e.css,n=e.sourceMap,o=void 0===i.convertToAbsoluteUrls&&n;(i.convertToAbsoluteUrls||o)&&(s=m(s)),n&&(s+="\n/*# sourceMappingURL=data:application/json;base64,"+btoa(unescape(encodeURIComponent(JSON.stringify(n))))+" */");var r=new Blob([s],{type:"text/css"}),h=t.href;t.href=URL.createObjectURL(r),h&&URL.revokeObjectURL(h)}var C={},u=function(t){var i;return function(){return void 0===i&&(i=t.apply(this,arguments)),i}}(function(){return window&&document&&document.all&&!window.atob}),d=function(t){var i={};return function(e){return void 0===i[e]&&(i[e]=t.call(this,e)),i[e]}}(function(t){return document.querySelector(t)}),p=null,f=0,v=[],m=e(28);t.exports=function(t,i){if("undefined"!=typeof DEBUG&&DEBUG&&"object"!=typeof document)throw new Error("The style-loader cannot be used in a non-browser environment");i=i||{},i.attrs="object"==typeof i.attrs?i.attrs:{},void 0===i.singleton&&(i.singleton=u()),void 0===i.insertInto&&(i.insertInto="head"),void 0===i.insertAt&&(i.insertAt="bottom");var e=n(t,i);return s(e,i),function(t){for(var o=[],r=0;r<e.length;r++){var h=e[r],a=C[h.id];a.refs--,o.push(a)}if(t){s(n(t,i),i)}for(var r=0;r<o.length;r++){var a=o[r];if(0===a.refs){for(var g=0;g<a.parts.length;g++)a.parts[g]();delete C[a.id]}}}};var y=function(){var t=[];return function(i,e){return t[i]=e,t.filter(Boolean).join("\n")}}()},function(t,i){t.exports=function(t){var i="undefined"!=typeof window&&window.location;if(!i)throw new Error("fixUrls requires window.location");if(!t||"string"!=typeof t)return t;var e=i.protocol+"//"+i.host,s=e+i.pathname.replace(/\/[^\/]*$/,"/");return t.replace(/url\s*\(((?:[^)(]|\((?:[^)(]+|\([^)(]*\))*\))*)\)/gi,function(t,i){var n=i.trim().replace(/^"(.*)"$/,function(t,i){return i}).replace(/^'(.*)'$/,function(t,i){return i});if(/^(#|data:|http:\/\/|https:\/\/|file:\/\/\/)/i.test(n))return t;var o;return o=0===n.indexOf("//")?n:0===n.indexOf("/")?e+n:s+n.replace(/^\.\//,""),"url("+JSON.stringify(o)+")"})}},function(t,i,e){var s=e(19);"string"==typeof s&&(s=[[t.i,s,""]]);var n={};n.transform=void 0;e(27)(s,n);s.locals&&(t.exports=s.locals)},function(t,i){t.exports="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAABNElEQVRogdXaSW7DMBBE0W9ezJWTJTlZlJMxi9CAIXjQwCK7GyBEbdR4+Ftdaq1X4BfvLMDVuaAAX84Fbew7CqB2nLO0Y5vSnp/OJW2+nR+/QUTyKuXunrrKPUQkrlJW72mrrCEiaZU1BJJWeQQRCas8gkDCKs8gIlmVZxBIVuUVRCSq8goCiaq8g4gkVd5BIEmVLRCRoMoWCCSoshUiglfZCoHgVfZAROAqeyAQuMpeiAhaZS8EglY5AhEBqxyBQMAqRyEiWJWjEAhW5QxEBKpyBgKBqpyFiCBVzkIgSJUeEBGgSg8IBKjSCyImV+kFgclVekLExCo9ITCxSm+ImFSlNwQmVXFAxIQqDghMqOKCiMFVXBAYXMUJEQOrOCEwsMql1lrNiz4w/xkE/IyALPxjnKM/+MdWV+cSHe8AAAAASUVORK5CYII="},function(t,i){t.exports="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAACXBIWXMAAAsTAAALEwEAmpwYAAA4PGlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxMzggNzkuMTU5ODI0LCAyMDE2LzA5LzE0LTAxOjA5OjAxICAgICAgICAiPgogICA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPgogICAgICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgICAgICAgICB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iCiAgICAgICAgICAgIHhtbG5zOmRjPSJodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIKICAgICAgICAgICAgeG1sbnM6cGhvdG9zaG9wPSJodHRwOi8vbnMuYWRvYmUuY29tL3Bob3Rvc2hvcC8xLjAvIgogICAgICAgICAgICB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIKICAgICAgICAgICAgeG1sbnM6c3RFdnQ9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZUV2ZW50IyIKICAgICAgICAgICAgeG1sbnM6dGlmZj0iaHR0cDovL25zLmFkb2JlLmNvbS90aWZmLzEuMC8iCiAgICAgICAgICAgIHhtbG5zOmV4aWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20vZXhpZi8xLjAvIj4KICAgICAgICAgPHhtcDpDcmVhdGVEYXRlPjIwMTctMDEtMjJUMjA6NDI6NDFaPC94bXA6Q3JlYXRlRGF0ZT4KICAgICAgICAgPHhtcDpNb2RpZnlEYXRlPjIwMTctMDEtMjNUMDA6MTBaPC94bXA6TW9kaWZ5RGF0ZT4KICAgICAgICAgPHhtcDpNZXRhZGF0YURhdGU+MjAxNy0wMS0yM1QwMDoxMFo8L3htcDpNZXRhZGF0YURhdGU+CiAgICAgICAgIDx4bXA6Q3JlYXRvclRvb2w+QWRvYmUgUGhvdG9zaG9wIENDIDIwMTcgKE1hY2ludG9zaCk8L3htcDpDcmVhdG9yVG9vbD4KICAgICAgICAgPGRjOmZvcm1hdD5pbWFnZS9wbmc8L2RjOmZvcm1hdD4KICAgICAgICAgPHBob3Rvc2hvcDpDb2xvck1vZGU+MzwvcGhvdG9zaG9wOkNvbG9yTW9kZT4KICAgICAgICAgPHhtcE1NOkluc3RhbmNlSUQ+eG1wLmlpZDpjMDFmNjFiZi1hYTM3LTQyNTItOTFjOS0wY2VhNjhiZWE0MGU8L3htcE1NOkluc3RhbmNlSUQ+CiAgICAgICAgIDx4bXBNTTpEb2N1bWVudElEPnhtcC5kaWQ6YzAxZjYxYmYtYWEzNy00MjUyLTkxYzktMGNlYTY4YmVhNDBlPC94bXBNTTpEb2N1bWVudElEPgogICAgICAgICA8eG1wTU06T3JpZ2luYWxEb2N1bWVudElEPnhtcC5kaWQ6YzAxZjYxYmYtYWEzNy00MjUyLTkxYzktMGNlYTY4YmVhNDBlPC94bXBNTTpPcmlnaW5hbERvY3VtZW50SUQ+CiAgICAgICAgIDx4bXBNTTpIaXN0b3J5PgogICAgICAgICAgICA8cmRmOlNlcT4KICAgICAgICAgICAgICAgPHJkZjpsaSByZGY6cGFyc2VUeXBlPSJSZXNvdXJjZSI+CiAgICAgICAgICAgICAgICAgIDxzdEV2dDphY3Rpb24+c2F2ZWQ8L3N0RXZ0OmFjdGlvbj4KICAgICAgICAgICAgICAgICAgPHN0RXZ0Omluc3RhbmNlSUQ+eG1wLmlpZDpjMDFmNjFiZi1hYTM3LTQyNTItOTFjOS0wY2VhNjhiZWE0MGU8L3N0RXZ0Omluc3RhbmNlSUQ+CiAgICAgICAgICAgICAgICAgIDxzdEV2dDp3aGVuPjIwMTctMDEtMjNUMDA6MTBaPC9zdEV2dDp3aGVuPgogICAgICAgICAgICAgICAgICA8c3RFdnQ6c29mdHdhcmVBZ2VudD5BZG9iZSBQaG90b3Nob3AgQ0MgMjAxNyAoTWFjaW50b3NoKTwvc3RFdnQ6c29mdHdhcmVBZ2VudD4KICAgICAgICAgICAgICAgICAgPHN0RXZ0OmNoYW5nZWQ+Lzwvc3RFdnQ6Y2hhbmdlZD4KICAgICAgICAgICAgICAgPC9yZGY6bGk+CiAgICAgICAgICAgIDwvcmRmOlNlcT4KICAgICAgICAgPC94bXBNTTpIaXN0b3J5PgogICAgICAgICA8dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPgogICAgICAgICA8dGlmZjpYUmVzb2x1dGlvbj43MjAwMDAvMTAwMDA8L3RpZmY6WFJlc29sdXRpb24+CiAgICAgICAgIDx0aWZmOllSZXNvbHV0aW9uPjcyMDAwMC8xMDAwMDwvdGlmZjpZUmVzb2x1dGlvbj4KICAgICAgICAgPHRpZmY6UmVzb2x1dGlvblVuaXQ+MjwvdGlmZjpSZXNvbHV0aW9uVW5pdD4KICAgICAgICAgPGV4aWY6Q29sb3JTcGFjZT42NTUzNTwvZXhpZjpDb2xvclNwYWNlPgogICAgICAgICA8ZXhpZjpQaXhlbFhEaW1lbnNpb24+NDA8L2V4aWY6UGl4ZWxYRGltZW5zaW9uPgogICAgICAgICA8ZXhpZjpQaXhlbFlEaW1lbnNpb24+NDA8L2V4aWY6UGl4ZWxZRGltZW5zaW9uPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAKPD94cGFja2V0IGVuZD0idyI/PrIqnbMAAAAgY0hSTQAAeiUAAICDAAD5/wAAgOkAAHUwAADqYAAAOpgAABdvkl/FRgAAAONJREFUeNrs2dEKgzAMBdDr8Ku3tY2OfXf2sD4IU6Q1iRdZwMfiQW2SxkFVwRy3wHvdu1apasT10G80r43EUQKXODrgU3+DBriG6wJ67OIE4MWaZhKAmTUPmuMsgdkDZwXMACbWUlc8cUeBBYCwNgshOAAYO9ZIBVK2W6G4VmA4ruUVTzWdgBE41ypx+ZbfDZgtuxOvJ+hWay1fcTkD2foNutdei00ikcjeXRyGPJJmhLmbWVYYYQb6Iw3Pwln34/SDe2IH7iFpRh+JHUg/PNpC/geY4SPgMajmv3sXDuy/IT4DAIksaI1YRbuWAAAAAElFTkSuQmCC"}]);
+/* eslint-disable no-proto */
+
+
+
+var base64 = __webpack_require__(21)
+var ieee754 = __webpack_require__(33)
+var isArray = __webpack_require__(23)
+
+exports.Buffer = Buffer
+exports.SlowBuffer = SlowBuffer
+exports.INSPECT_MAX_BYTES = 50
+
+/**
+ * If `Buffer.TYPED_ARRAY_SUPPORT`:
+ *   === true    Use Uint8Array implementation (fastest)
+ *   === false   Use Object implementation (most compatible, even IE6)
+ *
+ * Browsers that support typed arrays are IE 10+, Firefox 4+, Chrome 7+, Safari 5.1+,
+ * Opera 11.6+, iOS 4.2+.
+ *
+ * Due to various browser bugs, sometimes the Object implementation will be used even
+ * when the browser supports typed arrays.
+ *
+ * Note:
+ *
+ *   - Firefox 4-29 lacks support for adding new properties to `Uint8Array` instances,
+ *     See: https://bugzilla.mozilla.org/show_bug.cgi?id=695438.
+ *
+ *   - Chrome 9-10 is missing the `TypedArray.prototype.subarray` function.
+ *
+ *   - IE10 has a broken `TypedArray.prototype.subarray` function which returns arrays of
+ *     incorrect length in some situations.
+
+ * We detect these buggy browsers and set `Buffer.TYPED_ARRAY_SUPPORT` to `false` so they
+ * get the Object implementation, which is slower but behaves correctly.
+ */
+Buffer.TYPED_ARRAY_SUPPORT = global.TYPED_ARRAY_SUPPORT !== undefined
+  ? global.TYPED_ARRAY_SUPPORT
+  : typedArraySupport()
+
+/*
+ * Export kMaxLength after typed array support is determined.
+ */
+exports.kMaxLength = kMaxLength()
+
+function typedArraySupport () {
+  try {
+    var arr = new Uint8Array(1)
+    arr.__proto__ = {__proto__: Uint8Array.prototype, foo: function () { return 42 }}
+    return arr.foo() === 42 && // typed array instances can be augmented
+        typeof arr.subarray === 'function' && // chrome 9-10 lack `subarray`
+        arr.subarray(1, 1).byteLength === 0 // ie10 has broken `subarray`
+  } catch (e) {
+    return false
+  }
+}
+
+function kMaxLength () {
+  return Buffer.TYPED_ARRAY_SUPPORT
+    ? 0x7fffffff
+    : 0x3fffffff
+}
+
+function createBuffer (that, length) {
+  if (kMaxLength() < length) {
+    throw new RangeError('Invalid typed array length')
+  }
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    // Return an augmented `Uint8Array` instance, for best performance
+    that = new Uint8Array(length)
+    that.__proto__ = Buffer.prototype
+  } else {
+    // Fallback: Return an object instance of the Buffer class
+    if (that === null) {
+      that = new Buffer(length)
+    }
+    that.length = length
+  }
+
+  return that
+}
+
+/**
+ * The Buffer constructor returns instances of `Uint8Array` that have their
+ * prototype changed to `Buffer.prototype`. Furthermore, `Buffer` is a subclass of
+ * `Uint8Array`, so the returned instances will have all the node `Buffer` methods
+ * and the `Uint8Array` methods. Square bracket notation works as expected -- it
+ * returns a single octet.
+ *
+ * The `Uint8Array` prototype remains unmodified.
+ */
+
+function Buffer (arg, encodingOrOffset, length) {
+  if (!Buffer.TYPED_ARRAY_SUPPORT && !(this instanceof Buffer)) {
+    return new Buffer(arg, encodingOrOffset, length)
+  }
+
+  // Common case.
+  if (typeof arg === 'number') {
+    if (typeof encodingOrOffset === 'string') {
+      throw new Error(
+        'If encoding is specified then the first argument must be a string'
+      )
+    }
+    return allocUnsafe(this, arg)
+  }
+  return from(this, arg, encodingOrOffset, length)
+}
+
+Buffer.poolSize = 8192 // not used by this implementation
+
+// TODO: Legacy, not needed anymore. Remove in next major version.
+Buffer._augment = function (arr) {
+  arr.__proto__ = Buffer.prototype
+  return arr
+}
+
+function from (that, value, encodingOrOffset, length) {
+  if (typeof value === 'number') {
+    throw new TypeError('"value" argument must not be a number')
+  }
+
+  if (typeof ArrayBuffer !== 'undefined' && value instanceof ArrayBuffer) {
+    return fromArrayBuffer(that, value, encodingOrOffset, length)
+  }
+
+  if (typeof value === 'string') {
+    return fromString(that, value, encodingOrOffset)
+  }
+
+  return fromObject(that, value)
+}
+
+/**
+ * Functionally equivalent to Buffer(arg, encoding) but throws a TypeError
+ * if value is a number.
+ * Buffer.from(str[, encoding])
+ * Buffer.from(array)
+ * Buffer.from(buffer)
+ * Buffer.from(arrayBuffer[, byteOffset[, length]])
+ **/
+Buffer.from = function (value, encodingOrOffset, length) {
+  return from(null, value, encodingOrOffset, length)
+}
+
+if (Buffer.TYPED_ARRAY_SUPPORT) {
+  Buffer.prototype.__proto__ = Uint8Array.prototype
+  Buffer.__proto__ = Uint8Array
+  if (typeof Symbol !== 'undefined' && Symbol.species &&
+      Buffer[Symbol.species] === Buffer) {
+    // Fix subarray() in ES2016. See: https://github.com/feross/buffer/pull/97
+    Object.defineProperty(Buffer, Symbol.species, {
+      value: null,
+      configurable: true
+    })
+  }
+}
+
+function assertSize (size) {
+  if (typeof size !== 'number') {
+    throw new TypeError('"size" argument must be a number')
+  } else if (size < 0) {
+    throw new RangeError('"size" argument must not be negative')
+  }
+}
+
+function alloc (that, size, fill, encoding) {
+  assertSize(size)
+  if (size <= 0) {
+    return createBuffer(that, size)
+  }
+  if (fill !== undefined) {
+    // Only pay attention to encoding if it's a string. This
+    // prevents accidentally sending in a number that would
+    // be interpretted as a start offset.
+    return typeof encoding === 'string'
+      ? createBuffer(that, size).fill(fill, encoding)
+      : createBuffer(that, size).fill(fill)
+  }
+  return createBuffer(that, size)
+}
+
+/**
+ * Creates a new filled Buffer instance.
+ * alloc(size[, fill[, encoding]])
+ **/
+Buffer.alloc = function (size, fill, encoding) {
+  return alloc(null, size, fill, encoding)
+}
+
+function allocUnsafe (that, size) {
+  assertSize(size)
+  that = createBuffer(that, size < 0 ? 0 : checked(size) | 0)
+  if (!Buffer.TYPED_ARRAY_SUPPORT) {
+    for (var i = 0; i < size; ++i) {
+      that[i] = 0
+    }
+  }
+  return that
+}
+
+/**
+ * Equivalent to Buffer(num), by default creates a non-zero-filled Buffer instance.
+ * */
+Buffer.allocUnsafe = function (size) {
+  return allocUnsafe(null, size)
+}
+/**
+ * Equivalent to SlowBuffer(num), by default creates a non-zero-filled Buffer instance.
+ */
+Buffer.allocUnsafeSlow = function (size) {
+  return allocUnsafe(null, size)
+}
+
+function fromString (that, string, encoding) {
+  if (typeof encoding !== 'string' || encoding === '') {
+    encoding = 'utf8'
+  }
+
+  if (!Buffer.isEncoding(encoding)) {
+    throw new TypeError('"encoding" must be a valid string encoding')
+  }
+
+  var length = byteLength(string, encoding) | 0
+  that = createBuffer(that, length)
+
+  var actual = that.write(string, encoding)
+
+  if (actual !== length) {
+    // Writing a hex string, for example, that contains invalid characters will
+    // cause everything after the first invalid character to be ignored. (e.g.
+    // 'abxxcd' will be treated as 'ab')
+    that = that.slice(0, actual)
+  }
+
+  return that
+}
+
+function fromArrayLike (that, array) {
+  var length = array.length < 0 ? 0 : checked(array.length) | 0
+  that = createBuffer(that, length)
+  for (var i = 0; i < length; i += 1) {
+    that[i] = array[i] & 255
+  }
+  return that
+}
+
+function fromArrayBuffer (that, array, byteOffset, length) {
+  array.byteLength // this throws if `array` is not a valid ArrayBuffer
+
+  if (byteOffset < 0 || array.byteLength < byteOffset) {
+    throw new RangeError('\'offset\' is out of bounds')
+  }
+
+  if (array.byteLength < byteOffset + (length || 0)) {
+    throw new RangeError('\'length\' is out of bounds')
+  }
+
+  if (byteOffset === undefined && length === undefined) {
+    array = new Uint8Array(array)
+  } else if (length === undefined) {
+    array = new Uint8Array(array, byteOffset)
+  } else {
+    array = new Uint8Array(array, byteOffset, length)
+  }
+
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    // Return an augmented `Uint8Array` instance, for best performance
+    that = array
+    that.__proto__ = Buffer.prototype
+  } else {
+    // Fallback: Return an object instance of the Buffer class
+    that = fromArrayLike(that, array)
+  }
+  return that
+}
+
+function fromObject (that, obj) {
+  if (Buffer.isBuffer(obj)) {
+    var len = checked(obj.length) | 0
+    that = createBuffer(that, len)
+
+    if (that.length === 0) {
+      return that
+    }
+
+    obj.copy(that, 0, 0, len)
+    return that
+  }
+
+  if (obj) {
+    if ((typeof ArrayBuffer !== 'undefined' &&
+        obj.buffer instanceof ArrayBuffer) || 'length' in obj) {
+      if (typeof obj.length !== 'number' || isnan(obj.length)) {
+        return createBuffer(that, 0)
+      }
+      return fromArrayLike(that, obj)
+    }
+
+    if (obj.type === 'Buffer' && isArray(obj.data)) {
+      return fromArrayLike(that, obj.data)
+    }
+  }
+
+  throw new TypeError('First argument must be a string, Buffer, ArrayBuffer, Array, or array-like object.')
+}
+
+function checked (length) {
+  // Note: cannot use `length < kMaxLength()` here because that fails when
+  // length is NaN (which is otherwise coerced to zero.)
+  if (length >= kMaxLength()) {
+    throw new RangeError('Attempt to allocate Buffer larger than maximum ' +
+                         'size: 0x' + kMaxLength().toString(16) + ' bytes')
+  }
+  return length | 0
+}
+
+function SlowBuffer (length) {
+  if (+length != length) { // eslint-disable-line eqeqeq
+    length = 0
+  }
+  return Buffer.alloc(+length)
+}
+
+Buffer.isBuffer = function isBuffer (b) {
+  return !!(b != null && b._isBuffer)
+}
+
+Buffer.compare = function compare (a, b) {
+  if (!Buffer.isBuffer(a) || !Buffer.isBuffer(b)) {
+    throw new TypeError('Arguments must be Buffers')
+  }
+
+  if (a === b) return 0
+
+  var x = a.length
+  var y = b.length
+
+  for (var i = 0, len = Math.min(x, y); i < len; ++i) {
+    if (a[i] !== b[i]) {
+      x = a[i]
+      y = b[i]
+      break
+    }
+  }
+
+  if (x < y) return -1
+  if (y < x) return 1
+  return 0
+}
+
+Buffer.isEncoding = function isEncoding (encoding) {
+  switch (String(encoding).toLowerCase()) {
+    case 'hex':
+    case 'utf8':
+    case 'utf-8':
+    case 'ascii':
+    case 'latin1':
+    case 'binary':
+    case 'base64':
+    case 'ucs2':
+    case 'ucs-2':
+    case 'utf16le':
+    case 'utf-16le':
+      return true
+    default:
+      return false
+  }
+}
+
+Buffer.concat = function concat (list, length) {
+  if (!isArray(list)) {
+    throw new TypeError('"list" argument must be an Array of Buffers')
+  }
+
+  if (list.length === 0) {
+    return Buffer.alloc(0)
+  }
+
+  var i
+  if (length === undefined) {
+    length = 0
+    for (i = 0; i < list.length; ++i) {
+      length += list[i].length
+    }
+  }
+
+  var buffer = Buffer.allocUnsafe(length)
+  var pos = 0
+  for (i = 0; i < list.length; ++i) {
+    var buf = list[i]
+    if (!Buffer.isBuffer(buf)) {
+      throw new TypeError('"list" argument must be an Array of Buffers')
+    }
+    buf.copy(buffer, pos)
+    pos += buf.length
+  }
+  return buffer
+}
+
+function byteLength (string, encoding) {
+  if (Buffer.isBuffer(string)) {
+    return string.length
+  }
+  if (typeof ArrayBuffer !== 'undefined' && typeof ArrayBuffer.isView === 'function' &&
+      (ArrayBuffer.isView(string) || string instanceof ArrayBuffer)) {
+    return string.byteLength
+  }
+  if (typeof string !== 'string') {
+    string = '' + string
+  }
+
+  var len = string.length
+  if (len === 0) return 0
+
+  // Use a for loop to avoid recursion
+  var loweredCase = false
+  for (;;) {
+    switch (encoding) {
+      case 'ascii':
+      case 'latin1':
+      case 'binary':
+        return len
+      case 'utf8':
+      case 'utf-8':
+      case undefined:
+        return utf8ToBytes(string).length
+      case 'ucs2':
+      case 'ucs-2':
+      case 'utf16le':
+      case 'utf-16le':
+        return len * 2
+      case 'hex':
+        return len >>> 1
+      case 'base64':
+        return base64ToBytes(string).length
+      default:
+        if (loweredCase) return utf8ToBytes(string).length // assume utf8
+        encoding = ('' + encoding).toLowerCase()
+        loweredCase = true
+    }
+  }
+}
+Buffer.byteLength = byteLength
+
+function slowToString (encoding, start, end) {
+  var loweredCase = false
+
+  // No need to verify that "this.length <= MAX_UINT32" since it's a read-only
+  // property of a typed array.
+
+  // This behaves neither like String nor Uint8Array in that we set start/end
+  // to their upper/lower bounds if the value passed is out of range.
+  // undefined is handled specially as per ECMA-262 6th Edition,
+  // Section 13.3.3.7 Runtime Semantics: KeyedBindingInitialization.
+  if (start === undefined || start < 0) {
+    start = 0
+  }
+  // Return early if start > this.length. Done here to prevent potential uint32
+  // coercion fail below.
+  if (start > this.length) {
+    return ''
+  }
+
+  if (end === undefined || end > this.length) {
+    end = this.length
+  }
+
+  if (end <= 0) {
+    return ''
+  }
+
+  // Force coersion to uint32. This will also coerce falsey/NaN values to 0.
+  end >>>= 0
+  start >>>= 0
+
+  if (end <= start) {
+    return ''
+  }
+
+  if (!encoding) encoding = 'utf8'
+
+  while (true) {
+    switch (encoding) {
+      case 'hex':
+        return hexSlice(this, start, end)
+
+      case 'utf8':
+      case 'utf-8':
+        return utf8Slice(this, start, end)
+
+      case 'ascii':
+        return asciiSlice(this, start, end)
+
+      case 'latin1':
+      case 'binary':
+        return latin1Slice(this, start, end)
+
+      case 'base64':
+        return base64Slice(this, start, end)
+
+      case 'ucs2':
+      case 'ucs-2':
+      case 'utf16le':
+      case 'utf-16le':
+        return utf16leSlice(this, start, end)
+
+      default:
+        if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding)
+        encoding = (encoding + '').toLowerCase()
+        loweredCase = true
+    }
+  }
+}
+
+// The property is used by `Buffer.isBuffer` and `is-buffer` (in Safari 5-7) to detect
+// Buffer instances.
+Buffer.prototype._isBuffer = true
+
+function swap (b, n, m) {
+  var i = b[n]
+  b[n] = b[m]
+  b[m] = i
+}
+
+Buffer.prototype.swap16 = function swap16 () {
+  var len = this.length
+  if (len % 2 !== 0) {
+    throw new RangeError('Buffer size must be a multiple of 16-bits')
+  }
+  for (var i = 0; i < len; i += 2) {
+    swap(this, i, i + 1)
+  }
+  return this
+}
+
+Buffer.prototype.swap32 = function swap32 () {
+  var len = this.length
+  if (len % 4 !== 0) {
+    throw new RangeError('Buffer size must be a multiple of 32-bits')
+  }
+  for (var i = 0; i < len; i += 4) {
+    swap(this, i, i + 3)
+    swap(this, i + 1, i + 2)
+  }
+  return this
+}
+
+Buffer.prototype.swap64 = function swap64 () {
+  var len = this.length
+  if (len % 8 !== 0) {
+    throw new RangeError('Buffer size must be a multiple of 64-bits')
+  }
+  for (var i = 0; i < len; i += 8) {
+    swap(this, i, i + 7)
+    swap(this, i + 1, i + 6)
+    swap(this, i + 2, i + 5)
+    swap(this, i + 3, i + 4)
+  }
+  return this
+}
+
+Buffer.prototype.toString = function toString () {
+  var length = this.length | 0
+  if (length === 0) return ''
+  if (arguments.length === 0) return utf8Slice(this, 0, length)
+  return slowToString.apply(this, arguments)
+}
+
+Buffer.prototype.equals = function equals (b) {
+  if (!Buffer.isBuffer(b)) throw new TypeError('Argument must be a Buffer')
+  if (this === b) return true
+  return Buffer.compare(this, b) === 0
+}
+
+Buffer.prototype.inspect = function inspect () {
+  var str = ''
+  var max = exports.INSPECT_MAX_BYTES
+  if (this.length > 0) {
+    str = this.toString('hex', 0, max).match(/.{2}/g).join(' ')
+    if (this.length > max) str += ' ... '
+  }
+  return '<Buffer ' + str + '>'
+}
+
+Buffer.prototype.compare = function compare (target, start, end, thisStart, thisEnd) {
+  if (!Buffer.isBuffer(target)) {
+    throw new TypeError('Argument must be a Buffer')
+  }
+
+  if (start === undefined) {
+    start = 0
+  }
+  if (end === undefined) {
+    end = target ? target.length : 0
+  }
+  if (thisStart === undefined) {
+    thisStart = 0
+  }
+  if (thisEnd === undefined) {
+    thisEnd = this.length
+  }
+
+  if (start < 0 || end > target.length || thisStart < 0 || thisEnd > this.length) {
+    throw new RangeError('out of range index')
+  }
+
+  if (thisStart >= thisEnd && start >= end) {
+    return 0
+  }
+  if (thisStart >= thisEnd) {
+    return -1
+  }
+  if (start >= end) {
+    return 1
+  }
+
+  start >>>= 0
+  end >>>= 0
+  thisStart >>>= 0
+  thisEnd >>>= 0
+
+  if (this === target) return 0
+
+  var x = thisEnd - thisStart
+  var y = end - start
+  var len = Math.min(x, y)
+
+  var thisCopy = this.slice(thisStart, thisEnd)
+  var targetCopy = target.slice(start, end)
+
+  for (var i = 0; i < len; ++i) {
+    if (thisCopy[i] !== targetCopy[i]) {
+      x = thisCopy[i]
+      y = targetCopy[i]
+      break
+    }
+  }
+
+  if (x < y) return -1
+  if (y < x) return 1
+  return 0
+}
+
+// Finds either the first index of `val` in `buffer` at offset >= `byteOffset`,
+// OR the last index of `val` in `buffer` at offset <= `byteOffset`.
+//
+// Arguments:
+// - buffer - a Buffer to search
+// - val - a string, Buffer, or number
+// - byteOffset - an index into `buffer`; will be clamped to an int32
+// - encoding - an optional encoding, relevant is val is a string
+// - dir - true for indexOf, false for lastIndexOf
+function bidirectionalIndexOf (buffer, val, byteOffset, encoding, dir) {
+  // Empty buffer means no match
+  if (buffer.length === 0) return -1
+
+  // Normalize byteOffset
+  if (typeof byteOffset === 'string') {
+    encoding = byteOffset
+    byteOffset = 0
+  } else if (byteOffset > 0x7fffffff) {
+    byteOffset = 0x7fffffff
+  } else if (byteOffset < -0x80000000) {
+    byteOffset = -0x80000000
+  }
+  byteOffset = +byteOffset  // Coerce to Number.
+  if (isNaN(byteOffset)) {
+    // byteOffset: it it's undefined, null, NaN, "foo", etc, search whole buffer
+    byteOffset = dir ? 0 : (buffer.length - 1)
+  }
+
+  // Normalize byteOffset: negative offsets start from the end of the buffer
+  if (byteOffset < 0) byteOffset = buffer.length + byteOffset
+  if (byteOffset >= buffer.length) {
+    if (dir) return -1
+    else byteOffset = buffer.length - 1
+  } else if (byteOffset < 0) {
+    if (dir) byteOffset = 0
+    else return -1
+  }
+
+  // Normalize val
+  if (typeof val === 'string') {
+    val = Buffer.from(val, encoding)
+  }
+
+  // Finally, search either indexOf (if dir is true) or lastIndexOf
+  if (Buffer.isBuffer(val)) {
+    // Special case: looking for empty string/buffer always fails
+    if (val.length === 0) {
+      return -1
+    }
+    return arrayIndexOf(buffer, val, byteOffset, encoding, dir)
+  } else if (typeof val === 'number') {
+    val = val & 0xFF // Search for a byte value [0-255]
+    if (Buffer.TYPED_ARRAY_SUPPORT &&
+        typeof Uint8Array.prototype.indexOf === 'function') {
+      if (dir) {
+        return Uint8Array.prototype.indexOf.call(buffer, val, byteOffset)
+      } else {
+        return Uint8Array.prototype.lastIndexOf.call(buffer, val, byteOffset)
+      }
+    }
+    return arrayIndexOf(buffer, [ val ], byteOffset, encoding, dir)
+  }
+
+  throw new TypeError('val must be string, number or Buffer')
+}
+
+function arrayIndexOf (arr, val, byteOffset, encoding, dir) {
+  var indexSize = 1
+  var arrLength = arr.length
+  var valLength = val.length
+
+  if (encoding !== undefined) {
+    encoding = String(encoding).toLowerCase()
+    if (encoding === 'ucs2' || encoding === 'ucs-2' ||
+        encoding === 'utf16le' || encoding === 'utf-16le') {
+      if (arr.length < 2 || val.length < 2) {
+        return -1
+      }
+      indexSize = 2
+      arrLength /= 2
+      valLength /= 2
+      byteOffset /= 2
+    }
+  }
+
+  function read (buf, i) {
+    if (indexSize === 1) {
+      return buf[i]
+    } else {
+      return buf.readUInt16BE(i * indexSize)
+    }
+  }
+
+  var i
+  if (dir) {
+    var foundIndex = -1
+    for (i = byteOffset; i < arrLength; i++) {
+      if (read(arr, i) === read(val, foundIndex === -1 ? 0 : i - foundIndex)) {
+        if (foundIndex === -1) foundIndex = i
+        if (i - foundIndex + 1 === valLength) return foundIndex * indexSize
+      } else {
+        if (foundIndex !== -1) i -= i - foundIndex
+        foundIndex = -1
+      }
+    }
+  } else {
+    if (byteOffset + valLength > arrLength) byteOffset = arrLength - valLength
+    for (i = byteOffset; i >= 0; i--) {
+      var found = true
+      for (var j = 0; j < valLength; j++) {
+        if (read(arr, i + j) !== read(val, j)) {
+          found = false
+          break
+        }
+      }
+      if (found) return i
+    }
+  }
+
+  return -1
+}
+
+Buffer.prototype.includes = function includes (val, byteOffset, encoding) {
+  return this.indexOf(val, byteOffset, encoding) !== -1
+}
+
+Buffer.prototype.indexOf = function indexOf (val, byteOffset, encoding) {
+  return bidirectionalIndexOf(this, val, byteOffset, encoding, true)
+}
+
+Buffer.prototype.lastIndexOf = function lastIndexOf (val, byteOffset, encoding) {
+  return bidirectionalIndexOf(this, val, byteOffset, encoding, false)
+}
+
+function hexWrite (buf, string, offset, length) {
+  offset = Number(offset) || 0
+  var remaining = buf.length - offset
+  if (!length) {
+    length = remaining
+  } else {
+    length = Number(length)
+    if (length > remaining) {
+      length = remaining
+    }
+  }
+
+  // must be an even number of digits
+  var strLen = string.length
+  if (strLen % 2 !== 0) throw new TypeError('Invalid hex string')
+
+  if (length > strLen / 2) {
+    length = strLen / 2
+  }
+  for (var i = 0; i < length; ++i) {
+    var parsed = parseInt(string.substr(i * 2, 2), 16)
+    if (isNaN(parsed)) return i
+    buf[offset + i] = parsed
+  }
+  return i
+}
+
+function utf8Write (buf, string, offset, length) {
+  return blitBuffer(utf8ToBytes(string, buf.length - offset), buf, offset, length)
+}
+
+function asciiWrite (buf, string, offset, length) {
+  return blitBuffer(asciiToBytes(string), buf, offset, length)
+}
+
+function latin1Write (buf, string, offset, length) {
+  return asciiWrite(buf, string, offset, length)
+}
+
+function base64Write (buf, string, offset, length) {
+  return blitBuffer(base64ToBytes(string), buf, offset, length)
+}
+
+function ucs2Write (buf, string, offset, length) {
+  return blitBuffer(utf16leToBytes(string, buf.length - offset), buf, offset, length)
+}
+
+Buffer.prototype.write = function write (string, offset, length, encoding) {
+  // Buffer#write(string)
+  if (offset === undefined) {
+    encoding = 'utf8'
+    length = this.length
+    offset = 0
+  // Buffer#write(string, encoding)
+  } else if (length === undefined && typeof offset === 'string') {
+    encoding = offset
+    length = this.length
+    offset = 0
+  // Buffer#write(string, offset[, length][, encoding])
+  } else if (isFinite(offset)) {
+    offset = offset | 0
+    if (isFinite(length)) {
+      length = length | 0
+      if (encoding === undefined) encoding = 'utf8'
+    } else {
+      encoding = length
+      length = undefined
+    }
+  // legacy write(string, encoding, offset, length) - remove in v0.13
+  } else {
+    throw new Error(
+      'Buffer.write(string, encoding, offset[, length]) is no longer supported'
+    )
+  }
+
+  var remaining = this.length - offset
+  if (length === undefined || length > remaining) length = remaining
+
+  if ((string.length > 0 && (length < 0 || offset < 0)) || offset > this.length) {
+    throw new RangeError('Attempt to write outside buffer bounds')
+  }
+
+  if (!encoding) encoding = 'utf8'
+
+  var loweredCase = false
+  for (;;) {
+    switch (encoding) {
+      case 'hex':
+        return hexWrite(this, string, offset, length)
+
+      case 'utf8':
+      case 'utf-8':
+        return utf8Write(this, string, offset, length)
+
+      case 'ascii':
+        return asciiWrite(this, string, offset, length)
+
+      case 'latin1':
+      case 'binary':
+        return latin1Write(this, string, offset, length)
+
+      case 'base64':
+        // Warning: maxLength not taken into account in base64Write
+        return base64Write(this, string, offset, length)
+
+      case 'ucs2':
+      case 'ucs-2':
+      case 'utf16le':
+      case 'utf-16le':
+        return ucs2Write(this, string, offset, length)
+
+      default:
+        if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding)
+        encoding = ('' + encoding).toLowerCase()
+        loweredCase = true
+    }
+  }
+}
+
+Buffer.prototype.toJSON = function toJSON () {
+  return {
+    type: 'Buffer',
+    data: Array.prototype.slice.call(this._arr || this, 0)
+  }
+}
+
+function base64Slice (buf, start, end) {
+  if (start === 0 && end === buf.length) {
+    return base64.fromByteArray(buf)
+  } else {
+    return base64.fromByteArray(buf.slice(start, end))
+  }
+}
+
+function utf8Slice (buf, start, end) {
+  end = Math.min(buf.length, end)
+  var res = []
+
+  var i = start
+  while (i < end) {
+    var firstByte = buf[i]
+    var codePoint = null
+    var bytesPerSequence = (firstByte > 0xEF) ? 4
+      : (firstByte > 0xDF) ? 3
+      : (firstByte > 0xBF) ? 2
+      : 1
+
+    if (i + bytesPerSequence <= end) {
+      var secondByte, thirdByte, fourthByte, tempCodePoint
+
+      switch (bytesPerSequence) {
+        case 1:
+          if (firstByte < 0x80) {
+            codePoint = firstByte
+          }
+          break
+        case 2:
+          secondByte = buf[i + 1]
+          if ((secondByte & 0xC0) === 0x80) {
+            tempCodePoint = (firstByte & 0x1F) << 0x6 | (secondByte & 0x3F)
+            if (tempCodePoint > 0x7F) {
+              codePoint = tempCodePoint
+            }
+          }
+          break
+        case 3:
+          secondByte = buf[i + 1]
+          thirdByte = buf[i + 2]
+          if ((secondByte & 0xC0) === 0x80 && (thirdByte & 0xC0) === 0x80) {
+            tempCodePoint = (firstByte & 0xF) << 0xC | (secondByte & 0x3F) << 0x6 | (thirdByte & 0x3F)
+            if (tempCodePoint > 0x7FF && (tempCodePoint < 0xD800 || tempCodePoint > 0xDFFF)) {
+              codePoint = tempCodePoint
+            }
+          }
+          break
+        case 4:
+          secondByte = buf[i + 1]
+          thirdByte = buf[i + 2]
+          fourthByte = buf[i + 3]
+          if ((secondByte & 0xC0) === 0x80 && (thirdByte & 0xC0) === 0x80 && (fourthByte & 0xC0) === 0x80) {
+            tempCodePoint = (firstByte & 0xF) << 0x12 | (secondByte & 0x3F) << 0xC | (thirdByte & 0x3F) << 0x6 | (fourthByte & 0x3F)
+            if (tempCodePoint > 0xFFFF && tempCodePoint < 0x110000) {
+              codePoint = tempCodePoint
+            }
+          }
+      }
+    }
+
+    if (codePoint === null) {
+      // we did not generate a valid codePoint so insert a
+      // replacement char (U+FFFD) and advance only 1 byte
+      codePoint = 0xFFFD
+      bytesPerSequence = 1
+    } else if (codePoint > 0xFFFF) {
+      // encode to utf16 (surrogate pair dance)
+      codePoint -= 0x10000
+      res.push(codePoint >>> 10 & 0x3FF | 0xD800)
+      codePoint = 0xDC00 | codePoint & 0x3FF
+    }
+
+    res.push(codePoint)
+    i += bytesPerSequence
+  }
+
+  return decodeCodePointsArray(res)
+}
+
+// Based on http://stackoverflow.com/a/22747272/680742, the browser with
+// the lowest limit is Chrome, with 0x10000 args.
+// We go 1 magnitude less, for safety
+var MAX_ARGUMENTS_LENGTH = 0x1000
+
+function decodeCodePointsArray (codePoints) {
+  var len = codePoints.length
+  if (len <= MAX_ARGUMENTS_LENGTH) {
+    return String.fromCharCode.apply(String, codePoints) // avoid extra slice()
+  }
+
+  // Decode in chunks to avoid "call stack size exceeded".
+  var res = ''
+  var i = 0
+  while (i < len) {
+    res += String.fromCharCode.apply(
+      String,
+      codePoints.slice(i, i += MAX_ARGUMENTS_LENGTH)
+    )
+  }
+  return res
+}
+
+function asciiSlice (buf, start, end) {
+  var ret = ''
+  end = Math.min(buf.length, end)
+
+  for (var i = start; i < end; ++i) {
+    ret += String.fromCharCode(buf[i] & 0x7F)
+  }
+  return ret
+}
+
+function latin1Slice (buf, start, end) {
+  var ret = ''
+  end = Math.min(buf.length, end)
+
+  for (var i = start; i < end; ++i) {
+    ret += String.fromCharCode(buf[i])
+  }
+  return ret
+}
+
+function hexSlice (buf, start, end) {
+  var len = buf.length
+
+  if (!start || start < 0) start = 0
+  if (!end || end < 0 || end > len) end = len
+
+  var out = ''
+  for (var i = start; i < end; ++i) {
+    out += toHex(buf[i])
+  }
+  return out
+}
+
+function utf16leSlice (buf, start, end) {
+  var bytes = buf.slice(start, end)
+  var res = ''
+  for (var i = 0; i < bytes.length; i += 2) {
+    res += String.fromCharCode(bytes[i] + bytes[i + 1] * 256)
+  }
+  return res
+}
+
+Buffer.prototype.slice = function slice (start, end) {
+  var len = this.length
+  start = ~~start
+  end = end === undefined ? len : ~~end
+
+  if (start < 0) {
+    start += len
+    if (start < 0) start = 0
+  } else if (start > len) {
+    start = len
+  }
+
+  if (end < 0) {
+    end += len
+    if (end < 0) end = 0
+  } else if (end > len) {
+    end = len
+  }
+
+  if (end < start) end = start
+
+  var newBuf
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    newBuf = this.subarray(start, end)
+    newBuf.__proto__ = Buffer.prototype
+  } else {
+    var sliceLen = end - start
+    newBuf = new Buffer(sliceLen, undefined)
+    for (var i = 0; i < sliceLen; ++i) {
+      newBuf[i] = this[i + start]
+    }
+  }
+
+  return newBuf
+}
+
+/*
+ * Need to make sure that buffer isn't trying to write out of bounds.
+ */
+function checkOffset (offset, ext, length) {
+  if ((offset % 1) !== 0 || offset < 0) throw new RangeError('offset is not uint')
+  if (offset + ext > length) throw new RangeError('Trying to access beyond buffer length')
+}
+
+Buffer.prototype.readUIntLE = function readUIntLE (offset, byteLength, noAssert) {
+  offset = offset | 0
+  byteLength = byteLength | 0
+  if (!noAssert) checkOffset(offset, byteLength, this.length)
+
+  var val = this[offset]
+  var mul = 1
+  var i = 0
+  while (++i < byteLength && (mul *= 0x100)) {
+    val += this[offset + i] * mul
+  }
+
+  return val
+}
+
+Buffer.prototype.readUIntBE = function readUIntBE (offset, byteLength, noAssert) {
+  offset = offset | 0
+  byteLength = byteLength | 0
+  if (!noAssert) {
+    checkOffset(offset, byteLength, this.length)
+  }
+
+  var val = this[offset + --byteLength]
+  var mul = 1
+  while (byteLength > 0 && (mul *= 0x100)) {
+    val += this[offset + --byteLength] * mul
+  }
+
+  return val
+}
+
+Buffer.prototype.readUInt8 = function readUInt8 (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 1, this.length)
+  return this[offset]
+}
+
+Buffer.prototype.readUInt16LE = function readUInt16LE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 2, this.length)
+  return this[offset] | (this[offset + 1] << 8)
+}
+
+Buffer.prototype.readUInt16BE = function readUInt16BE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 2, this.length)
+  return (this[offset] << 8) | this[offset + 1]
+}
+
+Buffer.prototype.readUInt32LE = function readUInt32LE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length)
+
+  return ((this[offset]) |
+      (this[offset + 1] << 8) |
+      (this[offset + 2] << 16)) +
+      (this[offset + 3] * 0x1000000)
+}
+
+Buffer.prototype.readUInt32BE = function readUInt32BE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length)
+
+  return (this[offset] * 0x1000000) +
+    ((this[offset + 1] << 16) |
+    (this[offset + 2] << 8) |
+    this[offset + 3])
+}
+
+Buffer.prototype.readIntLE = function readIntLE (offset, byteLength, noAssert) {
+  offset = offset | 0
+  byteLength = byteLength | 0
+  if (!noAssert) checkOffset(offset, byteLength, this.length)
+
+  var val = this[offset]
+  var mul = 1
+  var i = 0
+  while (++i < byteLength && (mul *= 0x100)) {
+    val += this[offset + i] * mul
+  }
+  mul *= 0x80
+
+  if (val >= mul) val -= Math.pow(2, 8 * byteLength)
+
+  return val
+}
+
+Buffer.prototype.readIntBE = function readIntBE (offset, byteLength, noAssert) {
+  offset = offset | 0
+  byteLength = byteLength | 0
+  if (!noAssert) checkOffset(offset, byteLength, this.length)
+
+  var i = byteLength
+  var mul = 1
+  var val = this[offset + --i]
+  while (i > 0 && (mul *= 0x100)) {
+    val += this[offset + --i] * mul
+  }
+  mul *= 0x80
+
+  if (val >= mul) val -= Math.pow(2, 8 * byteLength)
+
+  return val
+}
+
+Buffer.prototype.readInt8 = function readInt8 (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 1, this.length)
+  if (!(this[offset] & 0x80)) return (this[offset])
+  return ((0xff - this[offset] + 1) * -1)
+}
+
+Buffer.prototype.readInt16LE = function readInt16LE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 2, this.length)
+  var val = this[offset] | (this[offset + 1] << 8)
+  return (val & 0x8000) ? val | 0xFFFF0000 : val
+}
+
+Buffer.prototype.readInt16BE = function readInt16BE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 2, this.length)
+  var val = this[offset + 1] | (this[offset] << 8)
+  return (val & 0x8000) ? val | 0xFFFF0000 : val
+}
+
+Buffer.prototype.readInt32LE = function readInt32LE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length)
+
+  return (this[offset]) |
+    (this[offset + 1] << 8) |
+    (this[offset + 2] << 16) |
+    (this[offset + 3] << 24)
+}
+
+Buffer.prototype.readInt32BE = function readInt32BE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length)
+
+  return (this[offset] << 24) |
+    (this[offset + 1] << 16) |
+    (this[offset + 2] << 8) |
+    (this[offset + 3])
+}
+
+Buffer.prototype.readFloatLE = function readFloatLE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length)
+  return ieee754.read(this, offset, true, 23, 4)
+}
+
+Buffer.prototype.readFloatBE = function readFloatBE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length)
+  return ieee754.read(this, offset, false, 23, 4)
+}
+
+Buffer.prototype.readDoubleLE = function readDoubleLE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 8, this.length)
+  return ieee754.read(this, offset, true, 52, 8)
+}
+
+Buffer.prototype.readDoubleBE = function readDoubleBE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 8, this.length)
+  return ieee754.read(this, offset, false, 52, 8)
+}
+
+function checkInt (buf, value, offset, ext, max, min) {
+  if (!Buffer.isBuffer(buf)) throw new TypeError('"buffer" argument must be a Buffer instance')
+  if (value > max || value < min) throw new RangeError('"value" argument is out of bounds')
+  if (offset + ext > buf.length) throw new RangeError('Index out of range')
+}
+
+Buffer.prototype.writeUIntLE = function writeUIntLE (value, offset, byteLength, noAssert) {
+  value = +value
+  offset = offset | 0
+  byteLength = byteLength | 0
+  if (!noAssert) {
+    var maxBytes = Math.pow(2, 8 * byteLength) - 1
+    checkInt(this, value, offset, byteLength, maxBytes, 0)
+  }
+
+  var mul = 1
+  var i = 0
+  this[offset] = value & 0xFF
+  while (++i < byteLength && (mul *= 0x100)) {
+    this[offset + i] = (value / mul) & 0xFF
+  }
+
+  return offset + byteLength
+}
+
+Buffer.prototype.writeUIntBE = function writeUIntBE (value, offset, byteLength, noAssert) {
+  value = +value
+  offset = offset | 0
+  byteLength = byteLength | 0
+  if (!noAssert) {
+    var maxBytes = Math.pow(2, 8 * byteLength) - 1
+    checkInt(this, value, offset, byteLength, maxBytes, 0)
+  }
+
+  var i = byteLength - 1
+  var mul = 1
+  this[offset + i] = value & 0xFF
+  while (--i >= 0 && (mul *= 0x100)) {
+    this[offset + i] = (value / mul) & 0xFF
+  }
+
+  return offset + byteLength
+}
+
+Buffer.prototype.writeUInt8 = function writeUInt8 (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 1, 0xff, 0)
+  if (!Buffer.TYPED_ARRAY_SUPPORT) value = Math.floor(value)
+  this[offset] = (value & 0xff)
+  return offset + 1
+}
+
+function objectWriteUInt16 (buf, value, offset, littleEndian) {
+  if (value < 0) value = 0xffff + value + 1
+  for (var i = 0, j = Math.min(buf.length - offset, 2); i < j; ++i) {
+    buf[offset + i] = (value & (0xff << (8 * (littleEndian ? i : 1 - i)))) >>>
+      (littleEndian ? i : 1 - i) * 8
+  }
+}
+
+Buffer.prototype.writeUInt16LE = function writeUInt16LE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 2, 0xffff, 0)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value & 0xff)
+    this[offset + 1] = (value >>> 8)
+  } else {
+    objectWriteUInt16(this, value, offset, true)
+  }
+  return offset + 2
+}
+
+Buffer.prototype.writeUInt16BE = function writeUInt16BE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 2, 0xffff, 0)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value >>> 8)
+    this[offset + 1] = (value & 0xff)
+  } else {
+    objectWriteUInt16(this, value, offset, false)
+  }
+  return offset + 2
+}
+
+function objectWriteUInt32 (buf, value, offset, littleEndian) {
+  if (value < 0) value = 0xffffffff + value + 1
+  for (var i = 0, j = Math.min(buf.length - offset, 4); i < j; ++i) {
+    buf[offset + i] = (value >>> (littleEndian ? i : 3 - i) * 8) & 0xff
+  }
+}
+
+Buffer.prototype.writeUInt32LE = function writeUInt32LE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 4, 0xffffffff, 0)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset + 3] = (value >>> 24)
+    this[offset + 2] = (value >>> 16)
+    this[offset + 1] = (value >>> 8)
+    this[offset] = (value & 0xff)
+  } else {
+    objectWriteUInt32(this, value, offset, true)
+  }
+  return offset + 4
+}
+
+Buffer.prototype.writeUInt32BE = function writeUInt32BE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 4, 0xffffffff, 0)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value >>> 24)
+    this[offset + 1] = (value >>> 16)
+    this[offset + 2] = (value >>> 8)
+    this[offset + 3] = (value & 0xff)
+  } else {
+    objectWriteUInt32(this, value, offset, false)
+  }
+  return offset + 4
+}
+
+Buffer.prototype.writeIntLE = function writeIntLE (value, offset, byteLength, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) {
+    var limit = Math.pow(2, 8 * byteLength - 1)
+
+    checkInt(this, value, offset, byteLength, limit - 1, -limit)
+  }
+
+  var i = 0
+  var mul = 1
+  var sub = 0
+  this[offset] = value & 0xFF
+  while (++i < byteLength && (mul *= 0x100)) {
+    if (value < 0 && sub === 0 && this[offset + i - 1] !== 0) {
+      sub = 1
+    }
+    this[offset + i] = ((value / mul) >> 0) - sub & 0xFF
+  }
+
+  return offset + byteLength
+}
+
+Buffer.prototype.writeIntBE = function writeIntBE (value, offset, byteLength, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) {
+    var limit = Math.pow(2, 8 * byteLength - 1)
+
+    checkInt(this, value, offset, byteLength, limit - 1, -limit)
+  }
+
+  var i = byteLength - 1
+  var mul = 1
+  var sub = 0
+  this[offset + i] = value & 0xFF
+  while (--i >= 0 && (mul *= 0x100)) {
+    if (value < 0 && sub === 0 && this[offset + i + 1] !== 0) {
+      sub = 1
+    }
+    this[offset + i] = ((value / mul) >> 0) - sub & 0xFF
+  }
+
+  return offset + byteLength
+}
+
+Buffer.prototype.writeInt8 = function writeInt8 (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 1, 0x7f, -0x80)
+  if (!Buffer.TYPED_ARRAY_SUPPORT) value = Math.floor(value)
+  if (value < 0) value = 0xff + value + 1
+  this[offset] = (value & 0xff)
+  return offset + 1
+}
+
+Buffer.prototype.writeInt16LE = function writeInt16LE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 2, 0x7fff, -0x8000)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value & 0xff)
+    this[offset + 1] = (value >>> 8)
+  } else {
+    objectWriteUInt16(this, value, offset, true)
+  }
+  return offset + 2
+}
+
+Buffer.prototype.writeInt16BE = function writeInt16BE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 2, 0x7fff, -0x8000)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value >>> 8)
+    this[offset + 1] = (value & 0xff)
+  } else {
+    objectWriteUInt16(this, value, offset, false)
+  }
+  return offset + 2
+}
+
+Buffer.prototype.writeInt32LE = function writeInt32LE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value & 0xff)
+    this[offset + 1] = (value >>> 8)
+    this[offset + 2] = (value >>> 16)
+    this[offset + 3] = (value >>> 24)
+  } else {
+    objectWriteUInt32(this, value, offset, true)
+  }
+  return offset + 4
+}
+
+Buffer.prototype.writeInt32BE = function writeInt32BE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000)
+  if (value < 0) value = 0xffffffff + value + 1
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value >>> 24)
+    this[offset + 1] = (value >>> 16)
+    this[offset + 2] = (value >>> 8)
+    this[offset + 3] = (value & 0xff)
+  } else {
+    objectWriteUInt32(this, value, offset, false)
+  }
+  return offset + 4
+}
+
+function checkIEEE754 (buf, value, offset, ext, max, min) {
+  if (offset + ext > buf.length) throw new RangeError('Index out of range')
+  if (offset < 0) throw new RangeError('Index out of range')
+}
+
+function writeFloat (buf, value, offset, littleEndian, noAssert) {
+  if (!noAssert) {
+    checkIEEE754(buf, value, offset, 4, 3.4028234663852886e+38, -3.4028234663852886e+38)
+  }
+  ieee754.write(buf, value, offset, littleEndian, 23, 4)
+  return offset + 4
+}
+
+Buffer.prototype.writeFloatLE = function writeFloatLE (value, offset, noAssert) {
+  return writeFloat(this, value, offset, true, noAssert)
+}
+
+Buffer.prototype.writeFloatBE = function writeFloatBE (value, offset, noAssert) {
+  return writeFloat(this, value, offset, false, noAssert)
+}
+
+function writeDouble (buf, value, offset, littleEndian, noAssert) {
+  if (!noAssert) {
+    checkIEEE754(buf, value, offset, 8, 1.7976931348623157E+308, -1.7976931348623157E+308)
+  }
+  ieee754.write(buf, value, offset, littleEndian, 52, 8)
+  return offset + 8
+}
+
+Buffer.prototype.writeDoubleLE = function writeDoubleLE (value, offset, noAssert) {
+  return writeDouble(this, value, offset, true, noAssert)
+}
+
+Buffer.prototype.writeDoubleBE = function writeDoubleBE (value, offset, noAssert) {
+  return writeDouble(this, value, offset, false, noAssert)
+}
+
+// copy(targetBuffer, targetStart=0, sourceStart=0, sourceEnd=buffer.length)
+Buffer.prototype.copy = function copy (target, targetStart, start, end) {
+  if (!start) start = 0
+  if (!end && end !== 0) end = this.length
+  if (targetStart >= target.length) targetStart = target.length
+  if (!targetStart) targetStart = 0
+  if (end > 0 && end < start) end = start
+
+  // Copy 0 bytes; we're done
+  if (end === start) return 0
+  if (target.length === 0 || this.length === 0) return 0
+
+  // Fatal error conditions
+  if (targetStart < 0) {
+    throw new RangeError('targetStart out of bounds')
+  }
+  if (start < 0 || start >= this.length) throw new RangeError('sourceStart out of bounds')
+  if (end < 0) throw new RangeError('sourceEnd out of bounds')
+
+  // Are we oob?
+  if (end > this.length) end = this.length
+  if (target.length - targetStart < end - start) {
+    end = target.length - targetStart + start
+  }
+
+  var len = end - start
+  var i
+
+  if (this === target && start < targetStart && targetStart < end) {
+    // descending copy from end
+    for (i = len - 1; i >= 0; --i) {
+      target[i + targetStart] = this[i + start]
+    }
+  } else if (len < 1000 || !Buffer.TYPED_ARRAY_SUPPORT) {
+    // ascending copy from start
+    for (i = 0; i < len; ++i) {
+      target[i + targetStart] = this[i + start]
+    }
+  } else {
+    Uint8Array.prototype.set.call(
+      target,
+      this.subarray(start, start + len),
+      targetStart
+    )
+  }
+
+  return len
+}
+
+// Usage:
+//    buffer.fill(number[, offset[, end]])
+//    buffer.fill(buffer[, offset[, end]])
+//    buffer.fill(string[, offset[, end]][, encoding])
+Buffer.prototype.fill = function fill (val, start, end, encoding) {
+  // Handle string cases:
+  if (typeof val === 'string') {
+    if (typeof start === 'string') {
+      encoding = start
+      start = 0
+      end = this.length
+    } else if (typeof end === 'string') {
+      encoding = end
+      end = this.length
+    }
+    if (val.length === 1) {
+      var code = val.charCodeAt(0)
+      if (code < 256) {
+        val = code
+      }
+    }
+    if (encoding !== undefined && typeof encoding !== 'string') {
+      throw new TypeError('encoding must be a string')
+    }
+    if (typeof encoding === 'string' && !Buffer.isEncoding(encoding)) {
+      throw new TypeError('Unknown encoding: ' + encoding)
+    }
+  } else if (typeof val === 'number') {
+    val = val & 255
+  }
+
+  // Invalid ranges are not set to a default, so can range check early.
+  if (start < 0 || this.length < start || this.length < end) {
+    throw new RangeError('Out of range index')
+  }
+
+  if (end <= start) {
+    return this
+  }
+
+  start = start >>> 0
+  end = end === undefined ? this.length : end >>> 0
+
+  if (!val) val = 0
+
+  var i
+  if (typeof val === 'number') {
+    for (i = start; i < end; ++i) {
+      this[i] = val
+    }
+  } else {
+    var bytes = Buffer.isBuffer(val)
+      ? val
+      : utf8ToBytes(new Buffer(val, encoding).toString())
+    var len = bytes.length
+    for (i = 0; i < end - start; ++i) {
+      this[i + start] = bytes[i % len]
+    }
+  }
+
+  return this
+}
+
+// HELPER FUNCTIONS
+// ================
+
+var INVALID_BASE64_RE = /[^+\/0-9A-Za-z-_]/g
+
+function base64clean (str) {
+  // Node strips out invalid characters like \n and \t from the string, base64-js does not
+  str = stringtrim(str).replace(INVALID_BASE64_RE, '')
+  // Node converts strings with length < 2 to ''
+  if (str.length < 2) return ''
+  // Node allows for non-padded base64 strings (missing trailing ===), base64-js does not
+  while (str.length % 4 !== 0) {
+    str = str + '='
+  }
+  return str
+}
+
+function stringtrim (str) {
+  if (str.trim) return str.trim()
+  return str.replace(/^\s+|\s+$/g, '')
+}
+
+function toHex (n) {
+  if (n < 16) return '0' + n.toString(16)
+  return n.toString(16)
+}
+
+function utf8ToBytes (string, units) {
+  units = units || Infinity
+  var codePoint
+  var length = string.length
+  var leadSurrogate = null
+  var bytes = []
+
+  for (var i = 0; i < length; ++i) {
+    codePoint = string.charCodeAt(i)
+
+    // is surrogate component
+    if (codePoint > 0xD7FF && codePoint < 0xE000) {
+      // last char was a lead
+      if (!leadSurrogate) {
+        // no lead yet
+        if (codePoint > 0xDBFF) {
+          // unexpected trail
+          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
+          continue
+        } else if (i + 1 === length) {
+          // unpaired lead
+          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
+          continue
+        }
+
+        // valid lead
+        leadSurrogate = codePoint
+
+        continue
+      }
+
+      // 2 leads in a row
+      if (codePoint < 0xDC00) {
+        if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
+        leadSurrogate = codePoint
+        continue
+      }
+
+      // valid surrogate pair
+      codePoint = (leadSurrogate - 0xD800 << 10 | codePoint - 0xDC00) + 0x10000
+    } else if (leadSurrogate) {
+      // valid bmp char, but last char was a lead
+      if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
+    }
+
+    leadSurrogate = null
+
+    // encode utf8
+    if (codePoint < 0x80) {
+      if ((units -= 1) < 0) break
+      bytes.push(codePoint)
+    } else if (codePoint < 0x800) {
+      if ((units -= 2) < 0) break
+      bytes.push(
+        codePoint >> 0x6 | 0xC0,
+        codePoint & 0x3F | 0x80
+      )
+    } else if (codePoint < 0x10000) {
+      if ((units -= 3) < 0) break
+      bytes.push(
+        codePoint >> 0xC | 0xE0,
+        codePoint >> 0x6 & 0x3F | 0x80,
+        codePoint & 0x3F | 0x80
+      )
+    } else if (codePoint < 0x110000) {
+      if ((units -= 4) < 0) break
+      bytes.push(
+        codePoint >> 0x12 | 0xF0,
+        codePoint >> 0xC & 0x3F | 0x80,
+        codePoint >> 0x6 & 0x3F | 0x80,
+        codePoint & 0x3F | 0x80
+      )
+    } else {
+      throw new Error('Invalid code point')
+    }
+  }
+
+  return bytes
+}
+
+function asciiToBytes (str) {
+  var byteArray = []
+  for (var i = 0; i < str.length; ++i) {
+    // Node's code seems to be doing this and not & 0x7F..
+    byteArray.push(str.charCodeAt(i) & 0xFF)
+  }
+  return byteArray
+}
+
+function utf16leToBytes (str, units) {
+  var c, hi, lo
+  var byteArray = []
+  for (var i = 0; i < str.length; ++i) {
+    if ((units -= 2) < 0) break
+
+    c = str.charCodeAt(i)
+    hi = c >> 8
+    lo = c % 256
+    byteArray.push(lo)
+    byteArray.push(hi)
+  }
+
+  return byteArray
+}
+
+function base64ToBytes (str) {
+  return base64.toByteArray(base64clean(str))
+}
+
+function blitBuffer (src, dst, offset, length) {
+  for (var i = 0; i < length; ++i) {
+    if ((i + offset >= dst.length) || (i >= src.length)) break
+    dst[i + offset] = src[i]
+  }
+  return i
+}
+
+function isnan (val) {
+  return val !== val // eslint-disable-line no-self-compare
+}
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
+
+/***/ }),
+/* 23 */
+/***/ (function(module, exports) {
+
+var toString = {}.toString;
+
+module.exports = Array.isArray || function (arr) {
+  return toString.call(arr) == '[object Array]';
+};
+
+
+/***/ }),
+/* 24 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(25)(undefined);
+// imports
+exports.push([module.i, "@import url(https://fonts.googleapis.com/css?family=Inconsolata);", ""]);
+
+// module
+exports.push([module.i, ".tone-editor_container.align-right {\n  left: auto;\n  right: 0;\n  border-right: none;\n  border-left: 2px solid rgba(0, 0, 0, 0.2); }\n  .tone-editor_container.align-right .resize-handle {\n    left: 0;\n    right: auto; }\n\n.tone-editor_container {\n  position: relative;\n  width: 272px;\n  height: 100vh;\n  position: fixed;\n  top: 0;\n  left: 0;\n  background: white;\n  padding: 10px;\n  border-right: 2px solid rgba(0, 0, 0, 0.2); }\n  .tone-editor_container * {\n    user-select: none;\n    font-family: 'Inconsolata'; }\n  .tone-editor_container .component-container {\n    display: flex;\n    align-items: flex-start;\n    flex-wrap: wrap; }\n  .tone-editor_container div.header {\n    width: 100%;\n    display: flex;\n    justify-content: flex-start; }\n    .tone-editor_container div.header * {\n      margin-right: 4px; }\n    .tone-editor_container div.header h3 {\n      opacity: 0.5;\n      display: inline-block;\n      margin: 4px 6px 4px 0; }\n    .tone-editor_container div.header div.keyboard-button {\n      display: block;\n      cursor: pointer; }\n    .tone-editor_container div.header .copy-all {\n      display: block;\n      cursor: pointer; }\n  .tone-editor_container svg.keyboard {\n    width: 100%;\n    margin-bottom: 6px;\n    transition: height 0.15s;\n    cursor: pointer; }\n    .tone-editor_container svg.keyboard g#labels {\n      opacity: 0.4; }\n  .tone-editor_container svg.keyboard.collapsed {\n    height: 0;\n    margin-bottom: 0;\n    transition: height 0.15s; }\n  .tone-editor_container div.component {\n    width: 266px;\n    position: relative;\n    background: darkGray;\n    padding-left: 6px;\n    font-size: 16px;\n    flex-grow: 0;\n    flex-shrink: 0;\n    max-height: 24px;\n    border-bottom: 1px solid rgba(0, 0, 0, 0.1);\n    border-top: 1px solid rgba(255, 255, 255, 0.5);\n    box-shadow: 2px 2px 8px rgba(100, 100, 100, 0.2);\n    overflow: hidden;\n    border-radius: 4px;\n    margin-bottom: 10px;\n    margin-right: 10px; }\n  .tone-editor_container div.component.expanded {\n    max-height: 3000px;\n    padding-bottom: 4px; }\n  .tone-editor_container .keyboard-target-button.active {\n    opacity: 1; }\n  .tone-editor_container div.subcomponent {\n    position: relative;\n    background: darkGray;\n    font-size: 16px;\n    max-height: 24px;\n    border-bottom: 1px solid rgba(0, 0, 0, 0.1);\n    background-color: rgba(0, 0, 0, 0.2);\n    overflow: hidden; }\n    .tone-editor_container div.subcomponent div.component-header h3.component-name {\n      margin-left: 12px;\n      font-weight: 200; }\n  .tone-editor_container div.subcomponent.expanded {\n    max-height: 3000px; }\n  .tone-editor_container div.component-header {\n    position: relative;\n    width: 100%;\n    display: flex;\n    align-items: center;\n    height: 24px; }\n    .tone-editor_container div.component-header h3 {\n      margin: 0;\n      font-size: 16px; }\n    .tone-editor_container div.component-header h3.component-name {\n      font-weight: 800;\n      margin-left: 2px;\n      margin-bottom: 1px; }\n    .tone-editor_container div.component-header a.component-class {\n      margin-left: 10px;\n      opacity: 0.4;\n      font-weight: 200;\n      cursor: pointer;\n      margin-left: 6px;\n      opacity: 0.4;\n      font-weight: 200;\n      cursor: pointer;\n      font-size: 13px;\n      flex-grow: 0;\n      margin-bottom: 0px;\n      text-overflow: ellipsis; }\n    .tone-editor_container div.component-header a.component-class:hover {\n      text-decoration: underline;\n      cursor: pointer; }\n    .tone-editor_container div.component-header .expand-triangle {\n      width: 13px;\n      height: 26px;\n      background-image: url(" + __webpack_require__(38) + ");\n      background-size: contain;\n      background-position: center;\n      background-repeat: no-repeat;\n      position: absolute;\n      right: 7px;\n      top: -1px;\n      opacity: 0.9;\n      cursor: pointer;\n      transition: transform 0.05s; }\n    .tone-editor_container div.component-header .expand-triangle.expanded {\n      transform: rotateZ(-90deg);\n      transition: transform 0.05s; }\n    .tone-editor_container div.component-header .expand-triangle.expanded:hover {\n      opacity: 1; }\n    .tone-editor_container div.component-header .extra-buttons {\n      margin-left: 10px;\n      overflow: hidden;\n      transition: opacity 0.15s;\n      display: flex; }\n      .tone-editor_container div.component-header .extra-buttons * {\n        cursor: pointer;\n        opacity: 0;\n        transition: opacity 0.15s;\n        margin-right: 4px; }\n      .tone-editor_container div.component-header .extra-buttons .keyboard-target-button.active {\n        opacity: 1; }\n  .tone-editor_container .component-header:hover .extra-buttons > * {\n    opacity: 0.75;\n    transition: opacity 0.15s; }\n  .tone-editor_container .parameter-group {\n    width: 100%;\n    max-height: calc(100vh - 100px);\n    background-color: rgba(255, 255, 255, 0.2);\n    box-sizing: border-box;\n    overflow-y: scroll; }\n    .tone-editor_container .parameter-group .parameter:hover .parameter-name, .tone-editor_container .parameter-group .parameter:hover .value {\n      color: rgba(0, 0, 0, 0.6); }\n    .tone-editor_container .parameter-group .parameter::before {\n      position: absolute;\n      content: \"\";\n      display: block;\n      width: 100%;\n      height: 1px;\n      top: 0px;\n      background: rgba(0, 0, 0, 0.1);\n      z-index: 10; }\n    .tone-editor_container .parameter-group .parameter.overwritten .parameter-name {\n      font-style: italic; }\n    .tone-editor_container .parameter-group .parameter.overwritten canvas {\n      opacity: 1; }\n    .tone-editor_container .parameter-group .parameter.overridden-by-signal {\n      pointer-events: none; }\n      .tone-editor_container .parameter-group .parameter.overridden-by-signal .blocker {\n        width: 100%;\n        height: 100%;\n        position: absolute;\n        top: 0;\n        left: 0;\n        background-image: url(" + __webpack_require__(37) + ");\n        background-size: contain;\n        opacity: 0.7;\n        pointer-events: none; }\n      .tone-editor_container .parameter-group .parameter.overridden-by-signal canvas {\n        opacity: 0; }\n    .tone-editor_container .parameter-group .parameter {\n      position: relative;\n      width: 100%;\n      height: 30px;\n      box-sizing: border-box;\n      display: flex;\n      align-items: center;\n      justify-content: space-between;\n      color: rgba(0, 0, 0, 0.5);\n      font-weight: 200;\n      overflow: hidden; }\n      .tone-editor_container .parameter-group .parameter canvas {\n        position: absolute;\n        left: 0;\n        top: 0;\n        opacity: 0.5;\n        filter: drop-shadow(1px 0px 2px rgba(0, 0, 0, 0.2)); }\n      .tone-editor_container .parameter-group .parameter .parameter-name {\n        margin-left: 10px;\n        z-index: 1;\n        position: relative;\n        top: -1px;\n        pointer-events: none; }\n      .tone-editor_container .parameter-group .parameter .parameter-value {\n        margin-right: 10px;\n        display: flex;\n        font-size: 16px;\n        z-index: 1;\n        position: relative;\n        top: -1px; }\n        .tone-editor_container .parameter-group .parameter .parameter-value div.value {\n          min-width: 20px;\n          width: auto;\n          margin-right: 2px;\n          padding: 0 2px 0 2px;\n          text-align: right;\n          font-size: 16px;\n          display: block;\n          cursor: text; }\n        .tone-editor_container .parameter-group .parameter .parameter-value div.value::selection {\n          font-size: 40px;\n          background: yellow;\n          opacity: 1; }\n        .tone-editor_container .parameter-group .parameter .parameter-value div.value:hover {\n          background: rgba(0, 0, 0, 0.15);\n          cursor: text; }\n        .tone-editor_container .parameter-group .parameter .parameter-value div.value:focus {\n          background: rgba(0, 0, 0, 0.15);\n          color: rgba(0, 0, 0, 0.6);\n          outline: none; }\n        .tone-editor_container .parameter-group .parameter .parameter-value div.unit {\n          opacity: 0.7;\n          min-width: 24px; }\n    .tone-editor_container .parameter-group .parameter.signal .parameter-name::after {\n      content: \"~\";\n      display: inline-block;\n      font-size: 22px;\n      font-weight: bold;\n      position: relative;\n      top: 2px;\n      opacity: 0.8; }\n    .tone-editor_container .parameter-group .parameter.signal:hover .parameter-name::after {\n      animation: signal-icon-spin 0.8s infinite linear; }\n    .tone-editor_container .parameter-group div.menu {\n      cursor: pointer;\n      background: rgba(255, 255, 255, 0.5); }\n      .tone-editor_container .parameter-group div.menu div.value {\n        cursor: pointer; }\n      .tone-editor_container .parameter-group div.menu span.menu-icon {\n        width: 1px;\n        position: relative;\n        top: 4px;\n        height: 11px;\n        border: dotted rgba(0, 0, 0, 0.2) 3px;\n        box-sizing: border-box; }\n      .tone-editor_container .parameter-group div.menu select {\n        background: white;\n        border: none;\n        opacity: 0;\n        width: 100%;\n        height: 100%;\n        position: absolute;\n        top: 0;\n        left: 0; }\n    .tone-editor_container .parameter-group div.cslider {\n      cursor: ew-resize; }\n      .tone-editor_container .parameter-group div.cslider div.cslider-inner {\n        position: absolute;\n        top: 0;\n        left: 50%;\n        height: 100%;\n        width: 60px;\n        opacity: 0.5;\n        background: #c8c8c8;\n        box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.3);\n        background: white; }\n      .tone-editor_container .parameter-group div.cslider div.center-line {\n        width: 1px;\n        height: 100%;\n        position: absolute;\n        left: 50%;\n        border: dashed rgba(0, 0, 0, 0.3) 1px;\n        box-sizing: border-box;\n        pointer-events: none; }\n    .tone-editor_container .parameter-group div.hslider {\n      cursor: ew-resize; }\n      .tone-editor_container .parameter-group div.hslider div.hslider-inner {\n        position: absolute;\n        top: 0;\n        left: 0;\n        height: 100%;\n        width: 60%;\n        background: #c8c8c8;\n        box-shadow: 2px 0px 2px rgba(0, 0, 0, 0.1);\n        background: white;\n        opacity: 0.5; }\n  .tone-editor_container .resize-handle {\n    width: 10px;\n    height: 100%;\n    position: absolute;\n    right: 0;\n    top: 0;\n    cursor: ew-resize;\n    z-index: 10000; }\n\n@keyframes signal-icon-spin {\n  0% {\n    transform: rotateX(0deg); }\n  50% {\n    transform: rotateX(50deg); }\n  100% {\n    transform: rotateX(0deg); } }\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 25 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(Buffer) {/*
+	MIT License http://www.opensource.org/licenses/mit-license.php
+	Author Tobias Koppers @sokra
+*/
+// css base code, injected by the css-loader
+module.exports = function(useSourceMap) {
+	var list = [];
+
+	// return the list of modules as css string
+	list.toString = function toString() {
+		return this.map(function (item) {
+			var content = cssWithMappingToString(item, useSourceMap);
+			if(item[2]) {
+				return "@media " + item[2] + "{" + content + "}";
+			} else {
+				return content;
+			}
+		}).join("");
+	};
+
+	// import a list of modules into the list
+	list.i = function(modules, mediaQuery) {
+		if(typeof modules === "string")
+			modules = [[null, modules, ""]];
+		var alreadyImportedModules = {};
+		for(var i = 0; i < this.length; i++) {
+			var id = this[i][0];
+			if(typeof id === "number")
+				alreadyImportedModules[id] = true;
+		}
+		for(i = 0; i < modules.length; i++) {
+			var item = modules[i];
+			// skip already imported module
+			// this implementation is not 100% perfect for weird media query combinations
+			//  when a module is imported multiple times with different media queries.
+			//  I hope this will never occur (Hey this way we have smaller bundles)
+			if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
+				if(mediaQuery && !item[2]) {
+					item[2] = mediaQuery;
+				} else if(mediaQuery) {
+					item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
+				}
+				list.push(item);
+			}
+		}
+	};
+	return list;
+};
+
+function cssWithMappingToString(item, useSourceMap) {
+	var content = item[1] || '';
+	var cssMapping = item[3];
+	if (!cssMapping) {
+		return content;
+	}
+
+	if (useSourceMap) {
+		var sourceMapping = toComment(cssMapping);
+		var sourceURLs = cssMapping.sources.map(function (source) {
+			return '/*# sourceURL=' + cssMapping.sourceRoot + source + ' */'
+		});
+
+		return [content].concat(sourceURLs).concat([sourceMapping]).join('\n');
+	}
+
+	return [content].join('\n');
+}
+
+// Adapted from convert-source-map (MIT)
+function toComment(sourceMap) {
+  var base64 = new Buffer(JSON.stringify(sourceMap)).toString('base64');
+  var data = 'sourceMappingURL=data:application/json;charset=utf-8;base64,' + base64;
+
+  return '/*# ' + data + ' */';
+}
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(22).Buffer))
+
+/***/ }),
+/* 26 */
+/***/ (function(module, exports) {
+
+module.exports = "<div class=\"component expanded\"> <div class=component-header> <h3 class=component-name>Name</h3><a class=component-class>Class</a><div class=extra-buttons><div class=keyboard-target-button>🎹</div><div class=copy-button>📋</div></div><div class=\"expand-triangle component-expand-triangle expanded\"></div> </div> <div class=parameter-group> </div> </div> ";
+
+/***/ }),
+/* 27 */
+/***/ (function(module, exports) {
+
+module.exports = "<div class=\"component master expanded\"> <div class=component-header> <h3 class=component-name>Name</h3><a class=component-class>Class</a><div class=extra-buttons><div class=keyboard-target-button>🎹</div><div class=copy-button>📋</div></div> </div> <div class=parameter-group> </div> </div> ";
+
+/***/ }),
+/* 28 */
+/***/ (function(module, exports) {
+
+module.exports = "<div class=subcomponent style=background:#add8e6> <div class=component-header> <h3 class=component-name>envelope</h3><a class=component-class>Envelope</a><div class=expand-triangle></div> </div> <div class=parameter-group> </div> </div> ";
+
+/***/ }),
+/* 29 */
+/***/ (function(module, exports) {
+
+module.exports = "<div class=tone-editor_container> <div class=header><h3>Tone.js</h3><div class=keyboard-button>🎹</div><div class=\"copy-button copy-all\">📋</div></div> <svg class=\"keyboard collapsed\" width=402px viewBox=\"0 0 402 108\" version=1.1 xmlns=http://www.w3.org/2000/svg xmlns:xlink=http://www.w3.org/1999/xlink> <g id=Page-1 stroke=none stroke-width=1 fill=none fill-rule=evenodd> <g id=keyboard transform=\"translate(1.000000, 1.000000)\"> <g id=white-keys stroke=#979797 stroke-width=0.5 fill=#FFFFFF> <rect id=Rectangle-3 x=0 y=0 width=36.3636364 height=106></rect> <rect id=Rectangle-3-Copy-6 x=218.181818 y=0 width=36.3636364 height=106></rect> <rect id=Rectangle-3-Copy-3 x=109.090909 y=0 width=36.3636364 height=106></rect> <rect id=Rectangle-3-Copy-7 x=327.272727 y=0 width=36.3636364 height=106></rect> <rect id=Rectangle-3-Copy x=36.3636364 y=0 width=36.3636364 height=106></rect> <rect id=Rectangle-3-Copy-8 x=254.545455 y=0 width=36.3636364 height=106></rect> <rect id=Rectangle-3-Copy-4 x=145.454545 y=0 width=36.3636364 height=106></rect> <rect id=Rectangle-3-Copy-9 x=364 y=0 width=36.3636364 height=106></rect> <rect id=Rectangle-3-Copy-2 x=72.7272727 y=0 width=36.3636364 height=106></rect> <rect id=Rectangle-3-Copy-10 x=290.909091 y=0 width=36.3636364 height=106></rect> <rect id=Rectangle-3-Copy-5 x=181.818182 y=0 width=36.3636364 height=106></rect> </g> <g id=black-keys transform=\"translate(22.000000, 0.000000)\" stroke=#979797 stroke-width=0.5 fill=#494949> <rect id=Rectangle-3-Copy-11 x=3.55271368e-15 y=0 width=29.1204057 height=64.4568302></rect> <rect id=Rectangle-3-Copy-12 x=36 y=0 width=29.1204057 height=64.4568302></rect> <rect id=Rectangle-3-Copy-14 x=109 y=0 width=29.1204057 height=64.4568302></rect> <rect id=Rectangle-3-Copy-15 x=145 y=0 width=29.1204057 height=64.4568302></rect> <rect id=Rectangle-3-Copy-16 x=182 y=0 width=29.1204057 height=64.4568302></rect> <rect id=Rectangle-3-Copy-17 x=254 y=0 width=29.1204057 height=64.4568302></rect> <rect id=Rectangle-3-Copy-18 x=291 y=0 width=29.1204057 height=64.4568302></rect> </g> <g id=labels transform=\"translate(5.000000, 35.249990)\" font-size=24 font-family=\"Inconsolata-Bold, Inconsolata\" letter-spacing=1.24347818 font-weight=bold> <text id=A fill=#5E5E5E> <tspan x=7.51701689 y=61.8296296>A</tspan> </text> <text id=J fill=#5E5E5E> <tspan x=225.698835 y=61.8296296>J</tspan> </text> <text id=F fill=#5E5E5E> <tspan x=116.607926 y=61.8296296>F</tspan> </text> <text id=; fill=#5E5E5E> <tspan x=334.789744 y=61.8296296>;</tspan> </text> <text id=S fill=#5E5E5E> <tspan x=43.8806533 y=61.8296296>S</tspan> </text> <text id=K fill=#5E5E5E> <tspan x=262.062471 y=61.8296296>K</tspan> </text> <text id=G fill=#5E5E5E> <tspan x=152.971562 y=61.8296296>G</tspan> </text> <text id=‘ fill=#5E5E5E> <tspan x=370.77539 y=61.8296296>‘</tspan> </text> <text id=D fill=#5E5E5E> <tspan x=78.330414 y=61.8296296>D</tspan> </text> <text id=L fill=#5E5E5E> <tspan x=296.512232 y=61.8296296>L</tspan> </text> <text id=H fill=#5E5E5E> <tspan x=187.421323 y=61.8296296>H</tspan> </text> <text id=W fill=#FFFFFF> <tspan x=25.1068314 y=21.1808804>W</tspan> </text> <text id=E fill=#FFFFFF> <tspan x=61.1068314 y=21.1808804>E</tspan> </text> <text id=T fill=#FFFFFF> <tspan x=134.106831 y=21.1808804>T</tspan> </text> <text id=Y fill=#FFFFFF> <tspan x=170.106831 y=21.1808804>Y</tspan> </text> <text id=U fill=#FFFFFF> <tspan x=207.106831 y=21.1808804>U</tspan> </text> <text id=O fill=#FFFFFF> <tspan x=279.106831 y=21.1808804>O</tspan> </text> <text id=P fill=#FFFFFF> <tspan x=316.106831 y=21.1808804>P</tspan> </text> </g> </g> </g> </svg> <div class=component-container> </div> <div class=copy-all></div> </div> ";
+
+/***/ }),
+/* 30 */
+/***/ (function(module, exports) {
+
+module.exports = "<div class=\"parameter menu\"> <div class=parameter-name>NAME</div> <div class=parameter-value> <div class=value contenteditable=true>VALUE</div><span class=menu-icon></span> </div> <select> </select> </div> ";
+
+/***/ }),
+/* 31 */
+/***/ (function(module, exports) {
+
+module.exports = "<div class=\"parameter hslider\"> <div class=parameter-name>NAME</div> <div class=parameter-value> <div class=value contenteditable=false></div> <div class=unit>UNIT</div> </div> </div> ";
+
+/***/ }),
+/* 32 */
+/***/ (function(module, exports) {
+
+module.exports = "<div class=\"parameter toggle\"> <div class=parameter-name>NAME</div> <div class=parameter-value> <div class=value contenteditable=false></div> <input class=toggle type=checkbox name=\"\" value=true> </div> </div> ";
+
+/***/ }),
+/* 33 */
+/***/ (function(module, exports) {
+
+exports.read = function (buffer, offset, isLE, mLen, nBytes) {
+  var e, m
+  var eLen = nBytes * 8 - mLen - 1
+  var eMax = (1 << eLen) - 1
+  var eBias = eMax >> 1
+  var nBits = -7
+  var i = isLE ? (nBytes - 1) : 0
+  var d = isLE ? -1 : 1
+  var s = buffer[offset + i]
+
+  i += d
+
+  e = s & ((1 << (-nBits)) - 1)
+  s >>= (-nBits)
+  nBits += eLen
+  for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8) {}
+
+  m = e & ((1 << (-nBits)) - 1)
+  e >>= (-nBits)
+  nBits += mLen
+  for (; nBits > 0; m = m * 256 + buffer[offset + i], i += d, nBits -= 8) {}
+
+  if (e === 0) {
+    e = 1 - eBias
+  } else if (e === eMax) {
+    return m ? NaN : ((s ? -1 : 1) * Infinity)
+  } else {
+    m = m + Math.pow(2, mLen)
+    e = e - eBias
+  }
+  return (s ? -1 : 1) * m * Math.pow(2, e - mLen)
+}
+
+exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
+  var e, m, c
+  var eLen = nBytes * 8 - mLen - 1
+  var eMax = (1 << eLen) - 1
+  var eBias = eMax >> 1
+  var rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0)
+  var i = isLE ? 0 : (nBytes - 1)
+  var d = isLE ? 1 : -1
+  var s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0
+
+  value = Math.abs(value)
+
+  if (isNaN(value) || value === Infinity) {
+    m = isNaN(value) ? 1 : 0
+    e = eMax
+  } else {
+    e = Math.floor(Math.log(value) / Math.LN2)
+    if (value * (c = Math.pow(2, -e)) < 1) {
+      e--
+      c *= 2
+    }
+    if (e + eBias >= 1) {
+      value += rt / c
+    } else {
+      value += rt * Math.pow(2, 1 - eBias)
+    }
+    if (value * c >= 2) {
+      e++
+      c /= 2
+    }
+
+    if (e + eBias >= eMax) {
+      m = 0
+      e = eMax
+    } else if (e + eBias >= 1) {
+      m = (value * c - 1) * Math.pow(2, mLen)
+      e = e + eBias
+    } else {
+      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen)
+      e = 0
+    }
+  }
+
+  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8) {}
+
+  e = (e << mLen) | m
+  eLen += mLen
+  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8) {}
+
+  buffer[offset + i - d] |= s * 128
+}
+
+
+/***/ }),
+/* 34 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/*
+	MIT License http://www.opensource.org/licenses/mit-license.php
+	Author Tobias Koppers @sokra
+*/
+var stylesInDom = {},
+	memoize = function(fn) {
+		var memo;
+		return function () {
+			if (typeof memo === "undefined") memo = fn.apply(this, arguments);
+			return memo;
+		};
+	},
+	isOldIE = memoize(function() {
+		// Test for IE <= 9 as proposed by Browserhacks
+		// @see http://browserhacks.com/#hack-e71d8692f65334173fee715c222cb805
+		// Tests for existence of standard globals is to allow style-loader 
+		// to operate correctly into non-standard environments
+		// @see https://github.com/webpack-contrib/style-loader/issues/177
+		return window && document && document.all && !window.atob;
+	}),
+	getElement = (function(fn) {
+		var memo = {};
+		return function(selector) {
+			if (typeof memo[selector] === "undefined") {
+				memo[selector] = fn.call(this, selector);
+			}
+			return memo[selector]
+		};
+	})(function (styleTarget) {
+		return document.querySelector(styleTarget)
+	}),
+	singletonElement = null,
+	singletonCounter = 0,
+	styleElementsInsertedAtTop = [],
+	fixUrls = __webpack_require__(35);
+
+module.exports = function(list, options) {
+	if(typeof DEBUG !== "undefined" && DEBUG) {
+		if(typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
+	}
+
+	options = options || {};
+	options.attrs = typeof options.attrs === "object" ? options.attrs : {};
+
+	// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
+	// tags it will allow on a page
+	if (typeof options.singleton === "undefined") options.singleton = isOldIE();
+
+	// By default, add <style> tags to the <head> element
+	if (typeof options.insertInto === "undefined") options.insertInto = "head";
+
+	// By default, add <style> tags to the bottom of the target
+	if (typeof options.insertAt === "undefined") options.insertAt = "bottom";
+
+	var styles = listToStyles(list, options);
+	addStylesToDom(styles, options);
+
+	return function update(newList) {
+		var mayRemove = [];
+		for(var i = 0; i < styles.length; i++) {
+			var item = styles[i];
+			var domStyle = stylesInDom[item.id];
+			domStyle.refs--;
+			mayRemove.push(domStyle);
+		}
+		if(newList) {
+			var newStyles = listToStyles(newList, options);
+			addStylesToDom(newStyles, options);
+		}
+		for(var i = 0; i < mayRemove.length; i++) {
+			var domStyle = mayRemove[i];
+			if(domStyle.refs === 0) {
+				for(var j = 0; j < domStyle.parts.length; j++)
+					domStyle.parts[j]();
+				delete stylesInDom[domStyle.id];
+			}
+		}
+	};
+};
+
+function addStylesToDom(styles, options) {
+	for(var i = 0; i < styles.length; i++) {
+		var item = styles[i];
+		var domStyle = stylesInDom[item.id];
+		if(domStyle) {
+			domStyle.refs++;
+			for(var j = 0; j < domStyle.parts.length; j++) {
+				domStyle.parts[j](item.parts[j]);
+			}
+			for(; j < item.parts.length; j++) {
+				domStyle.parts.push(addStyle(item.parts[j], options));
+			}
+		} else {
+			var parts = [];
+			for(var j = 0; j < item.parts.length; j++) {
+				parts.push(addStyle(item.parts[j], options));
+			}
+			stylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};
+		}
+	}
+}
+
+function listToStyles(list, options) {
+	var styles = [];
+	var newStyles = {};
+	for(var i = 0; i < list.length; i++) {
+		var item = list[i];
+		var id = options.base ? item[0] + options.base : item[0];
+		var css = item[1];
+		var media = item[2];
+		var sourceMap = item[3];
+		var part = {css: css, media: media, sourceMap: sourceMap};
+		if(!newStyles[id])
+			styles.push(newStyles[id] = {id: id, parts: [part]});
+		else
+			newStyles[id].parts.push(part);
+	}
+	return styles;
+}
+
+function insertStyleElement(options, styleElement) {
+	var styleTarget = getElement(options.insertInto)
+	if (!styleTarget) {
+		throw new Error("Couldn't find a style target. This probably means that the value for the 'insertInto' parameter is invalid.");
+	}
+	var lastStyleElementInsertedAtTop = styleElementsInsertedAtTop[styleElementsInsertedAtTop.length - 1];
+	if (options.insertAt === "top") {
+		if(!lastStyleElementInsertedAtTop) {
+			styleTarget.insertBefore(styleElement, styleTarget.firstChild);
+		} else if(lastStyleElementInsertedAtTop.nextSibling) {
+			styleTarget.insertBefore(styleElement, lastStyleElementInsertedAtTop.nextSibling);
+		} else {
+			styleTarget.appendChild(styleElement);
+		}
+		styleElementsInsertedAtTop.push(styleElement);
+	} else if (options.insertAt === "bottom") {
+		styleTarget.appendChild(styleElement);
+	} else {
+		throw new Error("Invalid value for parameter 'insertAt'. Must be 'top' or 'bottom'.");
+	}
+}
+
+function removeStyleElement(styleElement) {
+	styleElement.parentNode.removeChild(styleElement);
+	var idx = styleElementsInsertedAtTop.indexOf(styleElement);
+	if(idx >= 0) {
+		styleElementsInsertedAtTop.splice(idx, 1);
+	}
+}
+
+function createStyleElement(options) {
+	var styleElement = document.createElement("style");
+	options.attrs.type = "text/css";
+
+	attachTagAttrs(styleElement, options.attrs);
+	insertStyleElement(options, styleElement);
+	return styleElement;
+}
+
+function createLinkElement(options) {
+	var linkElement = document.createElement("link");
+	options.attrs.type = "text/css";
+	options.attrs.rel = "stylesheet";
+
+	attachTagAttrs(linkElement, options.attrs);
+	insertStyleElement(options, linkElement);
+	return linkElement;
+}
+
+function attachTagAttrs(element, attrs) {
+	Object.keys(attrs).forEach(function (key) {
+		element.setAttribute(key, attrs[key]);
+	});
+}
+
+function addStyle(obj, options) {
+	var styleElement, update, remove, transformResult;
+
+	// If a transform function was defined, run it on the css
+	if (options.transform && obj.css) {
+	    transformResult = options.transform(obj.css);
+	    
+	    if (transformResult) {
+	    	// If transform returns a value, use that instead of the original css.
+	    	// This allows running runtime transformations on the css.
+	    	obj.css = transformResult;
+	    } else {
+	    	// If the transform function returns a falsy value, don't add this css. 
+	    	// This allows conditional loading of css
+	    	return function() {
+	    		// noop
+	    	};
+	    }
+	}
+
+	if (options.singleton) {
+		var styleIndex = singletonCounter++;
+		styleElement = singletonElement || (singletonElement = createStyleElement(options));
+		update = applyToSingletonTag.bind(null, styleElement, styleIndex, false);
+		remove = applyToSingletonTag.bind(null, styleElement, styleIndex, true);
+	} else if(obj.sourceMap &&
+		typeof URL === "function" &&
+		typeof URL.createObjectURL === "function" &&
+		typeof URL.revokeObjectURL === "function" &&
+		typeof Blob === "function" &&
+		typeof btoa === "function") {
+		styleElement = createLinkElement(options);
+		update = updateLink.bind(null, styleElement, options);
+		remove = function() {
+			removeStyleElement(styleElement);
+			if(styleElement.href)
+				URL.revokeObjectURL(styleElement.href);
+		};
+	} else {
+		styleElement = createStyleElement(options);
+		update = applyToTag.bind(null, styleElement);
+		remove = function() {
+			removeStyleElement(styleElement);
+		};
+	}
+
+	update(obj);
+
+	return function updateStyle(newObj) {
+		if(newObj) {
+			if(newObj.css === obj.css && newObj.media === obj.media && newObj.sourceMap === obj.sourceMap)
+				return;
+			update(obj = newObj);
+		} else {
+			remove();
+		}
+	};
+}
+
+var replaceText = (function () {
+	var textStore = [];
+
+	return function (index, replacement) {
+		textStore[index] = replacement;
+		return textStore.filter(Boolean).join('\n');
+	};
+})();
+
+function applyToSingletonTag(styleElement, index, remove, obj) {
+	var css = remove ? "" : obj.css;
+
+	if (styleElement.styleSheet) {
+		styleElement.styleSheet.cssText = replaceText(index, css);
+	} else {
+		var cssNode = document.createTextNode(css);
+		var childNodes = styleElement.childNodes;
+		if (childNodes[index]) styleElement.removeChild(childNodes[index]);
+		if (childNodes.length) {
+			styleElement.insertBefore(cssNode, childNodes[index]);
+		} else {
+			styleElement.appendChild(cssNode);
+		}
+	}
+}
+
+function applyToTag(styleElement, obj) {
+	var css = obj.css;
+	var media = obj.media;
+
+	if(media) {
+		styleElement.setAttribute("media", media)
+	}
+
+	if(styleElement.styleSheet) {
+		styleElement.styleSheet.cssText = css;
+	} else {
+		while(styleElement.firstChild) {
+			styleElement.removeChild(styleElement.firstChild);
+		}
+		styleElement.appendChild(document.createTextNode(css));
+	}
+}
+
+function updateLink(linkElement, options, obj) {
+	var css = obj.css;
+	var sourceMap = obj.sourceMap;
+
+	/* If convertToAbsoluteUrls isn't defined, but sourcemaps are enabled
+	and there is no publicPath defined then lets turn convertToAbsoluteUrls
+	on by default.  Otherwise default to the convertToAbsoluteUrls option
+	directly
+	*/
+	var autoFixUrls = options.convertToAbsoluteUrls === undefined && sourceMap;
+
+	if (options.convertToAbsoluteUrls || autoFixUrls){
+		css = fixUrls(css);
+	}
+
+	if(sourceMap) {
+		// http://stackoverflow.com/a/26603875
+		css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + " */";
+	}
+
+	var blob = new Blob([css], { type: "text/css" });
+
+	var oldSrc = linkElement.href;
+
+	linkElement.href = URL.createObjectURL(blob);
+
+	if(oldSrc)
+		URL.revokeObjectURL(oldSrc);
+}
+
+
+/***/ }),
+/* 35 */
+/***/ (function(module, exports) {
+
+
+/**
+ * When source maps are enabled, `style-loader` uses a link element with a data-uri to
+ * embed the css on the page. This breaks all relative urls because now they are relative to a
+ * bundle instead of the current page.
+ *
+ * One solution is to only use full urls, but that may be impossible.
+ *
+ * Instead, this function "fixes" the relative urls to be absolute according to the current page location.
+ *
+ * A rudimentary test suite is located at `test/fixUrls.js` and can be run via the `npm test` command.
+ *
+ */
+
+module.exports = function (css) {
+  // get current location
+  var location = typeof window !== "undefined" && window.location;
+
+  if (!location) {
+    throw new Error("fixUrls requires window.location");
+  }
+
+	// blank or null?
+	if (!css || typeof css !== "string") {
+	  return css;
+  }
+
+  var baseUrl = location.protocol + "//" + location.host;
+  var currentDir = baseUrl + location.pathname.replace(/\/[^\/]*$/, "/");
+
+	// convert each url(...)
+	/*
+	This regular expression is just a way to recursively match brackets within
+	a string.
+
+	 /url\s*\(  = Match on the word "url" with any whitespace after it and then a parens
+	   (  = Start a capturing group
+	     (?:  = Start a non-capturing group
+	         [^)(]  = Match anything that isn't a parentheses
+	         |  = OR
+	         \(  = Match a start parentheses
+	             (?:  = Start another non-capturing groups
+	                 [^)(]+  = Match anything that isn't a parentheses
+	                 |  = OR
+	                 \(  = Match a start parentheses
+	                     [^)(]*  = Match anything that isn't a parentheses
+	                 \)  = Match a end parentheses
+	             )  = End Group
+              *\) = Match anything and then a close parens
+          )  = Close non-capturing group
+          *  = Match anything
+       )  = Close capturing group
+	 \)  = Match a close parens
+
+	 /gi  = Get all matches, not the first.  Be case insensitive.
+	 */
+	var fixedCss = css.replace(/url\s*\(((?:[^)(]|\((?:[^)(]+|\([^)(]*\))*\))*)\)/gi, function(fullMatch, origUrl) {
+		// strip quotes (if they exist)
+		var unquotedOrigUrl = origUrl
+			.trim()
+			.replace(/^"(.*)"$/, function(o, $1){ return $1; })
+			.replace(/^'(.*)'$/, function(o, $1){ return $1; });
+
+		// already a full url? no change
+		if (/^(#|data:|http:\/\/|https:\/\/|file:\/\/\/)/i.test(unquotedOrigUrl)) {
+		  return fullMatch;
+		}
+
+		// convert the url to a full url
+		var newUrl;
+
+		if (unquotedOrigUrl.indexOf("//") === 0) {
+		  	//TODO: should we add protocol?
+			newUrl = unquotedOrigUrl;
+		} else if (unquotedOrigUrl.indexOf("/") === 0) {
+			// path should be relative to the base url
+			newUrl = baseUrl + unquotedOrigUrl; // already starts with '/'
+		} else {
+			// path should be relative to current directory
+			newUrl = currentDir + unquotedOrigUrl.replace(/^\.\//, ""); // Strip leading './'
+		}
+
+		// send back the fixed url(...)
+		return "url(" + JSON.stringify(newUrl) + ")";
+	});
+
+	// send back the fixed css
+	return fixedCss;
+};
+
+
+/***/ }),
+/* 36 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(24);
+if(typeof content === 'string') content = [[module.i, content, '']];
+// Prepare cssTransformation
+var transform;
+
+var options = {}
+options.transform = transform
+// add the styles to the DOM
+var update = __webpack_require__(34)(content, options);
+if(content.locals) module.exports = content.locals;
+// Hot Module Replacement
+if(false) {
+	// When the styles change, update the <style> tags
+	if(!content.locals) {
+		module.hot.accept("!!../../node_modules/css-loader/index.js!../../node_modules/sass-loader/lib/loader.js!./main.sass", function() {
+			var newContent = require("!!../../node_modules/css-loader/index.js!../../node_modules/sass-loader/lib/loader.js!./main.sass");
+			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+			update(newContent);
+		});
+	}
+	// When the module is disposed, remove the <style> tags
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 37 */
+/***/ (function(module, exports) {
+
+module.exports = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAABNElEQVRogdXaSW7DMBBE0W9ezJWTJTlZlJMxi9CAIXjQwCK7GyBEbdR4+Ftdaq1X4BfvLMDVuaAAX84Fbew7CqB2nLO0Y5vSnp/OJW2+nR+/QUTyKuXunrrKPUQkrlJW72mrrCEiaZU1BJJWeQQRCas8gkDCKs8gIlmVZxBIVuUVRCSq8goCiaq8g4gkVd5BIEmVLRCRoMoWCCSoshUiglfZCoHgVfZAROAqeyAQuMpeiAhaZS8EglY5AhEBqxyBQMAqRyEiWJWjEAhW5QxEBKpyBgKBqpyFiCBVzkIgSJUeEBGgSg8IBKjSCyImV+kFgclVekLExCo9ITCxSm+ImFSlNwQmVXFAxIQqDghMqOKCiMFVXBAYXMUJEQOrOCEwsMql1lrNiz4w/xkE/IyALPxjnKM/+MdWV+cSHe8AAAAASUVORK5CYII="
+
+/***/ }),
+/* 38 */
+/***/ (function(module, exports) {
+
+module.exports = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAACXBIWXMAAAsTAAALEwEAmpwYAAA4PGlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxMzggNzkuMTU5ODI0LCAyMDE2LzA5LzE0LTAxOjA5OjAxICAgICAgICAiPgogICA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPgogICAgICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgICAgICAgICB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iCiAgICAgICAgICAgIHhtbG5zOmRjPSJodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIKICAgICAgICAgICAgeG1sbnM6cGhvdG9zaG9wPSJodHRwOi8vbnMuYWRvYmUuY29tL3Bob3Rvc2hvcC8xLjAvIgogICAgICAgICAgICB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIKICAgICAgICAgICAgeG1sbnM6c3RFdnQ9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZUV2ZW50IyIKICAgICAgICAgICAgeG1sbnM6dGlmZj0iaHR0cDovL25zLmFkb2JlLmNvbS90aWZmLzEuMC8iCiAgICAgICAgICAgIHhtbG5zOmV4aWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20vZXhpZi8xLjAvIj4KICAgICAgICAgPHhtcDpDcmVhdGVEYXRlPjIwMTctMDEtMjJUMjA6NDI6NDFaPC94bXA6Q3JlYXRlRGF0ZT4KICAgICAgICAgPHhtcDpNb2RpZnlEYXRlPjIwMTctMDEtMjNUMDA6MTBaPC94bXA6TW9kaWZ5RGF0ZT4KICAgICAgICAgPHhtcDpNZXRhZGF0YURhdGU+MjAxNy0wMS0yM1QwMDoxMFo8L3htcDpNZXRhZGF0YURhdGU+CiAgICAgICAgIDx4bXA6Q3JlYXRvclRvb2w+QWRvYmUgUGhvdG9zaG9wIENDIDIwMTcgKE1hY2ludG9zaCk8L3htcDpDcmVhdG9yVG9vbD4KICAgICAgICAgPGRjOmZvcm1hdD5pbWFnZS9wbmc8L2RjOmZvcm1hdD4KICAgICAgICAgPHBob3Rvc2hvcDpDb2xvck1vZGU+MzwvcGhvdG9zaG9wOkNvbG9yTW9kZT4KICAgICAgICAgPHhtcE1NOkluc3RhbmNlSUQ+eG1wLmlpZDpjMDFmNjFiZi1hYTM3LTQyNTItOTFjOS0wY2VhNjhiZWE0MGU8L3htcE1NOkluc3RhbmNlSUQ+CiAgICAgICAgIDx4bXBNTTpEb2N1bWVudElEPnhtcC5kaWQ6YzAxZjYxYmYtYWEzNy00MjUyLTkxYzktMGNlYTY4YmVhNDBlPC94bXBNTTpEb2N1bWVudElEPgogICAgICAgICA8eG1wTU06T3JpZ2luYWxEb2N1bWVudElEPnhtcC5kaWQ6YzAxZjYxYmYtYWEzNy00MjUyLTkxYzktMGNlYTY4YmVhNDBlPC94bXBNTTpPcmlnaW5hbERvY3VtZW50SUQ+CiAgICAgICAgIDx4bXBNTTpIaXN0b3J5PgogICAgICAgICAgICA8cmRmOlNlcT4KICAgICAgICAgICAgICAgPHJkZjpsaSByZGY6cGFyc2VUeXBlPSJSZXNvdXJjZSI+CiAgICAgICAgICAgICAgICAgIDxzdEV2dDphY3Rpb24+c2F2ZWQ8L3N0RXZ0OmFjdGlvbj4KICAgICAgICAgICAgICAgICAgPHN0RXZ0Omluc3RhbmNlSUQ+eG1wLmlpZDpjMDFmNjFiZi1hYTM3LTQyNTItOTFjOS0wY2VhNjhiZWE0MGU8L3N0RXZ0Omluc3RhbmNlSUQ+CiAgICAgICAgICAgICAgICAgIDxzdEV2dDp3aGVuPjIwMTctMDEtMjNUMDA6MTBaPC9zdEV2dDp3aGVuPgogICAgICAgICAgICAgICAgICA8c3RFdnQ6c29mdHdhcmVBZ2VudD5BZG9iZSBQaG90b3Nob3AgQ0MgMjAxNyAoTWFjaW50b3NoKTwvc3RFdnQ6c29mdHdhcmVBZ2VudD4KICAgICAgICAgICAgICAgICAgPHN0RXZ0OmNoYW5nZWQ+Lzwvc3RFdnQ6Y2hhbmdlZD4KICAgICAgICAgICAgICAgPC9yZGY6bGk+CiAgICAgICAgICAgIDwvcmRmOlNlcT4KICAgICAgICAgPC94bXBNTTpIaXN0b3J5PgogICAgICAgICA8dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPgogICAgICAgICA8dGlmZjpYUmVzb2x1dGlvbj43MjAwMDAvMTAwMDA8L3RpZmY6WFJlc29sdXRpb24+CiAgICAgICAgIDx0aWZmOllSZXNvbHV0aW9uPjcyMDAwMC8xMDAwMDwvdGlmZjpZUmVzb2x1dGlvbj4KICAgICAgICAgPHRpZmY6UmVzb2x1dGlvblVuaXQ+MjwvdGlmZjpSZXNvbHV0aW9uVW5pdD4KICAgICAgICAgPGV4aWY6Q29sb3JTcGFjZT42NTUzNTwvZXhpZjpDb2xvclNwYWNlPgogICAgICAgICA8ZXhpZjpQaXhlbFhEaW1lbnNpb24+NDA8L2V4aWY6UGl4ZWxYRGltZW5zaW9uPgogICAgICAgICA8ZXhpZjpQaXhlbFlEaW1lbnNpb24+NDA8L2V4aWY6UGl4ZWxZRGltZW5zaW9uPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAKPD94cGFja2V0IGVuZD0idyI/PrIqnbMAAAAgY0hSTQAAeiUAAICDAAD5/wAAgOkAAHUwAADqYAAAOpgAABdvkl/FRgAAAONJREFUeNrs2dEKgzAMBdDr8Ku3tY2OfXf2sD4IU6Q1iRdZwMfiQW2SxkFVwRy3wHvdu1apasT10G80r43EUQKXODrgU3+DBriG6wJ67OIE4MWaZhKAmTUPmuMsgdkDZwXMACbWUlc8cUeBBYCwNgshOAAYO9ZIBVK2W6G4VmA4ruUVTzWdgBE41ypx+ZbfDZgtuxOvJ+hWay1fcTkD2foNutdei00ikcjeXRyGPJJmhLmbWVYYYQb6Iw3Pwln34/SDe2IH7iFpRh+JHUg/PNpC/geY4SPgMajmv3sXDuy/IT4DAIksaI1YRbuWAAAAAElFTkSuQmCC"
+
+/***/ })
+/******/ ]);
