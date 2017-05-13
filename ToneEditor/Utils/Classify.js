@@ -1,6 +1,6 @@
 // Get the Tone classes of any Tone object
 
-define('Utils/Classify', function() {
+define( function() {
 
   // Instances of Tone.AMSynth inherit both Instrument and AMSynth
   var Classes = {

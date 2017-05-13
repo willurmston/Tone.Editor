@@ -1,5 +1,5 @@
 // API
-define('API', ['Utils','ToneEditor','Templates/Component', 'Keyboard','Copy'], function(utils, ToneEditor, Component, Keyboard, Copy) {
+define(['Utils','ToneEditor','Templates/Components/Component', 'Keyboard','Copy'], function(utils, ToneEditor, Component, Keyboard, Copy) {
 
   ToneEditor.add = function(name, component) {
     if (ToneEditor.initialized === false) ToneEditor.init()

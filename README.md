@@ -68,30 +68,28 @@ Click the clipboard button at the top of the panel to copy settings for all the 
 ## Options
 ```javascript
 
-// Adds the Tone.Master output to the Editor and always keeps it at the bottom
-ToneEditor.showMaster()
+// Adds Tone.Master output to the Editor
+ToneEditor
+  .master()
+
+// Adds Tone.Transport to the Editor
+  // optional: give a start and end time (in any Tone.Time format) to make a timeline appear
+  .transport('0:0:0', '16:0:0')
 
 // Change options (defaults are below)
-ToneEditor.options({
-  // Align the panel left or right
-  align: 'left',
+  .options({
+    // Align the panel left or right
+    align: 'left',
 
-  // Minify text before copying to clipboard
-  minify: false,
+    // Minify text before copying to clipboard
+    minify: false,
 
-  // Make the keyboard visible from the start
-  showKeyboard: false,
+    // Change the name of the downloaded settings file
+    // Click the button at the top of the panel to download
+    filename: 'yourSiteTitle_ToneSettings.js'
 
-  // When true, will include 'var yourComponentNameSettings = ' before settings when copying to clipboard
-  // This makes it easier to copy changes from all Tone objects at once
-  useSettingsObjects: true,
-
-  // If copied text is logged to the console
-  copyLog: false
-})
+  })
 
 
 // all methods are chainable ;)
 ```
-
-### This is in development, so no guarantees. If you have feedback on these ideas I'd love to hear it.

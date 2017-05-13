@@ -1,7 +1,7 @@
 
 // pass a UIElement object into this function to add superpowers relevant to the UIType
 
-define('Templates/UIElement/Slider', ['Utils', 'Templates/UIElement'], function(utils, UIElement){
+define(['Utils', 'Templates/UIElements/UIElement', 'Keyboard'], function(utils, UIElement, Keyboard){
 
 
   function Slider( parameterName, parentComponent, meta, options) {
@@ -26,11 +26,13 @@ define('Templates/UIElement/Slider', ['Utils', 'Templates/UIElement'], function(
       // round value if appropriate
       if (meta.integer) value = Math.round( value )
 
-      _this.parentToneComponent.set(_this.parameterName, _this.value)
+      _this.parentToneComponent.set(_this.name, value)
       if (!triggeredByUi) {
         _this.nxWidget.set({value: value})
       }
+
       _this.valueElement.innerHTML = nx.prune(value, 2)
+
     }
 
     // BUILD HTML
@@ -70,7 +72,7 @@ define('Templates/UIElement/Slider', ['Utils', 'Templates/UIElement'], function(
       // WHEN SLIDER SETS VALUE
       _this.nxWidget.on('value', function(value) {
         _this.applyValue(value, true)
-        _this.valueElement.innerHTML = nx.prune(_this.getValue(), 2)
+        // _this.valueElement.innerHTML = nx.prune(value, 2)
         _this.valueElement.setAttribute('contenteditable', false)
       })
 

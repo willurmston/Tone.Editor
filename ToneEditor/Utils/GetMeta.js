@@ -1,4 +1,4 @@
-define('Utils/GetMeta', function() {
+define( function() {
 
   // guess metadata for a parameter, based on...
 

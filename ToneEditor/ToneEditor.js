@@ -4,10 +4,8 @@
       // See README for documentation
       this._options = {
         minify: false,
-        useSettingsObjects: true,
-        showKeyboard: false,
-        align: 'left',
-        copyLog: false
+        filename: document.title.split(' ').join()+'_ToneSettings.js',
+        align: 'left'
       }
       this.components = []
       this.componentsById = {}

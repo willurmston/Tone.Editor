@@ -1,7 +1,7 @@
 
 // pass a UIElement object into this function to add superpowers relevant to the UIType
 
-define('Templates/UIElement/Toggle', ['Utils', 'Templates/UIElement'], function(utils, UIElement){
+define(['Utils', 'Templates/UIElements/UIElement'], function(utils, UIElement){
 
   function Toggle(parameterName, parentComponent, meta, options) {
 

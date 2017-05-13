@@ -17,34 +17,83 @@
           "dampening": 4300
       }).toMaster()
 
-      var synth = new Tone.MonoSynth({
-        oscillator: {
-          type: "square"
+      var synthSettings =
+      {
+        "frequency": 110,
+        "detune": 0,
+        "oscillator": {
+            "frequency": 110,
+            "detune": 0,
+            "type": "square",
+            "phase": 0,
+            // "partials": [],
+            "volume": 0,
+            "mute": false
         },
-        filter: {
-          Q: 2,
-          type: "lowpass",
-          rolloff: -12
+        "filter": {
+            "type": "lowpass",
+            "frequency": 0,
+            "rolloff": -12,
+            "Q": 2,
+            "gain": 0
         },
-        envelope: {
-          attack: .005,
-          decay: 1,
-          sustain: 0,
-          release: .45
+        "envelope": {
+            "attack": 0.81,
+            "decay": 2.2,
+            "sustain": 0,
+            "release": 4.85,
+            "attackCurve": "linear",
+            "releaseCurve": "exponential"
         },
-        filterEnvelope: {
-          attack: .001,
-          decay: .1,
-          sustain: .8,
-          release: .3,
-          baseFrequency: 300,
-          octaves: 3.2
-        }
-      }).connect(reverb)
+        "filterEnvelope": {
+            "baseFrequency": 37.059,
+            "octaves": 6.7,
+            "exponent": 2,
+            "attack": 0.2,
+            "decay": 7.1,
+            "sustain": 0.1,
+            "release": 0.9,
+            "attackCurve": "linear",
+            "releaseCurve": "exponential"
+        },
+        "portamento": 0.036,
+        "volume": -24.908225375657832
+      }
+
+      var synth = new Tone.MonoSynth(
+
+      //   {
+      //   oscillator: {
+      //     type: "square"
+      //   },
+      //   filter: {
+      //     Q: 2,
+      //     type: "lowpass",
+      //     rolloff: -12
+      //   },
+      //   envelope: {
+      //     attack: .005,
+      //     decay: 1,
+      //     sustain: 0,
+      //     release: .45
+      //   },
+      //   filterEnvelope: {
+      //     attack: .001,
+      //     decay: .1,
+      //     sustain: .8,
+      //     release: .3,
+      //     baseFrequency: 300,
+      //     octaves: 3.2
+      //   }
+      // }
+
+      synthSettings
+
+    ).connect(reverb)
 
       var synthPart = new Tone.Sequence(function(time, note){
       	synth.triggerAttackRelease(note, "16n", time);
-      }, ["C2", ["C3", ["C3", "D2"]], "E2", ["D2", "A1"]]).start(0);
+      }, ["C4", ["C4", ["C4", "D3"]], "E3", ["D3", "A2"]]).start(0);
 
       Tone.Transport.start("+0.1");
 

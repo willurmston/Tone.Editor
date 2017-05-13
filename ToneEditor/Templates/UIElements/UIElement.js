@@ -1,4 +1,4 @@
-define('UIElement', ['Utils','ToneEditor','Keyboard', 'Templates/Component'], function(utils, ToneEditor, Keyboard, Component){
+define('UIElement', ['Utils','ToneEditor','Keyboard', 'Templates/Components/Component'], function(utils, ToneEditor, Keyboard, Component){
 
   var UIElement = function( parameterName, parentComponent, meta, options) {
     var options = options || {}
@@ -20,12 +20,11 @@ define('UIElement', ['Utils','ToneEditor','Keyboard', 'Templates/Component'], fu
     var _this = this
 
     // if options.uiType is defined, override meta.uiType
-    if (options.uiType && meta.isDefault) meta.uiType = options.uiType
+    // if (options.uiType !== undefined && meta.isDefault === true) meta.uiType = options.uiType
 
     this.isSignal = utils.isSignal(_this.toneParameter)
 
   }
-
 
   UIElement.prototype.getValue = function() {
     return this.parentToneComponent.get(this.name)[this.name]

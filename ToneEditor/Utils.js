@@ -1,4 +1,4 @@
-define('Utils', ['Utils/Classify', 'Utils/GetMeta', 'Utils/isSignal'], function(classify, getMeta, isSignal){
+define('Utils', ['./Utils/Classify', './Utils/GetMeta', './Utils/isSignal'], function(classify, getMeta, isSignal){
   // ADD / REMOVE / HAS CLASS ========================================================
   Node.prototype.hasClass = function (className) {
       if (this.classList) {
@@ -68,20 +68,31 @@ define('Utils', ['Utils/Classify', 'Utils/GetMeta', 'Utils/isSignal'], function(
   }
 
 
-  function getComponent(element) {
+  function downloadTextFile(filename, text) {
+    var element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+    element.setAttribute('download', filename);
 
-    // return component
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
   }
 
-  module.exports = {
+  var utils = {
     extend: extend,
     remap: remap,
     iterate: iterate,
     classify: classify,
     getMeta: getMeta,
     isSignal: isSignal,
-    getComponent: getComponent,
-    getWindowSize: getWindowSize
+    getWindowSize: getWindowSize,
+    downloadTextFile: downloadTextFile
   }
+
+  window.utils = utils
+  module.exports = utils
 
 })

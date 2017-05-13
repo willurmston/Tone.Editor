@@ -33,7 +33,7 @@
   left: 0
   background: white
   padding: 10px
-  // box-shadow: 2px 0px 8px rgba(0, 0, 0, 0.14)
+  overflow-y: scroll
   border-right: 2px solid rgba(0,0,0,0.2)
 
   *
@@ -44,13 +44,15 @@
     display: flex
     align-items: flex-start
     flex-wrap: wrap
-    // min-width: 266px
-
+    padding-top: 20px
+    padding-bottom: 40px
 
   div.header
     width: 100%
     display: flex
     justify-content: flex-start
+    position: fixed
+    top: 10px
 
     *
       margin-right: 4px

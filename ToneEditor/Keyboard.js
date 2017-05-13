@@ -1,4 +1,4 @@
-define(['Utils','ToneEditor'], function(utils, ToneEditor){
+define('Keyboard', ['Utils','ToneEditor'], function(utils, ToneEditor){
   var Keyboard = {
     target: undefined,
     element: ToneEditor.element.querySelector('svg.keyboard'),

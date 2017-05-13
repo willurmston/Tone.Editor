@@ -1,4 +1,4 @@
-define(['./libs/clipboard.min','Utils','ToneEditor', 'Templates/Component'], function (Clipboard, utils, ToneEditor, Component) {
+define(['./libs/clipboard.min','Utils','ToneEditor', 'Templates/Components/Component'], function (Clipboard, utils, ToneEditor, Component) {
 
   Component.prototype.toString = function(minify, useRefObjects) {
     var minify = minify || ToneEditor._options.minify
@@ -9,7 +9,7 @@ define(['./libs/clipboard.min','Utils','ToneEditor', 'Templates/Component'], fun
     if (minify) {
       var result = JSON.stringify(this.toneComponent.get())
     } else {
-      var result = JSON.stringify(this.toneComponent.get(), null, '\t')
+      var result = JSON.stringify(this.toneComponent.get(), null, 2)
     }
 
     // USE REF OBJECTS (default: false)
@@ -28,7 +28,7 @@ define(['./libs/clipboard.min','Utils','ToneEditor', 'Templates/Component'], fun
 
       if (trigger.classList.contains('copy-all')) { // it's the copy-all button
         ToneEditor.components.forEach( function(component) {
-          text+=component.toString(true, true)+';\n'
+          text+=component.toString(true, true)+';\n\n'
         })
 
       } else { // It's a component copy button
@@ -42,5 +42,16 @@ define(['./libs/clipboard.min','Utils','ToneEditor', 'Templates/Component'], fun
       return text
     }
   })
+
+  ToneEditor.download = function() {
+    var text = ''
+    ToneEditor.components.forEach( function(component) {
+      text+=component.toString(true, true)+';\n\n'
+    })
+
+    var filename = this._options.filename
+
+    utils.downloadTextFile(filename, text)
+  }
 
 })

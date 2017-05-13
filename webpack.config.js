@@ -3,11 +3,11 @@ var webpack = require('webpack');
 var UglifyJSPlugin = require('uglifyjs-webpack-plugin')
 module.exports = {
     entry: {
-        main: path.join(__dirname, '/ToneEditor/Initialize'),
+        main: path.join(__dirname, './ToneEditor/Initialize'),
     },
     resolve: {
         extensions: [".js"],
-        modules: ['./']
+        modules: [path.resolve('./ToneEditor')]
     },
     output: {
         publicPath: "/ToneEditor/",
@@ -17,6 +17,7 @@ module.exports = {
     module: {
       loaders:[],
       rules: [
+        // { test: /\.js$/, exclude:path.resolve(__dirname, "node_modules")},
         { test: /\.jpg$/, use: [ "file-loader" ] },
         { test: /\.png$/, use: [ "url-loader?mimetype=image/png" ] },
         {

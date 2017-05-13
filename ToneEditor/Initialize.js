@@ -3,8 +3,8 @@
 // INITIALIZE EVERYTHING
 
 define([
-  'Utils/Utils.js',
-  'libs/nexusUI',
+  'Utils',
+  './libs/nexusUI',
   'ToneEditor',
   'State',
   'Listen',

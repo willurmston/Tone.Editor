@@ -1,7 +1,7 @@
 
 // pass a UIElement object into this function to add superpowers relevant to the UIType
 
-define(['Utils', 'Templates/UIElement'], function(utils, UIElement){
+define(['Utils', 'Templates/UIElements/UIElement'], function(utils, UIElement){
 
   function Menu(parameterName, parentComponent, meta, options) {
     var _this = this
@@ -37,7 +37,7 @@ define(['Utils', 'Templates/UIElement'], function(utils, UIElement){
     })
 
     this.menuElement.onchange = function() {
-      _this.applyValue(_this.value)
+      _this.applyValue(this.value)
       // prevent typing from changing the selection
       this.blur()
     }
