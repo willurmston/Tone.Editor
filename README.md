@@ -1,6 +1,6 @@
 
 
-![Banner](https://rawgit.com/willurmston/ToneEditor/master/github-assets/banner.svg)
+![Banner](https://cdn.rawgit.com/willurmston/ToneEditor/40cb09e8/github-assets/banner.svg)
 
 
 <!-- # Tone.Editor -->
