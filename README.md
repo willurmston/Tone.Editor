@@ -1,6 +1,6 @@
 
 
-![Banner](https://rawgit.com/willurmston/ToneEditor/master/design/github-assets/banner.svg)
+![Banner](https://rawgit.com/willurmston/ToneEditor/master/github-assets/banner.svg)
 
 <!-- # Tone.Editor -->
 A GUI overlay for making websites using [Tone.js](https://github.com/Tonejs/Tone.js). Use it during design and development, then throw it out when you're done. **(BETA)**
