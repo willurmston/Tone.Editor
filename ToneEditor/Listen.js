@@ -10,7 +10,6 @@ define( ['./Utils','ToneEditor','./Keyboard'], function(utils, ToneEditor, Keybo
         e.target.style.animation = 'tone-editor_copied 1s'
 
         //COPY CHANGES
-        // PSSST YOU CAN check e.g. Tone.MonoSynth.defaults and see what has changed
       } else if (e.target.hasClass('value')) {
         if (e.target.getAttribute('contenteditable') === 'false') {
           ToneEditor._focusValueElement(e.target)
@@ -21,8 +20,8 @@ define( ['./Utils','ToneEditor','./Keyboard'], function(utils, ToneEditor, Keybo
       }
     })
     ToneEditor.element.addEventListener('dblclick', function(e) {
-      if (e.target.parentNode.hasClass('parameter')) {
-        ToneEditor._focusValueElement(e.target.parentNode.querySelectorAll('div.value')[0])
+      if (e.target.hasClass('value')) {
+        ToneEditor._focusValueElement(e.target)
       }
     })
     ToneEditor.element.addEventListener('mousedown', function(e) {

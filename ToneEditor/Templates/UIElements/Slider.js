@@ -5,12 +5,11 @@ define(['Utils', 'Templates/UIElements/UIElement', 'Keyboard'], function(utils, 
 
 
   function Slider( parameterName, parentComponent, meta, options) {
-    // Object.assign(this, new UIElement(parameterName, parentComponent, meta, options))
 
-    // this.prototype = new UIElement(parameterName, parentComponent, meta, options)
     UIElement.call(this, parameterName, parentComponent, meta, options)
 
     this.parentComponent = parentComponent
+    this.nxWidget = false
 
     var _this = this
 
@@ -36,23 +35,21 @@ define(['Utils', 'Templates/UIElements/UIElement', 'Keyboard'], function(utils, 
     }
 
     // BUILD HTML
-    var tempContainer = document.createElement('div')
-    tempContainer.innerHTML = require('./Slider.html')
 
-    // INJECT VALUES INTO TEMPLATE
-    tempContainer.querySelector('.parameter-name').innerHTML = this.name
-    tempContainer.querySelector('.unit').innerHTML = meta.unit
 
-    if (this.isSignal) {
-      tempContainer.firstElementChild.classList.add('signal')
-    }
 
     // STORE ELEMENT AND DITCH tempContainer
-    this.element = tempContainer.firstElementChild
+    this.element = utils.nodeFromString( require('./Slider.html') )
+
+    // INJECT VALUES INTO TEMPLATE
+    this.element.querySelector('.parameter-name').innerHTML = this.name
+    this.element.querySelector('.unit').innerHTML = meta.unit
     this.element.setAttribute('id', this.id)
+    if (this.isSignal) this.element.classList.add('signal')
 
     //CREATE nxWidget AFTER ELEMENT IS IN DOM
     this.parentComponent.deferUntilDrawn(function() {
+
       _this.nxWidget = nx.add( meta.uiType, {
         parent: _this.element,
         name: _this.id+'_slider',
@@ -72,7 +69,6 @@ define(['Utils', 'Templates/UIElements/UIElement', 'Keyboard'], function(utils, 
       // WHEN SLIDER SETS VALUE
       _this.nxWidget.on('value', function(value) {
         _this.applyValue(value, true)
-        // _this.valueElement.innerHTML = nx.prune(value, 2)
         _this.valueElement.setAttribute('contenteditable', false)
       })
 
@@ -107,7 +103,7 @@ define(['Utils', 'Templates/UIElements/UIElement', 'Keyboard'], function(utils, 
 
     // WHEN ELEMENT SETS VALUE
     this.valueElement.addEventListener('keydown', function(e) {
-      switch(e.which){
+      switch(e.keyCode){
         //ENTER - apply value
         case 13:
           var value = _this.valueElement.innerHTML
@@ -151,7 +147,7 @@ define(['Utils', 'Templates/UIElements/UIElement', 'Keyboard'], function(utils, 
 
         //NUMBERS
         default:
-          if (e.which >= 48 && e.which <= 57 || e.which === 189 /* negative symbol */ ) {
+          if (e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode === 189 /* negative symbol */ || e.keyCode === 190 /* decimal */ ) {
 
           } else {
             e.preventDefault()

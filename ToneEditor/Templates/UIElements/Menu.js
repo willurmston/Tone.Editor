@@ -1,6 +1,4 @@
-
 // pass a UIElement object into this function to add superpowers relevant to the UIType
-
 define(['Utils', 'Templates/UIElements/UIElement'], function(utils, UIElement){
 
   function Menu(parameterName, parentComponent, meta, options) {

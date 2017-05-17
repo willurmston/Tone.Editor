@@ -6,7 +6,8 @@ define( function() {
   var Classes = {
     Instrument: ["AMSynth", "DuoSynth", "FMSynth", "MembraneSynth", "MetalSynth", "MonoSynth", "Monophonic", "NoiseSynth", "PluckSynth", "PolySynth", "Sampler", "Synth"],
     Effect: ["AutoFilter", "AutoPanner", "AutoWah", "BitCrusher", "Chebyshev", "Chorus", "Convolver", "Distortion", "FeedbackDelay", "FeedbackEffect", "Freeverb", "JCReverb", "MidSideEffect", "Phaser", "PingPongDelay", "PitchShift", "StereoEffect", "StereoFeedbackEffect", "StereoWidener", "StereoXFeedbackEffect", "Tremolo", "Vibrato"],
-    Source: ["AMOscillator", "BufferSource", "FMOscillator", "FatOscillator", "GrainPlayer", "MultiPlayer", "Noise", "OmniOscillator", "Oscillator", "PWMOscillator", "Player", "PulseOscillator", "UserMedia"]
+    Source: ["AMOscillator", "BufferSource", "FMOscillator", "FatOscillator", "GrainPlayer", "MultiPlayer", "Noise", "OmniOscillator", "Oscillator", "PWMOscillator", "Player", "PulseOscillator", "UserMedia"],
+    Event: [ "Loop", "Part", "Pattern", "Sequence"]
   }
 
   // instances of the rest only inherit Tone

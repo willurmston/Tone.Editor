@@ -1,4 +1,4 @@
-define('Templates/Components/Component', ['Utils','ToneEditor','../UIElements/UIElement','Keyboard'], function(utils, ToneEditor, UIElement, Keyboard){
+define(['Utils','ToneEditor','../UIElements/UIElement','Keyboard'], function(utils, ToneEditor, UIElement, Keyboard){
 
   function Component(name, toneComponent, heritage, options) {
     var options = options || {}
@@ -82,8 +82,8 @@ define('Templates/Components/Component', ['Utils','ToneEditor','../UIElements/UI
     var parameters = {}
     var subComponents = {}
 
-    this.parameters = []
-    this.subComponents = []
+    this.parameters = {}
+    this.subComponents = {}
 
     utils.iterate( flattenedProps, function(key, prop) {
       if (typeof prop === 'object' && _this.isSubcomponent === false) {
@@ -93,7 +93,7 @@ define('Templates/Components/Component', ['Utils','ToneEditor','../UIElements/UI
         }
 
         var heritage = utils.classify(_this.toneComponent[key])
-        _this.subComponents.push( new Component( key, _this.toneComponent[key], heritage, options ) )
+        _this.subComponents[key] = new Component( key, _this.toneComponent[key], heritage, options )
 
       } else if (typeof prop === 'array') {
 
@@ -109,7 +109,7 @@ define('Templates/Components/Component', ['Utils','ToneEditor','../UIElements/UI
           // get the right constructor based on uiType
           var uiConstructor = require('../UIElements/'+meta.uiType.capitalize()+'.js')
 
-          _this.parameters.push( new uiConstructor( key, _this, meta, options ) )
+          _this.parameters[key] = new uiConstructor( key, _this, meta, options )
         }
 
       } else if (typeof prop === 'boolean') {
@@ -123,11 +123,9 @@ define('Templates/Components/Component', ['Utils','ToneEditor','../UIElements/UI
         if (meta.uiType === 'hidden') {
 
         } else {
-
           // get the right constructor based on uiType
-          var uiConstructor = require('../UIElements/Toggle.js')
-          _this.parameters.push( new uiConstructor( key, _this, meta, options ) )
-
+          var uiConstructor = require('../UIElements/'+meta.uiType.capitalize()+'.js')
+          _this.parameters[key] = new uiConstructor( key, _this, meta, options )
         }
       }
     })
@@ -158,12 +156,12 @@ define('Templates/Components/Component', ['Utils','ToneEditor','../UIElements/UI
   Component.prototype.draw = function() {
     var _this = this
     // call draw on all child parameters, append their html to parameter container
-    this.parameters.forEach( function(parameter) {
+    utils.iterate(this.parameters, function(key, parameter) {
       _this.parameterGroupElement.appendChild( parameter.draw() )
     })
 
     // call draw on all child components
-    this.subComponents.forEach( function(subComponent) {
+    utils.iterate(this.subComponents, function(key, subComponent) {
       _this.parameterGroupElement.appendChild( subComponent.draw() )
     })
 
@@ -183,11 +181,11 @@ define('Templates/Components/Component', ['Utils','ToneEditor','../UIElements/UI
 
   // updates all nexusUI widget values
   Component.prototype.update = function() {
-    this.parameters.forEach( function(parameter) {
+    utils.iterate(this.parameters, function(name,parameter) {
       parameter.applyValue( parameter.getValue() )
     })
 
-    this.subComponents.forEach( function(subComponent) {
+    utils.iterate(this.subComponents, function(name, subComponent) {
       // call update on subComponents
       subComponent.update()
     })

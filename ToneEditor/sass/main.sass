@@ -21,7 +21,7 @@
   border-left: 2px solid rgba(0,0,0,0.2)
 
   .resize-handle
-    left: 0
+    left: -5px
     right: auto
 
 .tone-editor_container
@@ -413,11 +413,42 @@
         background: white
         opacity: 0.5
 
+    // button-row
+    .button-row
+      display: flex
+      flex-wrap: nowrap
+      align-items: center
+      justify-content: flex-start
+
+      div
+        display: flex
+        align-items: center
+        justify-content: center
+        width: 30px
+        height: 100%
+        border-right: 1px solid rgba(0,0,0,0.1)
+        font-size: 13px
+        text-align: center
+
+        svg
+          width: 35%
+          opacity: 0.45
+          pointer-events: none
+
+      div:hover
+        cursor: pointer
+        background: rgba(255,255,255,0.3)
+
+    // Scrubber
+    .scrubber
+      .parameter-value
+        pointer-events: none
+
   .resize-handle
     width: 10px
     height: 100%
     position: absolute
-    right: 0
+    right: -5px
     top: 0
     cursor: ew-resize
     z-index: 10000
@@ -427,6 +458,10 @@
     // bottom: 20px
     // left: 8px
     // z-index: 200
+
+
+
+
 
 
 @keyframes signal-icon-spin

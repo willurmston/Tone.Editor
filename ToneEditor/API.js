@@ -20,24 +20,41 @@ define(['Utils','ToneEditor','Templates/Components/Component', 'Keyboard','Copy'
     }
 
     function addComponent(component, name) {
-      // if (component instanceof Tone.Instrument || component instanceof Tone.Effect || component instanceof Tone.Player || component === Tone.Master) {
-        var name = name || generateName()
+      var name = name || generateName()
+
+      var heritage = utils.classify(component)
+
+      // CHECK IF NEEDS A SPECIAL COMPONENT TYPE (i.e. Transport or Master)
+      if (heritage.includes('Transport')) {
+
+        var TransportComponent = require('Templates/Components/Transport')
 
         // ADD PARAMETERS TO OBJECT
-        var newComponent = new Component( name, component)
-        ToneEditor.components.push(newComponent)
-        ToneEditor.componentsById[name] = newComponent
+        var newComponent = new TransportComponent( name, component, heritage)
 
-        //DRAW ELEMENT TO DOM
-        newComponent.draw()
+      } else if (heritage.includes('Master')) {
 
-        if (component === Tone.Master) {
-          ToneEditor.masterShown = true
-        }
-      // } else { // UNSUPPORTED TONE OBJECT
-      //   console.log('%cIgnored unsupported Tone object', 'color: DarkOrange', component)
-      //   console.log('%cTone-Editor only supports Tone.Instrument, Tone.Effect, Tone.Player', 'color: DarkOrange')
-      // }
+        // ADD PARAMETERS TO OBJECT
+        var newComponent = new Component( name, component, heritage)
+
+      // } else if (heritage.includes('Instrument') || heritage.includes('Effect') || component instanceof Tone.Sequence){ // Create a generic component
+      } else if (component instanceof Tone) {
+
+        // ADD PARAMETERS TO OBJECT
+        var newComponent = new Component( name, component, heritage)
+
+      } else { // UNSUPPORTED TONE OBJECT
+        console.log('%cIgnored unsupported Tone object', 'color: DarkOrange', component)
+        // console.log('%cTone-Editor only supports Tone.Instrument or Tone.Effect', 'color: DarkOrange')
+
+        return
+      }
+
+      ToneEditor.components.push(newComponent)
+      ToneEditor.componentsById[name] = newComponent
+
+      //DRAW ELEMENT TO DOM
+      newComponent.draw()
 
     }
 
@@ -61,28 +78,18 @@ define(['Utils','ToneEditor','Templates/Components/Component', 'Keyboard','Copy'
     return ToneEditor
   }
 
-  //REMOVE
-
-  // ToneEditor.keyboard = function() {
-  //   if (ToneEditor.initialized === false) ToneEditor.init()
-  //
-  //   Keyboard.show()
-  //
-  //   // try and target an instrument in ToneEditor.components
-  //   ToneEditor.components.forEach( function(element) {
-  //     if (element.heritage[0] === 'Instrument') Keyboard.setTarget(element)
-  //   })
-  //   return ToneEditor
-  // }
-
-  // Shortcut for adding Tone.Master, and always keeps it at the bottom
+  // Shortcut for adding Tone.Master
   ToneEditor.master = function() {
     ToneEditor.add('Master', Tone.Master)
     return ToneEditor
   }
 
-  // Shows transport controls, and optionally a scrubber
+  // Shows transport controls
   ToneEditor.transport = function(timeIn, timeOut) {
+
+    if (timeIn) ToneEditor._options.transportScrubIn = Tone.Time(timeIn).toSeconds()
+    if (timeOut) ToneEditor._options.transportScrubOut = Tone.Time(timeOut).toSeconds()
+
     ToneEditor.add('Transport', Tone.Transport)
     return ToneEditor
   }

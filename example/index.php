@@ -17,6 +17,8 @@
           "dampening": 4300
       }).toMaster()
 
+
+
       var synthSettings =
       {
         "frequency": 110,
@@ -95,13 +97,14 @@
       	synth.triggerAttackRelease(note, "16n", time);
       }, ["C4", ["C4", ["C4", "D3"]], "E3", ["D3", "A2"]]).start(0);
 
-      Tone.Transport.start("+0.1");
+      // Tone.Transport.start("+0.1");
 
       // Tone.Transport.loop = true
 
       ToneEditor.add({
         'synth': synth,
         'reverb': reverb,
+        'synthPart': synthPart
       }).options({
         log: true,
         minify: true,

@@ -3,9 +3,14 @@
     var ToneEditor = function() {
       // See README for documentation
       this._options = {
+        // public options (accessible from API)
         minify: false,
         filename: document.title.split(' ').join()+'_ToneSettings.js',
-        align: 'left'
+        align: 'left',
+
+        // private options
+        transportScrubIn: 0,
+        transportScrubOut: 180
       }
       this.components = []
       this.componentsById = {}

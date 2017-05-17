@@ -1,13 +1,12 @@
 # Tone.Editor
-A GUI overlay for making websites using [Tone.js](github.com/https://github.com/Tonejs/Tone.js). Use it during design and development, then throw it out when you're done.
+A GUI overlay for making websites using [Tone.js](https://github.com/Tonejs/Tone.js). Use it during design and development, then throw it out when you're done.  *BETA*
 
-## Why?
-Tone.js is a fun, flexible and hi-performance web music framework. However, because it's text-based, the process of making music with it can be a drag. It might take 20 page refreshes to get a synth sound that you like. A GUI layer solves this problem, allowing you fiddle with parameters of all your Tone objects in real time, then copy the changes into your code.
+### Why?
+Tone.js is a fun, flexible and hi-performance web music framework. However, because it's text-based, the process of being creative with it can be slow. A GUI layer solves this problem, allowing you fiddle with parameters of all your Tone objects in real time, then copy the changes into your code.
 
-## Usage
+### Usage
 Include Tone-Editor.min.js in your page *after* Tone.js.
 
-Then,
 ```javascript
 
 // Define some Tone components and their settings.
@@ -48,7 +47,7 @@ var reverb = new Tone.Freeverb(reverbSettings).toMaster()
 
 var synth = new Tone.MonoSynth(synthSettings).connect(reverb)
 
-// Use ToneEditor.add() to initialize the editor and add your Tone objects
+// Use ToneEditor.add() to add your Tone objects
 // Accepts either:
 //    a name and a Tone component
 //    an object with keys and values
@@ -60,34 +59,38 @@ ToneEditor
 ```
 Any changes made to the GUI will affect your Tone objects. See `example/index.html` for a demo.
 
-## Copying changes back into your code
-Click the clipboard button on any component to copy its settings to the clipboard
+### Copying changes back into your code
+* Click the clipboard button on any component to copy its settings to the clipboard
 
-Click the clipboard button at the top of the panel to copy settings for all the components in the Editor
+* Click the clipboard button at the top of the panel to copy settings for all the components in the Editor
 
-## Options
+* Click the download button button at the top of the panel to download the settings in a script
+
+### Options
 ```javascript
 
-// Adds Tone.Master output to the Editor
 ToneEditor
   .master()
+  // Adds Tone.Master output to the Editor
 
-// Adds Tone.Transport to the Editor
-  // optional: give a start and end time (in any Tone.Time format) to make a timeline appear
   .transport('0:0:0', '16:0:0')
+  // Adds Tone.Transport to the Editor
+  // optional: give a start and end time (in any Tone.Time format) to make a timeline appear
 
-// Change options (defaults are below)
+  // Change options (defaults are below)
   .options({
-    // Align the panel left or right
     align: 'left',
+    // Align the panel left or right
 
-    // Minify text before copying to clipboard
     minify: false,
+    // Minify text before copying to clipboard
 
+    filename: 'yourSiteTitle_ToneSettings.js'
     // Change the name of the downloaded settings file
     // Click the button at the top of the panel to download
-    filename: 'yourSiteTitle_ToneSettings.js'
 
+    draggable: true
+    // Turn on or off draggable functionality
   })
 
 

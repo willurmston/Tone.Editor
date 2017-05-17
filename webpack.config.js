@@ -3,7 +3,7 @@ var webpack = require('webpack');
 var UglifyJSPlugin = require('uglifyjs-webpack-plugin')
 module.exports = {
     entry: {
-        main: path.join(__dirname, './ToneEditor/Initialize'),
+        main: [ path.join(__dirname, './ToneEditor/Initialize')],
     },
     resolve: {
         extensions: [".js"],

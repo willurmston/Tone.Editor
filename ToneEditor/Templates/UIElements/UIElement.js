@@ -1,5 +1,6 @@
 define('UIElement', ['Utils','ToneEditor','Keyboard', 'Templates/Components/Component'], function(utils, ToneEditor, Keyboard, Component){
 
+  // UIElement base class
   var UIElement = function( parameterName, parentComponent, meta, options) {
     var options = options || {}
 
@@ -8,7 +9,6 @@ define('UIElement', ['Utils','ToneEditor','Keyboard', 'Templates/Components/Comp
 
     this.name = parameterName
     this.toneParameter = this.parentToneComponent[parameterName]
-    this.nxWidget = false
     this.overwritten = false
     this.initialized = false
 
@@ -18,9 +18,6 @@ define('UIElement', ['Utils','ToneEditor','Keyboard', 'Templates/Components/Comp
     this.id = parentComponent.id+'_'+parameterName
 
     var _this = this
-
-    // if options.uiType is defined, override meta.uiType
-    // if (options.uiType !== undefined && meta.isDefault === true) meta.uiType = options.uiType
 
     this.isSignal = utils.isSignal(_this.toneParameter)
 
