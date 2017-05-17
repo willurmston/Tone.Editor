@@ -76,16 +76,19 @@ define(['Utils', 'Templates/UIElements/UIElement', 'Keyboard'], function(utils, 
       var value = _this.getValue()
 
       // CHECK IF PARAMETER IS CONTROLLED BY ANOTHER SIGNAL
-      if (_this.toneParameter.overridden) {
-        var blocker = document.createElement('div')
-        blocker.classList.add('blocker')
-        _this.element.classList.add('overridden-by-signal')
-        _this.element.appendChild(blocker)
+      // if (_this.toneParameter.overridden) {
+      //   var blocker = document.createElement('div')
+      //   blocker.classList.add('blocker')
+      //   _this.element.classList.add('overridden-by-signal')
+      //   _this.element.appendChild(blocker)
+      //
+      // } else {
+      //
+      //   _this.applyValue(value)
+      // }
 
-      } else {
-
-        _this.applyValue(value)
-      }
+      _this.applyValue(value)
+      
       _this.initialized = true
 
     }) // END DEFERRED CALLBACK

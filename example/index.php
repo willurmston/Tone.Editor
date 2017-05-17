@@ -6,7 +6,8 @@
   </head>
   <body>
 
-    <script src="Tone.min.js" charset="utf-8"></script>
+    <!-- include Tone.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/0.10.0/Tone.min.js"></script>
 
     <!-- include ToneEditor.js after Tone.js -->
     <script src="../build/Tone-Editor.js" charset="utf-8"></script>
@@ -16,7 +17,6 @@
           "roomSize": 0.7,
           "dampening": 4300
       }).toMaster()
-
 
 
       var synthSettings =
@@ -62,49 +62,16 @@
         "volume": -24.908225375657832
       }
 
-      var synth = new Tone.MonoSynth(
-
-      //   {
-      //   oscillator: {
-      //     type: "square"
-      //   },
-      //   filter: {
-      //     Q: 2,
-      //     type: "lowpass",
-      //     rolloff: -12
-      //   },
-      //   envelope: {
-      //     attack: .005,
-      //     decay: 1,
-      //     sustain: 0,
-      //     release: .45
-      //   },
-      //   filterEnvelope: {
-      //     attack: .001,
-      //     decay: .1,
-      //     sustain: .8,
-      //     release: .3,
-      //     baseFrequency: 300,
-      //     octaves: 3.2
-      //   }
-      // }
-
-      synthSettings
-
-    ).connect(reverb)
+      var synth = new Tone.MonoSynth( synthSettings ).connect(reverb)
 
       var synthPart = new Tone.Sequence(function(time, note){
       	synth.triggerAttackRelease(note, "16n", time);
       }, ["C4", ["C4", ["C4", "D3"]], "E3", ["D3", "A2"]]).start(0);
 
-      // Tone.Transport.start("+0.1");
-
-      // Tone.Transport.loop = true
 
       ToneEditor.add({
         'synth': synth,
-        'reverb': reverb,
-        'synthPart': synthPart
+        'reverb': reverb
       }).options({
         log: true,
         minify: true,
