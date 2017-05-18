@@ -55,7 +55,8 @@ var reverb = new Tone.Freeverb(reverbSettings).toMaster()
 var synth = new Tone.MonoSynth(synthSettings).connect(reverb)
 ```
 
-Use ToneEditor.add() to add your Tone objects to the Editor
+Use `ToneEditor.add()` to add your Tone objects to the Editor.
+
 Accepts either:
 * a name and a Tone component
 * an object with keys and values
@@ -75,18 +76,22 @@ Any changes made to the GUI will affect your Tone objects. See `example/index.ht
 
 * Click the download button button at the top of the panel to download the settings in a script
 
-### Options
+### Extras
+
+
 ```javascript
+ToneEditor.master()
+```
+Adds Tone.Master to the Editor
 
-ToneEditor
-  .master()
-  // Adds Tone.Master to the Editor
+```javascript
+ToneEditor.transport('0:0:0', '16:0:0')
+```
+Adds Tone.Transport to the Editor
+optional: set the in and out points (in any Tone.Time format) of the progress scrubber
 
-  .transport('0:0:0', '16:0:0')
-  // Adds Tone.Transport to the Editor
-  // optional: set the in and out points (in any Tone.Time format) of the progress scrubber
-
-  // Change options (defaults are below)
+Change options (defaults are below)
+```javascript
   .options({
     align: 'left',
     // Align the panel left or right
@@ -101,7 +106,6 @@ ToneEditor
     draggable: true
     // Turn on or off draggable functionality
   })
-
-
-// all methods are chainable ;)
 ```
+
+All methods are chainable.
