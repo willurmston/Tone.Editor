@@ -11,11 +11,13 @@ Tone.js is a fun, flexible and hi-performance web music framework, but because i
 
 ### Usage
 Include Tone-Editor.min.js in your page *after* Tone.js.
-
+```html
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/0.10.0/Tone.min.js"></script>
+<script src="../build/Tone-Editor.js" charset="utf-8"></script>
+```
+Define some Tone components and their settings.
+*Your workflow will be simplest if you keep settings in separate objects.*
 ```javascript
-
-// Define some Tone components and their settings.
-// ** Your workflow will be simplest if you keep settings in separate objects. **
 var reverbSettings =
 {
   "roomSize": 0.7,
@@ -51,17 +53,19 @@ var synthSettings =
 var reverb = new Tone.Freeverb(reverbSettings).toMaster()
 
 var synth = new Tone.MonoSynth(synthSettings).connect(reverb)
+```
 
-// Use ToneEditor.add() to add your Tone objects
-// Accepts either:
-//    a name and a Tone component
-//    an object with keys and values
+Use ToneEditor.add() to add your Tone objects to the Editor
+Accepts either:
+* a name and a Tone component
+* an object with keys and values
 
+```javascript
 ToneEditor
   .add('synth', synth)
   .add('reverb', reverb)
-
 ```
+
 Any changes made to the GUI will affect your Tone objects. See `example/index.html` for a demo.
 
 ### Copying changes back into your code
