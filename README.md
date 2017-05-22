@@ -13,7 +13,7 @@ Tone.js is a fun, flexible and hi-performance web music framework, but because i
 Include Tone-Editor.min.js in your page *after* Tone.js.
 ```html
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/0.10.0/Tone.min.js"></script>
-<script src="../build/Tone-Editor.js" charset="utf-8"></script>
+<script src="js/Tone-Editor.js" charset="utf-8"></script>
 ```
 Define some Tone components and their settings.
 *Your workflow will be simplest if you keep settings in separate objects.*
@@ -94,8 +94,6 @@ ToneEditor.options({
   // Click the button at the top of the panel to download
   filename: 'yourSiteTitle_ToneSettings.js'
 
-  // Turn on or off draggable functionality
-  draggable: true
 })
 ```
 All methods are chainable.
