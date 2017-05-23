@@ -34,6 +34,9 @@ define([
     // inject HTML
     ToneEditor.draw()
 
+    // recall saved state
+    State.get()
+
     // init complete
     ToneEditor.initialized = true
   }

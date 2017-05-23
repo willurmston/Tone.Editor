@@ -1,5 +1,5 @@
 // API
-define(['Utils','ToneEditor','Templates/Components/Component', 'Keyboard','Copy'], function(utils, ToneEditor, Component, Keyboard, Copy) {
+define(['Utils','ToneEditor','Templates/Components/Component', 'Keyboard','Copy', 'State'], function(utils, ToneEditor, Component, Keyboard, Copy, State) {
 
   ToneEditor.add = function(name, component) {
     if (ToneEditor.initialized === false) ToneEditor.init()
@@ -56,6 +56,7 @@ define(['Utils','ToneEditor','Templates/Components/Component', 'Keyboard','Copy'
       //DRAW ELEMENT TO DOM
       newComponent.draw()
 
+      State.get()
     }
 
     function generateName() {

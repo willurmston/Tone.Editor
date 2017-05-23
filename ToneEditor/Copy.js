@@ -21,8 +21,6 @@ define(['./libs/clipboard.min','Utils','ToneEditor', 'Templates/Components/Compo
       })
     })
 
-    console.log(filtered)
-
     // MINIFY (default: false)
     // Minify/collapse copied text
     if (minify) {
@@ -74,19 +72,3 @@ define(['./libs/clipboard.min','Utils','ToneEditor', 'Templates/Components/Compo
   }
 
 })
-
-
-var synthSettings =
-{"frequency":110,"detune":0,"portamento":0.036,"volume":-24.993742990301048,"oscillator":{"frequency":110,"detune":0,"phase":0,"volume":0,"mute":false},"filter":{"frequency":0,"rolloff":-12,"Q":2,"gain":0},"envelope":{"attack":0.81,"decay":2.2,"sustain":0,"release":4.85},"filterEnvelope":{"baseFrequency":37.059,"octaves":6.7,"exponent":2,"attack":0.2,"decay":7.1,"sustain":0.1,"release":0.9}};
-
-var reverbSettings =
-{"roomSize":0.699999988079071,"dampening":4300,"wet":1};
-
-var synthPartSettings =
-{"loop":true,"playbackRate":1,"probability":1,"humanize":false,"mute":false};
-
-var MasterSettings =
-{"volume":0,"mute":false};
-
-var TransportSettings =
-{"bpm":120,"swing":0,"timeSignature":4,"loopStart":0,"loopEnd":0};

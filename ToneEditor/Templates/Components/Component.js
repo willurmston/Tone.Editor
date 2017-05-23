@@ -1,9 +1,8 @@
-define('Templates/Components/Component', ['Utils','ToneEditor','../UIElements/UIElement','Keyboard'], function(utils, ToneEditor, UIElement, Keyboard){
+define('Templates/Components/Component', ['Utils','ToneEditor','../UIElements/UIElement','Keyboard', 'State'], function(utils, ToneEditor, UIElement, Keyboard, State){
 
   function Component(name, toneComponent, heritage, options) {
     var options = options || {}
     this.name = name
-    // this.id = 'tone-component-'+Date.now()
     this.id = this.name
     this.heritage = heritage
 
@@ -57,6 +56,9 @@ define('Templates/Components/Component', ['Utils','ToneEditor','../UIElements/UI
       var classList = e.target.classList
       if (classList.contains('keyboardTargetButton')) {
         Keyboard.setTarget(_this)
+
+        // save state
+        State.save()
       } else if (classList.contains('expand-triangle') && e.target === _this.expandTriangle) {
 
         if (_this.expanded) {
@@ -64,7 +66,11 @@ define('Templates/Components/Component', ['Utils','ToneEditor','../UIElements/UI
         } else {
           _this.expand()
         }
+        // save state
+        State.save()
       }
+
+
     })
 
     // inject values into html template
@@ -142,16 +148,12 @@ define('Templates/Components/Component', ['Utils','ToneEditor','../UIElements/UI
     this.element.classList.add('expanded')
     this.expandTriangle.classList.add('expanded')
     this.expanded = true
-
-    ToneEditor.saveState()
   }
 
   Component.prototype.collapse = function() {
     this.element.classList.remove('expanded')
     this.expandTriangle.classList.remove('expanded')
     this.expanded = false
-
-    ToneEditor.saveState()
   }
 
   // draws to dom

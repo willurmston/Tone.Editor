@@ -261,7 +261,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
       this._updateEditCount = function() {
         if (this._editedParameters.length === 1) {
           _this._copyAllButton.classList.add('visible')
-          // _this._copyAllButton.innerHTML = 'copy '+_this._editedParameters.length+' change'
         } else {
           // _this._copyAllButton.innerHTML = 'copy '+_this._editedParameters.length+' changes'
         }
@@ -306,7 +305,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0),__webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, ToneEditor){
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0),__webpack_require__(1),__webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, ToneEditor, State){
   var Keyboard = {
     target: undefined,
     element: ToneEditor.element.querySelector('svg.keyboard'),
@@ -326,6 +325,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
       this.isVisible = !this.isVisible
     },
     setTarget: function(target) {
+      // accepts component as argument
       if (!this.isVisible) this.show()
 
       if (this.target) this.target.keyboardTargetButton.classList.remove('active')
@@ -334,6 +334,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
       target.keyboardTargetButton.classList.add('active')
 
+      // save state
+      State.save()
     }
   }
 
@@ -393,7 +395,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
   document.addEventListener('keyup', function(e) {
     var noteIndex = keymap[e.keyCode]
 
-
     switch (e.keyCode) {
       case 16:
         Keyboard.shiftIsDown = false
@@ -425,7 +426,95 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0),__webpack_require__(1),__webpack_require__(2), __webpack_require__(4)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, ToneEditor, Keyboard, Component){
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(1),__webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, ToneEditor, Keyboard, State) {
+
+  var save = function() {
+
+    var components = []
+    ToneEditor.components.forEach( function(component) {
+
+      var storedComponent = {
+        name: component.name,
+        subComponents: []
+      }
+
+      if (component.expandTriangle) {
+        storedComponent.expanded = component.expanded
+
+      }
+
+      //subcomponents
+      component.subComponents.forEach( function(subComponent) {
+        storedComponent.subComponents.push({
+          id: subComponent.id,
+          expanded: subComponent.expanded
+        })
+      })
+
+      components.push(storedComponent)
+    })
+
+    var keyboard = { octave: Keyboard.octave, isVisible: Keyboard.isVisible }
+    if (Keyboard.target) keyboard.targetName = Keyboard.target.name
+
+    var string = JSON.stringify({
+      components: components,
+      keyboard: keyboard
+    })
+
+    console.log('save state')
+
+    window.localStorage.setItem( 'ToneEditor', string )
+
+  }
+
+
+
+  var get = function() {
+    // retreive the stored state
+    var storedState = JSON.parse(window.localStorage.getItem('ToneEditor'))
+
+    // COMPONENTS
+    storedState.components.forEach( updateLiveComponent )
+
+    function updateLiveComponent( storedComponent ) {
+      // get the corresponding component from the Editor
+      var liveComponent = ToneEditor.componentsById[storedComponent.name]
+
+      // check if it exists in the editor now
+      if (liveComponent) {
+        // if it's expandable, expand or collapse it
+        if (liveComponent.expandTriangle !== null) {
+          storedComponent.expanded ? liveComponent.expand() : liveComponent.collapse()
+        }
+
+        storedComponent.subComponents.forEach( function(storedSubComponent) {
+          updateLiveComponent( storedSubComponent )
+        })
+      }
+    }
+
+    // KEYBOARD
+    if (storedState.keyboard.targetName) Keyboard.setTarget( ToneEditor.componentsById[storedState.keyboard.targetName] )
+
+    Keyboard.octave = storedState.keyboard.octave
+
+    return storedState
+  }
+
+  module.exports = {
+    save: save,
+    get: get
+  }
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__))
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0),__webpack_require__(1),__webpack_require__(2), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, ToneEditor, Keyboard, Component){
 
   // UIElement base class
   var UIElement = function( parameterName, parentComponent, meta, options) {
@@ -466,15 +555,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0),__webpack_require__(1),__webpack_require__(3),__webpack_require__(2)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, ToneEditor, UIElement, Keyboard){
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0),__webpack_require__(1),__webpack_require__(4),__webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, ToneEditor, UIElement, Keyboard, State){
 
   function Component(name, toneComponent, heritage, options) {
     var options = options || {}
     this.name = name
-    // this.id = 'tone-component-'+Date.now()
     this.id = this.name
     this.heritage = heritage
 
@@ -528,6 +616,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
       var classList = e.target.classList
       if (classList.contains('keyboardTargetButton')) {
         Keyboard.setTarget(_this)
+
+        // save state
+        State.save()
       } else if (classList.contains('expand-triangle') && e.target === _this.expandTriangle) {
 
         if (_this.expanded) {
@@ -535,7 +626,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         } else {
           _this.expand()
         }
+        // save state
+        State.save()
       }
+
+
     })
 
     // inject values into html template
@@ -596,7 +691,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         } else {
 
           // get the right constructor based on uiType
-          var uiConstructor = __webpack_require__(8)
+          var uiConstructor = __webpack_require__(9)
           _this.parameters.push( new uiConstructor( key, _this, meta, options ) )
 
         }
@@ -613,16 +708,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     this.element.classList.add('expanded')
     this.expandTriangle.classList.add('expanded')
     this.expanded = true
-
-    ToneEditor.saveState()
   }
 
   Component.prototype.collapse = function() {
     this.element.classList.remove('expanded')
     this.expandTriangle.classList.remove('expanded')
     this.expanded = false
-
-    ToneEditor.saveState()
   }
 
   // draws to dom
@@ -669,10 +760,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(21),__webpack_require__(0),__webpack_require__(1), __webpack_require__(4)], __WEBPACK_AMD_DEFINE_RESULT__ = function (Clipboard, utils, ToneEditor, Component) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(21),__webpack_require__(0),__webpack_require__(1), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_RESULT__ = function (Clipboard, utils, ToneEditor, Component) {
 
   Component.prototype.toString = function(minify, useRefObjects) {
     var _this = this
@@ -694,8 +785,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         filtered[subComponent.name][parameter.name] = parameter.parentComponent.toneComponent.get(parameter.name)[parameter.name]
       })
     })
-
-    console.log(filtered)
 
     // MINIFY (default: false)
     // Minify/collapse copied text
@@ -751,29 +840,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__))
 
 
-var synthSettings =
-{"frequency":110,"detune":0,"portamento":0.036,"volume":-24.993742990301048,"oscillator":{"frequency":110,"detune":0,"phase":0,"volume":0,"mute":false},"filter":{"frequency":0,"rolloff":-12,"Q":2,"gain":0},"envelope":{"attack":0.81,"decay":2.2,"sustain":0,"release":4.85},"filterEnvelope":{"baseFrequency":37.059,"octaves":6.7,"exponent":2,"attack":0.2,"decay":7.1,"sustain":0.1,"release":0.9}};
-
-var reverbSettings =
-{"roomSize":0.699999988079071,"dampening":4300,"wet":1};
-
-var synthPartSettings =
-{"loop":true,"playbackRate":1,"probability":1,"humanize":false,"mute":false};
-
-var MasterSettings =
-{"volume":0,"mute":false};
-
-var TransportSettings =
-{"bpm":120,"swing":0,"timeSignature":4,"loopStart":0,"loopEnd":0};
-
-
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
 // EXTENDS UIElement.Slider
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(7), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, Slider, UIElement, Keyboard){
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(8), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, Slider, UIElement, Keyboard){
 
 
   function Scrubber( parameterName, parentComponent, meta, options) {
@@ -798,13 +871,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
 // pass a UIElement object into this function to add superpowers relevant to the UIType
 
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(3), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, UIElement, Keyboard){
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(4), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, UIElement, Keyboard){
 
 
   function Slider( parameterName, parentComponent, meta, options) {
@@ -973,13 +1046,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
 // pass a UIElement object into this function to add superpowers relevant to the UIType
 
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, UIElement){
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(4)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, UIElement){
 
   function Toggle(parameterName, parentComponent, meta, options) {
     var _this = this
@@ -1024,13 +1097,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports) {
 
 module.exports = "<svg viewBox=\"0 0 100 100\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"><g id=\"Page-1\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"><g id=\"play\" fill=\"#000000\"><polygon id=\"Triangle\" points=\"100 50 0 100 1.42108547e-14 0\"></polygon></g></g></svg>"
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
@@ -1041,12 +1114,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
   __webpack_require__(0),
   __webpack_require__(22),
   __webpack_require__(1),
-  __webpack_require__(14),
+  __webpack_require__(3),
+  __webpack_require__(13),
   __webpack_require__(12),
-  __webpack_require__(11),
   __webpack_require__(2),
-  __webpack_require__(5),
-  __webpack_require__(13)
+  __webpack_require__(6),
+  __webpack_require__(14)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, NexusUI, ToneEditor, State, Listen) {
   // incorporate state-saving methods
   // utils.extend(ToneEditor, State)
@@ -1069,6 +1142,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
     // inject HTML
     ToneEditor.draw()
 
+    // recall saved state
+    State.get()
+
     // init complete
     ToneEditor.initialized = true
   }
@@ -1084,11 +1160,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// API
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0),__webpack_require__(1),__webpack_require__(4), __webpack_require__(2),__webpack_require__(5)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, ToneEditor, Component, Keyboard, Copy) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0),__webpack_require__(1),__webpack_require__(5), __webpack_require__(2),__webpack_require__(6), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, ToneEditor, Component, Keyboard, Copy, State) {
 
   ToneEditor.add = function(name, component) {
     if (ToneEditor.initialized === false) ToneEditor.init()
@@ -1145,6 +1221,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// API
       //DRAW ELEMENT TO DOM
       newComponent.draw()
 
+      State.get()
     }
 
     function generateName() {
@@ -1202,7 +1279,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// API
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0),__webpack_require__(1),__webpack_require__(2)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, ToneEditor, Keyboard) {
@@ -1248,7 +1325,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1),__webpack_require__(0)], __WEBPACK_AMD_DEFINE_RESULT__ = function(ToneEditor, utils) {
@@ -1317,72 +1394,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 14 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(1),__webpack_require__(2)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, ToneEditor, Keyboard) {
-
-  ToneEditor.saveState = function() {
-    //global
-      //keyboard target
-      //for each component
-        //isCollapsed
-
-
-    var componentsById = {}
-    utils.iterate(ToneEditor.componentsById, function(key, component) {
-
-      componentsById[key] = {
-        id: component.id,
-        collapsed: component.expanded,
-        subComponents: {}
-      }
-
-      //subcomponents
-      utils.iterate(component.subComponents, function(key2, subComponent) {
-        componentsById[key].subComponents[key2] = JSON.stringify({
-          id: subComponent.id,
-          collapsed: subComponent.expanded
-        })
-      })
-
-
-    })
-
-    localStorage.ToneEditor = {
-      componentsById: JSON.stringify(componentsById)
-    }
-
-    if (Keyboard.target) {
-      var keyboard = {
-        targetID: Keyboard.target.id,
-        octave: Keyboard.octave
-      }
-      localStorage.Keyboard = JSON.stringify(keyboard)
-    }
-  }
-
-  ToneEditor.retrieveState = function() {
-
-    //keyboard
-
-
-    return localStorage.getItem('ToneEditor')
-  }
-
-
-
-  return ToneEditor
-}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__))
-
-
-/***/ }),
 /* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// WRAPPER FOR COMPONENT WITH SPECIAL PROPERTIES
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0),__webpack_require__(1), __webpack_require__(4), __webpack_require__(6),__webpack_require__(2)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, ToneEditor, Component, Scrubber, Keyboard){
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0),__webpack_require__(1), __webpack_require__(5), __webpack_require__(7),__webpack_require__(2)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, ToneEditor, Component, Scrubber, Keyboard){
 
   function Transport(name, toneComponent, heritage, options) {
     var _this = this
@@ -1483,9 +1499,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// WRAPPER FOR C
     Tone.Transport.on('start', function() {
       playPause.innerHTML = __webpack_require__(36)
     }).on('pause', function() {
-      playPause.innerHTML = __webpack_require__(9)
+      playPause.innerHTML = __webpack_require__(10)
     }).on('stop', function() {
-      playPause.innerHTML = __webpack_require__(9)
+      playPause.innerHTML = __webpack_require__(10)
     })
 
   }
@@ -1503,10 +1519,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// WRAPPER FOR C
 
 var map = {
 	"./Menu.js": 17,
-	"./Scrubber.js": 6,
-	"./Slider.js": 7,
-	"./Toggle.js": 8,
-	"./UIElement.js": 3
+	"./Scrubber.js": 7,
+	"./Slider.js": 8,
+	"./Toggle.js": 9,
+	"./UIElement.js": 4
 };
 function webpackContext(req) {
 	return __webpack_require__(webpackContextResolve(req));
@@ -1529,7 +1545,7 @@ webpackContext.id = 16;
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// pass a UIElement object into this function to add superpowers relevant to the UIType
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, UIElement){
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(4)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, UIElement){
 
   function Menu(parameterName, parentComponent, meta, options) {
     var _this = this
@@ -10543,7 +10559,7 @@ module.exports = g;
 /* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(10);
+module.exports = __webpack_require__(11);
 
 
 /***/ })

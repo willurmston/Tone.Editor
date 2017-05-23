@@ -18,7 +18,6 @@
       this._updateEditCount = function() {
         if (this._editedParameters.length === 1) {
           _this._copyAllButton.classList.add('visible')
-          // _this._copyAllButton.innerHTML = 'copy '+_this._editedParameters.length+' change'
         } else {
           // _this._copyAllButton.innerHTML = 'copy '+_this._editedParameters.length+' changes'
         }

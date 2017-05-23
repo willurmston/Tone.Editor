@@ -1,4 +1,4 @@
-define('Keyboard', ['Utils','ToneEditor'], function(utils, ToneEditor){
+define('Keyboard', ['Utils','ToneEditor','State'], function(utils, ToneEditor, State){
   var Keyboard = {
     target: undefined,
     element: ToneEditor.element.querySelector('svg.keyboard'),
@@ -18,6 +18,7 @@ define('Keyboard', ['Utils','ToneEditor'], function(utils, ToneEditor){
       this.isVisible = !this.isVisible
     },
     setTarget: function(target) {
+      // accepts component as argument
       if (!this.isVisible) this.show()
 
       if (this.target) this.target.keyboardTargetButton.classList.remove('active')
@@ -26,6 +27,8 @@ define('Keyboard', ['Utils','ToneEditor'], function(utils, ToneEditor){
 
       target.keyboardTargetButton.classList.add('active')
 
+      // save state
+      State.save()
     }
   }
 
@@ -84,7 +87,6 @@ define('Keyboard', ['Utils','ToneEditor'], function(utils, ToneEditor){
   })
   document.addEventListener('keyup', function(e) {
     var noteIndex = keymap[e.keyCode]
-
 
     switch (e.keyCode) {
       case 16:
