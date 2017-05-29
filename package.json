@@ -28,6 +28,7 @@
     "svg-inline-loader": "^0.7.1",
     "uglify-js": "^2.8.22",
     "uglifyjs-webpack-plugin": "^0.4.3",
+    "unminified-webpack-plugin": "^1.2.0",
     "url-loader": "^0.5.8",
     "webpack": "^2.4.1",
     "webpack-stream": "^3.2.0"

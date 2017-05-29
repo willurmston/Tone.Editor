@@ -6,8 +6,6 @@
 <!-- # Tone.Editor -->
 A GUI overlay for making websites using [Tone.js](https://github.com/Tonejs/Tone.js). Use it during design and development, then throw it out when you're done. **(BETA)**
 
-![screenshot](https://cdn.rawgit.com/willurmston/ToneEditor/02ad5a04/github-assets/screenshot.png) 
-
 ### Why?
 Tone.js is a fun, flexible and hi-performance web music framework, but because it's text-based, the process of being creative with it can be slow. A GUI layer solves this problem, allowing you fiddle with parameters of all your Tone objects in real time, then copy the changes into your code.
 
@@ -57,17 +55,22 @@ var reverb = new Tone.Freeverb(reverbSettings).toMaster()
 var synth = new Tone.MonoSynth(synthSettings).connect(reverb)
 ```
 ### .add()
-Use `ToneEditor.add()` to add your Tone objects to the Editor.
+Use `ToneEditor.add()` to add your Tone objects to the Editor. Optional: customize a component's color.
 
 ```javascript
 ToneEditor
   .add('synth', synth)
-  .add('ocarina', ocarina, 'purple')
   .add({
     reverb: reverb,
     kickDrum: kickDrum
   })
 
+  // give an extra argument to customize a component's color
+  .add('ocarina', ocarina, 'purple')
+  .add({
+    snare: snare,
+    hiHat: hiHat
+  },'lightgreen')
 ```
 
 Any changes made to the GUI will affect your Tone objects. See `example/index.html` for a demo.

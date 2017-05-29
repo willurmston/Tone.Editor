@@ -1,6 +1,8 @@
 var path = require('path');
 var webpack = require('webpack');
 var UglifyJSPlugin = require('uglifyjs-webpack-plugin')
+var UnminifiedWebpackPlugin = require('unminified-webpack-plugin')
+
 module.exports = {
     entry: {
         main: [ path.join(__dirname, './ToneEditor/Initialize')],
@@ -12,7 +14,7 @@ module.exports = {
     output: {
         publicPath: "/ToneEditor/",
         path: path.join(__dirname, 'build'),
-        filename: 'Tone-Editor.js'
+        filename: 'Tone-Editor.min.js'
     },
     module: {
       loaders:[],
@@ -40,6 +42,11 @@ module.exports = {
       ]
     },
     plugins: [
-      // new UglifyJSPlugin()
+      new webpack.optimize.UglifyJsPlugin({
+            compress: {
+                warnings: false
+            }
+      }),
+      new UnminifiedWebpackPlugin()
     ]
 };
