@@ -1,4 +1,4 @@
-define(['./libs/clipboard.min','Utils','ToneEditor', 'Templates/Components/Component'], function (Clipboard, utils, ToneEditor, Component) {
+define(['./libs/clipboard.min','Utils','ToneEditor','State', 'Templates/Components/Component'], function (Clipboard, utils, ToneEditor, State, Component) {
 
   Component.prototype.toString = function(minify, useRefObjects) {
     var _this = this
@@ -40,21 +40,29 @@ define(['./libs/clipboard.min','Utils','ToneEditor', 'Templates/Components/Compo
 
   // RETURNS FLATTENED PROPERTIES OF TONECOMPONENT
   new Clipboard( '.tone-editor_container .copy-button', {
-    text: function(trigger) {
+    text: function(copyButton) {
       var text = ''
 
-      if (trigger.classList.contains('copy-all')) { // it's the copy-all button
+      if (copyButton.classList.contains('copy-all')) { // it's the copy-all button
         ToneEditor.components.forEach( function(component) {
           text+='var '+component.id+'Settings = '+'\n'+component.toString(true, true)+';\n\n'
         })
 
       } else { // It's a component copy button
-        var id = trigger.getAttribute('data-component-id')
+        var id = copyButton.getAttribute('data-component-id')
         var component = ToneEditor.componentsById[id]
 
         text+='var '+id+'Settings = '+'\n'+component.toString()
       }
 
+      // ANIMATION
+      copyButton.innerHTML = '✔️'
+      copyButton.style = '-webkit-animation: copy-button-animation 0.5s forwards; animation: copy-button-animation 0.5s forwards;'
+
+      setTimeout( function() {
+        copyButton.innerHTML = '📋'
+        copyButton.style = ''
+      }, 500)
 
       return text
     }

@@ -1,4 +1,4 @@
-define( ['ToneEditor','./Utils'], function(ToneEditor, utils) {
+define( ['ToneEditor','Utils','State'], function(ToneEditor, utils, State) {
 
   var resizeHandle = document.createElement('div')
   resizeHandle.classList.add('resize-handle')
@@ -7,6 +7,21 @@ define( ['ToneEditor','./Utils'], function(ToneEditor, utils) {
   var resizing = false
   var mouseX
   var width
+
+  var saveTimer
+
+  ToneEditor.resize = function(width) {
+    ToneEditor.element.style.width = width + 'px'
+    ToneEditor.resizedWidth = width
+
+    if (width >= ToneEditor._options.columnWidth * 2) {
+      ToneEditor.componentContainer.classList.add('multi-column')
+    } else {
+      ToneEditor.componentContainer.classList.remove('multi-column')
+    }
+
+    return this
+  }
 
   document.addEventListener('mousemove', function(e) {
     if (resizing) {
@@ -28,28 +43,20 @@ define( ['ToneEditor','./Utils'], function(ToneEditor, utils) {
         width = mouseX
       }
 
-      ToneEditor.element.style.width = width + 'px'
+      ToneEditor.resize(width)
 
-      // store panel width ratio
-      localStorage.panelWidthRatio = width / windowWidth
+      // after a second, save the resizedWidth
+      clearTimeout(saveTimer)
 
-      // var canvases = ToneEditor.element.querySelectorAll('canvas.nx')
-      //
-      // for (var i=0; i<canvases.length; i++) {
-      //   canvases[i].width = canvases[i].parentElement.offsetWidth
-      // }
-      //
-      // // resize all components
-      // ToneEditor.components.forEach(function(component) {
-      //   component.update()
-      // })
+      saveTimer = setTimeout( function() {
+        State.save()
+      }, 500)
 
     }
   }, false)
   document.addEventListener('mousedown', function(e) {
     if (e.target.classList.contains('resize-handle')) {
       resizing = true
-
     }
   }, false)
   document.addEventListener('mouseup', function() {

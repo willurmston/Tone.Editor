@@ -8,10 +8,10 @@ define([
   'ToneEditor',
   'State',
   'Listen',
+  'Resize',
   'API',
   'Keyboard',
-  'Copy',
-  'Resize'
+  'Copy'
 ], function(utils, NexusUI, ToneEditor, State, Listen) {
   // incorporate state-saving methods
   // utils.extend(ToneEditor, State)

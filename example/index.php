@@ -64,16 +64,22 @@
 
       var synth = new Tone.MonoSynth( synthSettings ).connect(reverb)
 
+      var MasterSettings =
+        {"volume":5.814896066023659,"mute":false}
+
+      Tone.Master.set(MasterSettings)
+
       var synthPart = new Tone.Sequence(function(time, note){
       	synth.triggerAttackRelease(note, "16n", time);
       }, ["C4", ["C4", ["C4", "D3"]], "E3", ["D3", "A2"]]).start(0);
 
 
+      // ToneEditor
       ToneEditor.add({
         'synth': synth,
         'reverb': reverb
-      }).options({
-        log: true,
+      })
+      .options({
         minify: true,
         align: 'right'
       })

@@ -1,97 +1,151 @@
 <div class="tone-editor_container">
-  <div class="header"><h3>Tone.js</h3><div class="keyboard-button">🎹</div><div class="copy-button copy-all">📋</div></div>
+  <div class="expand-triangle panel-expand-triangle expanded"></div>
+  <h3 class="collapsed-tone-js-logo">
+    Tone.js
+  </h3>
+
+  <div class="header">
+    <div class="top-row">
+      <h3 class="tone-js-logo">Tone.js</h3>
+      <div class="extra-buttons">
+        <div class="keyboard-button">🎹</div>
+        <div class="copy-button copy-all">📋</div>
+
+      </div>
+    </div>
+
+  <div class="keyboard-container">
 
   <!-- KEYBOARD.SVG -->
-  <svg class="keyboard collapsed" width="402px" viewBox="0 0 402 108" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-      <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-          <g id="keyboard" transform="translate(1.000000, 1.000000)">
-              <g id="white-keys" stroke="#979797" stroke-width="0.5" fill="#FFFFFF">
-                  <rect id="Rectangle-3" x="0" y="0" width="36.3636364" height="106"></rect>
-                  <rect id="Rectangle-3-Copy-6" x="218.181818" y="0" width="36.3636364" height="106"></rect>
-                  <rect id="Rectangle-3-Copy-3" x="109.090909" y="0" width="36.3636364" height="106"></rect>
-                  <rect id="Rectangle-3-Copy-7" x="327.272727" y="0" width="36.3636364" height="106"></rect>
-                  <rect id="Rectangle-3-Copy" x="36.3636364" y="0" width="36.3636364" height="106"></rect>
-                  <rect id="Rectangle-3-Copy-8" x="254.545455" y="0" width="36.3636364" height="106"></rect>
-                  <rect id="Rectangle-3-Copy-4" x="145.454545" y="0" width="36.3636364" height="106"></rect>
-                  <rect id="Rectangle-3-Copy-9" x="364" y="0" width="36.3636364" height="106"></rect>
-                  <rect id="Rectangle-3-Copy-2" x="72.7272727" y="0" width="36.3636364" height="106"></rect>
-                  <rect id="Rectangle-3-Copy-10" x="290.909091" y="0" width="36.3636364" height="106"></rect>
-                  <rect id="Rectangle-3-Copy-5" x="181.818182" y="0" width="36.3636364" height="106"></rect>
-              </g>
-              <g id="black-keys" transform="translate(22.000000, 0.000000)" stroke="#979797" stroke-width="0.5" fill="#494949">
-                  <rect id="Rectangle-3-Copy-11" x="3.55271368e-15" y="0" width="29.1204057" height="64.4568302"></rect>
-                  <rect id="Rectangle-3-Copy-12" x="36" y="0" width="29.1204057" height="64.4568302"></rect>
-                  <rect id="Rectangle-3-Copy-14" x="109" y="0" width="29.1204057" height="64.4568302"></rect>
-                  <rect id="Rectangle-3-Copy-15" x="145" y="0" width="29.1204057" height="64.4568302"></rect>
-                  <rect id="Rectangle-3-Copy-16" x="182" y="0" width="29.1204057" height="64.4568302"></rect>
-                  <rect id="Rectangle-3-Copy-17" x="254" y="0" width="29.1204057" height="64.4568302"></rect>
-                  <rect id="Rectangle-3-Copy-18" x="291" y="0" width="29.1204057" height="64.4568302"></rect>
-              </g>
-              <g id="labels" transform="translate(5.000000, 35.249990)" font-size="24" font-family="Inconsolata-Bold, Inconsolata" letter-spacing="1.24347818" font-weight="bold">
-                  <text id="A" fill="#5E5E5E">
-                      <tspan x="7.51701689" y="61.8296296">A</tspan>
-                  </text>
-                  <text id="J" fill="#5E5E5E">
-                      <tspan x="225.698835" y="61.8296296">J</tspan>
-                  </text>
-                  <text id="F" fill="#5E5E5E">
-                      <tspan x="116.607926" y="61.8296296">F</tspan>
-                  </text>
-                  <text id=";" fill="#5E5E5E">
-                      <tspan x="334.789744" y="61.8296296">;</tspan>
-                  </text>
-                  <text id="S" fill="#5E5E5E">
-                      <tspan x="43.8806533" y="61.8296296">S</tspan>
-                  </text>
-                  <text id="K" fill="#5E5E5E">
-                      <tspan x="262.062471" y="61.8296296">K</tspan>
-                  </text>
-                  <text id="G" fill="#5E5E5E">
-                      <tspan x="152.971562" y="61.8296296">G</tspan>
-                  </text>
-                  <text id="‘" fill="#5E5E5E">
-                      <tspan x="370.77539" y="61.8296296">‘</tspan>
-                  </text>
-                  <text id="D" fill="#5E5E5E">
-                      <tspan x="78.330414" y="61.8296296">D</tspan>
-                  </text>
-                  <text id="L" fill="#5E5E5E">
-                      <tspan x="296.512232" y="61.8296296">L</tspan>
-                  </text>
-                  <text id="H" fill="#5E5E5E">
-                      <tspan x="187.421323" y="61.8296296">H</tspan>
-                  </text>
-                  <text id="W" fill="#FFFFFF">
-                      <tspan x="25.1068314" y="21.1808804">W</tspan>
-                  </text>
-                  <text id="E" fill="#FFFFFF">
-                      <tspan x="61.1068314" y="21.1808804">E</tspan>
-                  </text>
-                  <text id="T" fill="#FFFFFF">
-                      <tspan x="134.106831" y="21.1808804">T</tspan>
-                  </text>
-                  <text id="Y" fill="#FFFFFF">
-                      <tspan x="170.106831" y="21.1808804">Y</tspan>
-                  </text>
-                  <text id="U" fill="#FFFFFF">
-                      <tspan x="207.106831" y="21.1808804">U</tspan>
-                  </text>
-                  <text id="O" fill="#FFFFFF">
-                      <tspan x="279.106831" y="21.1808804">O</tspan>
-                  </text>
-                  <text id="P" fill="#FFFFFF">
-                      <tspan x="316.106831" y="21.1808804">P</tspan>
-                  </text>
-              </g>
-          </g>
+  <svg class="keyboard" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400.5 70">
+    <defs>
+      <style>
+        .white,
+        .cls-5 {
+          fill: #fff;
+        }
+        .white,
+        .black {
+          stroke: #979797;
+          stroke-width: 0.5px;
+        }
+        .black {
+          fill: #494949;
+        }
+        .black,
+        .cls-4,
+        .cls-5 {
+          isolation: isolate;
+        }
+        .cls-4,
+        .cls-5 {
+          font-size: 24px;
+          font-family: Inconsolata-Bold, Inconsolata;
+          font-weight: 700;
+          letter-spacing: 0.05em;
+        }
+        .cls-4 {
+          fill: #5e5e5e;
+        }
+      </style>
+    </defs>
+    <g id="white-keys">
+      <rect data-index="0" class="key white" x="0.25" y="0.25" width="36.36" height="70" />
+      <rect data-index="2" class="key white" x="36.61" y="0.25" width="36.36" height="70"/>
+      <rect data-index="4" class="key white" x="72.98" y="0.25" width="36.36" height="70"/>
+
+      <rect data-index="5" class="key white" x="109.34" y="0.25" width="36.36" height="70"/>
+
+      <rect data-index="7" class="key white" x="145.7" y="0.25" width="36.36" height="70"/>
+      <rect data-index="9" class="key white" x="182.07" y="0.25" width="36.36" height="70"/>
+
+      <rect data-index="11" class="key white" x="218.43" y="0.25" width="36.36" height="70"/>
+
+      <rect data-index="12" class="key white" x="254.8" y="0.25" width="36.36" height="70"/>
+
+      <rect data-index="14" class="key white" x="291.16" y="0.25" width="36.36" height="70"/>
+      <rect data-index="16" class="key white" x="327.52" y="0.25" width="36.36" height="70"/>
+
+      <rect data-index="17" class="key white" x="363.89" y="0.25" width="36.36" height="70"/>
+
+    </g>
+    <g id="black-keys">
+      <rect data-index="1" class="key black" x="22.25" y="0.25" width="29.12" height="34.46"/>
+      <rect data-index="3" class="key black" x="58.25" y="0.25" width="29.12" height="34.46"/>
+      <rect data-index="6" class="key black" x="131.25" y="0.25" width="29.12" height="34.46"/>
+      <rect data-index="8" class="key black" x="167.25" y="0.25" width="29.12" height="34.46"/>
+      <rect data-index="10" class="key black" x="204.25" y="0.25" width="29.12" height="34.46"/>
+      <rect data-index="13" class="key black" x="276.25" y="0.25" width="29.12" height="34.46"/>
+      <rect data-index="15" class="key black" x="313.25" y="0.25" width="29.12" height="34.46"/>
+    </g>
+    <g id="labels">
+      <g id="A" class="black">
+        <text class="cls-4" transform="translate(12.77 61.33)">A</text>
       </g>
+      <g id="J" class="black">
+        <text class="cls-4" transform="translate(230.95 61.33)">J</text>
+      </g>
+      <g id="F" class="black">
+        <text class="cls-4" transform="translate(121.86 61.33)">F</text>
+      </g>
+      <g id="_" data-name=";" class="black">
+        <text class="cls-4" transform="translate(340.04 61.33)">;</text>
+      </g>
+      <g id="S" class="black">
+        <text class="cls-4" transform="translate(49.13 61.33)">S</text>
+      </g>
+      <g id="K" class="black">
+        <text class="cls-4" transform="translate(267.31 61.33)">K</text>
+      </g>
+      <g id="G" class="black">
+        <text class="cls-4" transform="translate(158.22 61.33)">G</text>
+      </g>
+      <g id="_2" data-name="‘" class="black">
+        <text class="cls-4" transform="translate(376.03 61.33)">‘</text>
+      </g>
+      <g id="D" class="black">
+        <text class="cls-4" transform="translate(83.58 61.33)">D</text>
+      </g>
+      <g id="L" class="black">
+        <text class="cls-4" transform="translate(301.76 61.33)">L</text>
+      </g>
+      <g id="H" class="black">
+        <text class="cls-4" transform="translate(192.67 61.33)">H</text>
+      </g>
+      <g id="W" class="black">
+        <text class="cls-5" transform="translate(30.36 25.68)">W</text>
+      </g>
+      <g id="E" class="black">
+        <text class="cls-5" transform="translate(66.36 25.68)">E</text>
+      </g>
+      <g id="T" class="black">
+        <text class="cls-5" transform="translate(139.36 25.68)">T</text>
+      </g>
+      <g id="Y" class="black">
+        <text class="cls-5" transform="translate(175.36 25.68)">Y</text>
+      </g>
+      <g id="U" class="black">
+        <text class="cls-5" transform="translate(212.36 25.68)">U</text>
+      </g>
+      <g id="O" class="black">
+        <text class="cls-5" transform="translate(284.36 25.68)">O</text>
+      </g>
+      <g id="P" class="black">
+        <text class="cls-5" transform="translate(321.36 25.68)">P</text>
+      </g>
+    </g>
   </svg>
+
+  </div>
+
+</div>
+
+
 
 
   <div class="component-container">
 
   </div>
 
-  <div class="copy-all"></div>
 
 </div>

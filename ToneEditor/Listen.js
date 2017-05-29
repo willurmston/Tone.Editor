@@ -1,22 +1,27 @@
-define( ['./Utils','ToneEditor','./Keyboard'], function(utils, ToneEditor, Keyboard) {
+define( ['./Utils','ToneEditor', 'Keyboard'], function(utils, ToneEditor, Keyboard) {
   startListeners = function() {
 
     // DELEGATED CLICK LISTENERS
     ToneEditor.element.addEventListener('click', function(e){
-      if (e.target.hasClass('component-class')) {
+      var classList = e.target.classList
+      if (classList.contains('component-class')) {
         // OPEN PAGE IN DOCS
         window.open('https://tonejs.github.io/docs/#'+e.target.innerHTML, '_blank')
-      } else if (e.target.hasClass('copy-all')) {
+      } else if (classList.contains('copy-all')) {
         e.target.style.animation = 'tone-editor_copied 1s'
 
         //COPY CHANGES
-      } else if (e.target.hasClass('value')) {
+      } else if (classList.contains('value')) {
         if (e.target.getAttribute('contenteditable') === 'false') {
           ToneEditor._focusValueElement(e.target)
           document.execCommand('selectAll',false,null)
         }
-      } else if (e.target.hasClass('keyboard-button')) {
+      } else if (classList.contains('keyboard-button')) {
         Keyboard.toggle()
+      } else if ((classList.contains('panel-expand-triangle') && classList.contains('expand-triangle')) || classList.contains('tone-js-logo')) {
+        ToneEditor.toggle()
+      } else if (classList.contains('tone-editor_container') && classList.contains('collapsed') ) {
+        ToneEditor.expand()
       }
     })
     ToneEditor.element.addEventListener('dblclick', function(e) {

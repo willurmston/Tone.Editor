@@ -1,4 +1,4 @@
-define('Templates/Components/Component', ['Utils','ToneEditor','../UIElements/UIElement','Keyboard', 'State'], function(utils, ToneEditor, UIElement, Keyboard, State){
+define('Templates/Components/Component', ['Utils','ToneEditor','../UIElements/UIElement','State', 'Keyboard' ], function(utils, ToneEditor, UIElement, State, Keyboard){
 
   function Component(name, toneComponent, heritage, options) {
     var options = options || {}
@@ -38,13 +38,11 @@ define('Templates/Components/Component', ['Utils','ToneEditor','../UIElements/UI
 
       this.element = tempContainer.firstElementChild
 
+      if (options.color) this.element.style.background = options.color
+
       this.keyboardTargetButton = this.element.querySelector('.keyboard-target-button')
 
-      if (this.heritage[0] === 'Instrument') {
-
-      } else {
-        this.keyboardTargetButton.remove()
-      }
+      if (this.heritage[0] !== 'Instrument') this.keyboardTargetButton.remove()
 
       // ADD HOOK FOR CLIPBOARD.js
       this.element.querySelector('.copy-button').setAttribute('data-component-id', this.id)
@@ -54,11 +52,17 @@ define('Templates/Components/Component', ['Utils','ToneEditor','../UIElements/UI
 
     this.element.addEventListener('click', function(e) {
       var classList = e.target.classList
-      if (classList.contains('keyboardTargetButton')) {
-        Keyboard.setTarget(_this)
+      if (classList.contains('keyboard-target-button')) {
+
+        if (Keyboard.isActive) {
+          Keyboard.deactivate().removeTarget()
+        } else {
+          Keyboard.setTarget(_this).activate().show()
+        }
+
+        State.save()
 
         // save state
-        State.save()
       } else if (classList.contains('expand-triangle') && e.target === _this.expandTriangle) {
 
         if (_this.expanded) {
@@ -69,7 +73,6 @@ define('Templates/Components/Component', ['Utils','ToneEditor','../UIElements/UI
         // save state
         State.save()
       }
-
 
     })
 
@@ -90,6 +93,7 @@ define('Templates/Components/Component', ['Utils','ToneEditor','../UIElements/UI
 
     this.parameters = []
     this.subComponents = []
+    this.subComponentsByName = {}
 
     utils.iterate( flattenedProps, function(key, prop) {
       if (typeof prop === 'object' && _this.isSubcomponent === false) {
@@ -99,9 +103,13 @@ define('Templates/Components/Component', ['Utils','ToneEditor','../UIElements/UI
         }
 
         var heritage = utils.classify(_this.toneComponent[key])
-        _this.subComponents.push( new Component( key, _this.toneComponent[key], heritage, options ) )
+        var newComp = new Component( key, _this.toneComponent[key], heritage, options )
+        _this.subComponents.push( newComp )
+        _this.subComponentsByName[key] = newComp
 
       } else if (typeof prop === 'array') {
+        // NOTE this might create problems later with parameters that are arrays (i.e. waveform partials).
+        // Try setting an array and see what happens
 
       } else if (typeof prop === 'number') {
         // console.log('number', key, prop)
@@ -138,7 +146,6 @@ define('Templates/Components/Component', ['Utils','ToneEditor','../UIElements/UI
       }
     })
   }
-
 
   Component.prototype.deferUntilDrawn = function(callback) {
     this.deferred.push(callback)

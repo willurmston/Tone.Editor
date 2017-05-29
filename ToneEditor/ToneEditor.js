@@ -10,18 +10,21 @@
 
         // private options
         transportScrubIn: 0,
-        transportScrubOut: 180
+        transportScrubOut: 180,
+        columnWidth: 272
       }
       this.components = []
       this.componentsById = {}
+
       var _this = this
       this._updateEditCount = function() {
         if (this._editedParameters.length === 1) {
           _this._copyAllButton.classList.add('visible')
         } else {
-          // _this._copyAllButton.innerHTML = 'copy '+_this._editedParameters.length+' changes'
         }
       }
+      this.resizedWidth = 280 //272
+      this.isCollapsed = false
 
       this._copyAllButton = null // defined later _this.element.querySelector('div.copy-all')
       this.element = document.querySelectorAll('div.tone-editor_container')[0]
@@ -34,6 +37,9 @@
 
       this.componentContainer = this.element.querySelector('.component-container')
 
+      this.expandTriangle = this.element.querySelector('.panel-expand-triangle')
+
+
       // inject css
       require('./sass/main.sass')
 
@@ -42,6 +48,30 @@
         _this._copyAllButton = _this.element.querySelector('div.copy-all')
 
         return _this.element
+      }
+      this.expand = function() {
+        this.element.classList.remove('collapsed')
+        this.expandTriangle.classList.add('expanded')
+        this.resize(this.resizedWidth)
+        this.isCollapsed = false
+
+        require('State').save()
+      }
+      this.collapse = function() {
+        this.element.classList.add('collapsed')
+        this.element.style.width = ''
+        this.expandTriangle.classList.remove('expanded')
+
+        this.isCollapsed = true
+
+        require('State').save()
+      }
+      this.toggle = function() {
+        if (this.element.classList.contains('collapsed')) {
+          this.expand()
+        } else {
+          this.collapse()
+        }
       }
     }
 
@@ -52,6 +82,5 @@
       document.execCommand('selectAll',false,null)
     }
 
-    // window.ToneEditor = ToneEditor
     module.exports = new ToneEditor()
   })

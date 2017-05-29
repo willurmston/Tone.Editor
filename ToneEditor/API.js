@@ -1,8 +1,8 @@
 // API
-define(['Utils','ToneEditor','Templates/Components/Component', 'Keyboard','Copy', 'State'], function(utils, ToneEditor, Component, Keyboard, Copy, State) {
+define(['Utils','ToneEditor','State', 'Templates/Components/Component', 'Keyboard','Copy'], function(utils, ToneEditor, State, Component, Keyboard, Copy) {
 
-  ToneEditor.add = function(name, component) {
-    if (ToneEditor.initialized === false) ToneEditor.init()
+  ToneEditor.add = function(name, component, color) {
+    if (!ToneEditor.initialized) ToneEditor.init()
 
     // PARSE ARGUMENTS
     // check if an object
@@ -11,6 +11,7 @@ define(['Utils','ToneEditor','Templates/Components/Component', 'Keyboard','Copy'
       if ( name instanceof Tone) {
         addComponent(name)
       } else { // it's an object of names and components
+        var color = arguments[1] // allow assigning a color to a group of components
         for (var key in name) {
           addComponent(name[key], key)
         }
@@ -24,28 +25,30 @@ define(['Utils','ToneEditor','Templates/Components/Component', 'Keyboard','Copy'
 
       var heritage = utils.classify(component)
 
+      var options = {}
+      if (color) options.color = color
+
       // CHECK IF NEEDS A SPECIAL COMPONENT TYPE (i.e. Transport or Master)
       if (heritage.includes('Transport')) {
 
         var TransportComponent = require('Templates/Components/Transport')
 
         // ADD PARAMETERS TO OBJECT
-        var newComponent = new TransportComponent( name, component, heritage)
+        var newComponent = new TransportComponent( name, component, heritage, options)
 
       } else if (heritage.includes('Master')) {
 
         // ADD PARAMETERS TO OBJECT
-        var newComponent = new Component( name, component, heritage)
+        var newComponent = new Component( name, component, heritage, options)
 
       // } else if (heritage.includes('Instrument') || heritage.includes('Effect') || component instanceof Tone.Sequence){ // Create a generic component
       } else if (component instanceof Tone) {
 
         // ADD PARAMETERS TO OBJECT
-        var newComponent = new Component( name, component, heritage)
+        var newComponent = new Component( name, component, heritage, options)
 
       } else { // UNSUPPORTED TONE OBJECT
         console.log('%cIgnored unsupported Tone object', 'color: DarkOrange', component)
-        // console.log('%cTone-Editor only supports Tone.Instrument or Tone.Effect', 'color: DarkOrange')
 
         return
       }
@@ -62,9 +65,21 @@ define(['Utils','ToneEditor','Templates/Components/Component', 'Keyboard','Copy'
     function generateName() {
       return 'component-'+ToneEditor.components.length
     }
+
     return ToneEditor
   }
+  ToneEditor.remove = function(nameOrComponent) {
+    if (typeof nameOrComponent === 'string' && ToneEditor.componentsById[nameOrComponent] !== undefined) {
+      delete ToneEditor.componentsById[name]
+      ToneEditor.components.forEach( function(component, index) {
+        if (component.name === nameOrComponent) ToneEditor.components.splice(index, 1)
+      })
+    }
 
+    State.save()
+
+    return ToneEditor
+  }
   ToneEditor.show = function() {
     if (!ToneEditor.initialized) ToneEditor.init()
 
@@ -81,7 +96,7 @@ define(['Utils','ToneEditor','Templates/Components/Component', 'Keyboard','Copy'
 
   // Shortcut for adding Tone.Master
   ToneEditor.master = function() {
-    ToneEditor.add('Master', Tone.Master)
+    ToneEditor.add('Master', Tone.Master, 'skyblue')
     return ToneEditor
   }
 
@@ -91,7 +106,7 @@ define(['Utils','ToneEditor','Templates/Components/Component', 'Keyboard','Copy'
     if (timeIn) ToneEditor._options.transportScrubIn = Tone.Time(timeIn).toSeconds()
     if (timeOut) ToneEditor._options.transportScrubOut = Tone.Time(timeOut).toSeconds()
 
-    ToneEditor.add('Transport', Tone.Transport)
+    ToneEditor.add('Transport', Tone.Transport, 'orange')
     return ToneEditor
   }
 

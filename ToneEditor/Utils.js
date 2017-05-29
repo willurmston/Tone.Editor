@@ -155,7 +155,8 @@ define('Utils', ['./Utils/Classify', './Utils/GetMeta', './Utils/isSignal'], fun
     isSignal: isSignal,
     getWindowSize: getWindowSize,
     downloadTextFile: downloadTextFile,
-    nodeFromString: nodeFromString
+    nodeFromString: nodeFromString,
+    merge: require('Utils/deepmerge')
   }
 
   window.utils = utils

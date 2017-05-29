@@ -1,37 +1,86 @@
 define('Keyboard', ['Utils','ToneEditor','State'], function(utils, ToneEditor, State){
+
+  var State = require('State')
+
   var Keyboard = {
-    target: undefined,
     element: ToneEditor.element.querySelector('svg.keyboard'),
+    target: null,
+    isActive: false,
     isVisible: false,
+
+    // expand the keyboard
     show: function() {
-      this.element.classList.remove('collapsed')
+      // this.element.classList.remove('collapsed')
       this.isVisible = true
-      // this._saveState('keyboardVisible', this.isVisible)
+      ToneEditor.element.classList.add('keyboard-visible')
+
+      // var State = require('State')
+      // State.save()
+
+      return this
     },
+
+    // collapse the keyboard
     hide: function() {
-      this.element.classList.add('collapsed')
+      // this.element.classList.add('collapsed')
       this.isVisible = false
-      this._saveState('keyboardVisible', this.isVisible)
+      ToneEditor.element.classList.remove('keyboard-visible')
+
+      // var State = require('State')
+      // State.save()
+
+      return this
     },
+
+    // toggle collapsed/expanded
     toggle: function toggle(){
-      this.element.classList.toggle('collapsed')
-      this.isVisible = !this.isVisible
+      if (this.isVisible) {
+        this.hide()
+      } else {
+        this.show()
+      }
+
+      return this
     },
     setTarget: function(target) {
-      // accepts component as argument
-      if (!this.isVisible) this.show()
 
-      if (this.target) this.target.keyboardTargetButton.classList.remove('active')
+      if (this.target !== null) this.removeTarget()
 
       this.target = target
 
-      target.keyboardTargetButton.classList.add('active')
+      // // save state
+      // var State = require('State')
+      // State.save()
 
-      // save state
-      State.save()
+      return this
+    },
+    removeTarget: function() {
+
+      if (this.target) {
+        this.target.keyboardTargetButton.classList.remove('active')
+        this.target = null
+        // var State = require('State')
+        // State.save()
+      }
+
+      return this
+    },
+    activate: function() {
+      this.isActive = true
+      if (this.target) this.target.keyboardTargetButton.classList.add('active')
+
+
+      return this
+    },
+    deactivate: function() {
+      this.isActive = false
+      if (this.target) this.target.keyboardTargetButton.classList.remove('active')
+
+      return this
     }
   }
 
+  // maps e.keyCode values to noteIndex
   var keymap = {
     65: 0,
     87: 1,
@@ -45,14 +94,50 @@ define('Keyboard', ['Utils','ToneEditor','State'], function(utils, ToneEditor, S
     72: 9,
     85: 10,
     74: 11,
-    73: 12,
-    75: 13
+    75: 12,
+    79: 13,
+    76: 14,
+    80: 15,
+    186: 16,
+    222: 17
   }
 
   Keyboard.octave = 4 // middle c
 
   // keys that are down
   var currentNotes = {}
+
+  function startNote(noteIndex) {
+    if (Keyboard.isActive && Keyboard.target !== null && noteIndex !== undefined ) {
+      Keyboard.element.querySelector('rect[data-index="'+noteIndex+'"]').classList.add('note-playing')
+
+      var note = Tone.Frequency().midiToFrequency((Keyboard.octave*12)+noteIndex)
+
+
+      if (currentNotes[note] === undefined) {
+        // console.log('should start')
+        // console.log(currentNotes[note])
+        currentNotes[note] = true
+        Keyboard.target.toneComponent.triggerAttack( note )
+      }
+    }
+  }
+
+  function endNote(noteIndex) {
+    if (Keyboard.isActive && Keyboard.target !== null && noteIndex !== undefined) {
+      Keyboard.element.querySelector('rect[data-index="'+noteIndex+'"]').classList.remove('note-playing')
+
+      var note = Tone.Frequency().midiToFrequency((Keyboard.octave*12)+noteIndex)
+
+      if (currentNotes[note] === true) {
+        // console.log('should end')
+
+        Keyboard.target.toneComponent.triggerRelease( note, '+0' ).triggerRelease()
+        currentNotes[note] = undefined
+      }
+
+    }
+  }
 
   // LISTEN FOR KEY PRESSES (KEYBOARD AND MODIFIERS)
   document.addEventListener('keydown', function(e) {
@@ -66,23 +151,16 @@ define('Keyboard', ['Utils','ToneEditor','State'], function(utils, ToneEditor, S
         Keyboard.optionIsDown = true
         break
       case 90:
-        currentOctave --
+        Keyboard.octave--
+        require('State').save()
         break
       case 88:
-        currentOctave ++
+        Keyboard.octave++
+        require('State').save()
         break
       default:
         // play keyboard if active and has target instrument
-        if (Keyboard.isVisible && Keyboard.target !== undefined && noteIndex !== undefined ) {
-          var note = Tone.Frequency().midiToFrequency((Keyboard.octave*12)+noteIndex)
-
-          if (currentNotes[note] === undefined) {
-            console.log('should start')
-            console.log(currentNotes[note])
-            currentNotes[note] = true
-            Keyboard.target.toneComponent.triggerAttack( note )
-          }
-        }
+        startNote(noteIndex)
     }
   })
   document.addEventListener('keyup', function(e) {
@@ -96,17 +174,21 @@ define('Keyboard', ['Utils','ToneEditor','State'], function(utils, ToneEditor, S
         Keyboard.optionIsDown = false
         break
       default:
-        if (Keyboard.isVisible && Keyboard.target !== undefined && noteIndex !== undefined) {
-          var note = Tone.Frequency().midiToFrequency((Keyboard.octave*12)+noteIndex)
+        endNote(noteIndex)
 
-          if (currentNotes[note] === true) {
-            console.log('should end')
+    }
+  })
 
-            Keyboard.target.toneComponent.triggerRelease( note, '+0' ).triggerRelease()
-            currentNotes[note] = undefined
-          }
-
-        }
+  Keyboard.element.addEventListener('mousedown', function(e) {
+    if (e.target.classList.contains('key')) {
+      var index = parseInt(e.target.getAttribute('data-index'))
+      startNote(index)
+    }
+  })
+  Keyboard.element.addEventListener('mouseup', function(e) {
+    if (e.target.classList.contains('key')) {
+      var index = parseInt(e.target.getAttribute('data-index'))
+      endNote(index)
     }
   })
 

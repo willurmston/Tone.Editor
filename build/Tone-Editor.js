@@ -63,14 +63,14 @@
 /******/ 	__webpack_require__.p = "/ToneEditor/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 40);
+/******/ 	return __webpack_require__(__webpack_require__.s = 42);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(18), __webpack_require__(19), __webpack_require__(20)], __WEBPACK_AMD_DEFINE_RESULT__ = function(classify, getMeta, isSignal){
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(18), __webpack_require__(19), __webpack_require__(21)], __WEBPACK_AMD_DEFINE_RESULT__ = function(classify, getMeta, isSignal){
 
   // POLYFILLS
   // https://tc39.github.io/ecma262/#sec-array.prototype.includes
@@ -227,7 +227,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     isSignal: isSignal,
     getWindowSize: getWindowSize,
     downloadTextFile: downloadTextFile,
-    nodeFromString: nodeFromString
+    nodeFromString: nodeFromString,
+    merge: __webpack_require__(20)
   }
 
   window.utils = utils
@@ -239,6 +240,156 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 /***/ }),
 /* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(2),__webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, ToneEditor, Keyboard, State) {
+
+  // STATE MANAGER
+  // Layer on top of window.localStorage that allows for certain UI changes to persist across page refreshes
+  // See notes/State for more background
+
+  // A temporary state in memory that holds state data before it goes to localStorage.
+  var workingState = {
+    isCollapsed: false,
+    resizedWidth: 272,
+    componentsByName: {},
+    keyboard: {
+      isActive: false,
+      isVisible: false,
+      targetName: null // Unless the Keyboard.target is unspecified, there should ALWAYS be a name here, even if it doesn't exist in the Editor
+    }
+  }
+
+  // NOTE: "Stored" refers to data saved in window.localStorage. "Live" refers to corresponding objects in the ToneEditor object. "Working" is an object that holds state data before it goes to localStorage
+
+  function save() {
+
+    var componentsByName = {}
+    ToneEditor.components.forEach( function(component) {
+
+      workingState.componentsByName[component.name] = {
+        name: component.name,
+        subComponentsByName: {},
+        expanded: component.expandTriangle ? component.expanded : undefined
+      }
+
+      if (component.expandTriangle) {
+        workingState.componentsByName[component.name].expanded = component.expanded
+      }
+
+      //subcomponents
+      component.subComponents.forEach( function(subComponent) {
+        workingState.componentsByName[component.name].subComponentsByName[subComponent.name] = {
+          name: subComponent.name,
+          expanded: subComponent.expanded
+        }
+      })
+    })
+
+    //KEYBOARD
+    workingState.keyboard.octave = Keyboard.octave
+    workingState.keyboard.isActive = Keyboard.isActive
+    workingState.keyboard.isVisible = Keyboard.isVisible
+    if (Keyboard.target !== null) workingState.keyboard.targetName = Keyboard.target.name
+
+
+    //RESIZE
+    workingState.resizedWidth = ToneEditor.resizedWidth
+
+    //COLLAPSED
+    workingState.isCollapsed = ToneEditor.isCollapsed
+
+    window.localStorage.setItem( 'ToneEditor', JSON.stringify(workingState) )
+  }
+
+  // retreive the stored state and update ever
+  function get() {
+    var storedState = JSON.parse(window.localStorage.getItem('ToneEditor'))
+
+    // return
+    if (!storedState) return
+
+    // storedState = utils.merge(workingState, storedState)
+
+    // save state in MEMORY so it can be saved to storage later in .save()
+    workingState = storedState
+
+    // COMPONENTS
+    utils.iterate(workingState.componentsByName, function( name, storedComponent ) {
+
+      // get the corresponding component from the Editor
+      var liveComponent = ToneEditor.componentsById[storedComponent.name]
+
+      // check if it exists in the editor now
+      if (liveComponent) {
+
+        // if it's expandable, expand or collapse it
+        if (liveComponent.expandTriangle !== null) {
+          storedComponent.expanded ? liveComponent.expand() : liveComponent.collapse()
+        }
+
+        utils.iterate(storedComponent.subComponentsByName, function(name, storedSubComponent) {
+          var liveSubComponent = liveComponent.subComponentsByName[name]
+
+          if (liveSubComponent) {
+
+            if (liveSubComponent.expandTriangle !== null) {
+              storedSubComponent.expanded ? liveSubComponent.expand() : liveSubComponent.collapse()
+            }
+          }
+        })
+      }
+    })
+
+    // KEYBOARD
+    Keyboard.octave = storedState.keyboard.octave
+
+    if (storedState.keyboard.targetName === null) {
+      // do nothing
+    } else if (ToneEditor.componentsById[storedState.keyboard.targetName] !== undefined) {
+      console.log('newTarget', newTarget, storedState.keyboard.isActive)
+      var newTarget = ToneEditor.componentsById[storedState.keyboard.targetName]
+      Keyboard.setTarget(newTarget)
+
+      if (storedState.keyboard.isActive) {
+        Keyboard.activate()
+      } else {
+        Keyboard.deactivate()
+      }
+    }
+
+    if (storedState.keyboard.isVisible) {
+      Keyboard.show()
+    } else {
+      Keyboard.hide()
+    }
+
+    // RESIZE / COLLAPSE
+    ToneEditor.resizedWidth = storedState.resizedWidth
+    if (!storedState.isCollapsed) {
+      ToneEditor.element.classList.remove('transition-width')
+      ToneEditor.expand()
+      ToneEditor.resize(storedState.resizedWidth)
+      ToneEditor.element.classList.add('transition-width')
+    } else {
+      ToneEditor.collapse()
+    }
+
+    return storedState
+  }
+
+
+  module.exports = {
+    save: save,
+    get: get
+  }
+
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__))
+
+
+/***/ }),
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
@@ -253,38 +404,68 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
 
         // private options
         transportScrubIn: 0,
-        transportScrubOut: 180
+        transportScrubOut: 180,
+        columnWidth: 272
       }
       this.components = []
       this.componentsById = {}
+
       var _this = this
       this._updateEditCount = function() {
         if (this._editedParameters.length === 1) {
           _this._copyAllButton.classList.add('visible')
         } else {
-          // _this._copyAllButton.innerHTML = 'copy '+_this._editedParameters.length+' changes'
         }
       }
+      this.resizedWidth = 280 //272
+      this.isCollapsed = false
 
       this._copyAllButton = null // defined later _this.element.querySelector('div.copy-all')
       this.element = document.querySelectorAll('div.tone-editor_container')[0]
 
       //BUILD HTML
       var tempContainer = document.createElement('div')
-      tempContainer.innerHTML = __webpack_require__(28)
+      tempContainer.innerHTML = __webpack_require__(29)
 
       this.element = tempContainer.firstElementChild
 
       this.componentContainer = this.element.querySelector('.component-container')
 
+      this.expandTriangle = this.element.querySelector('.panel-expand-triangle')
+
+
       // inject css
-      __webpack_require__(35)
+      __webpack_require__(36)
 
       this.draw = function() {
         document.body.appendChild(this.element)
         _this._copyAllButton = _this.element.querySelector('div.copy-all')
 
         return _this.element
+      }
+      this.expand = function() {
+        this.element.classList.remove('collapsed')
+        this.expandTriangle.classList.add('expanded')
+        this.resize(this.resizedWidth)
+        this.isCollapsed = false
+
+        __webpack_require__(1).save()
+      }
+      this.collapse = function() {
+        this.element.classList.add('collapsed')
+        this.element.style.width = ''
+        this.expandTriangle.classList.remove('expanded')
+
+        this.isCollapsed = true
+
+        __webpack_require__(1).save()
+      }
+      this.toggle = function() {
+        if (this.element.classList.contains('collapsed')) {
+          this.expand()
+        } else {
+          this.collapse()
+        }
       }
     }
 
@@ -295,50 +476,98 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
       document.execCommand('selectAll',false,null)
     }
 
-    // window.ToneEditor = ToneEditor
     module.exports = new ToneEditor()
   }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__))
 
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0),__webpack_require__(1),__webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, ToneEditor, State){
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0),__webpack_require__(2),__webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, ToneEditor, State){
+
+  var State = __webpack_require__(1)
+
   var Keyboard = {
-    target: undefined,
     element: ToneEditor.element.querySelector('svg.keyboard'),
+    target: null,
+    isActive: false,
     isVisible: false,
+
+    // expand the keyboard
     show: function() {
-      this.element.classList.remove('collapsed')
+      // this.element.classList.remove('collapsed')
       this.isVisible = true
-      // this._saveState('keyboardVisible', this.isVisible)
+      ToneEditor.element.classList.add('keyboard-visible')
+
+      // var State = require('State')
+      // State.save()
+
+      return this
     },
+
+    // collapse the keyboard
     hide: function() {
-      this.element.classList.add('collapsed')
+      // this.element.classList.add('collapsed')
       this.isVisible = false
-      this._saveState('keyboardVisible', this.isVisible)
+      ToneEditor.element.classList.remove('keyboard-visible')
+
+      // var State = require('State')
+      // State.save()
+
+      return this
     },
+
+    // toggle collapsed/expanded
     toggle: function toggle(){
-      this.element.classList.toggle('collapsed')
-      this.isVisible = !this.isVisible
+      if (this.isVisible) {
+        this.hide()
+      } else {
+        this.show()
+      }
+
+      return this
     },
     setTarget: function(target) {
-      // accepts component as argument
-      if (!this.isVisible) this.show()
 
-      if (this.target) this.target.keyboardTargetButton.classList.remove('active')
+      if (this.target !== null) this.removeTarget()
 
       this.target = target
 
-      target.keyboardTargetButton.classList.add('active')
+      // // save state
+      // var State = require('State')
+      // State.save()
 
-      // save state
-      State.save()
+      return this
+    },
+    removeTarget: function() {
+
+      if (this.target) {
+        this.target.keyboardTargetButton.classList.remove('active')
+        this.target = null
+        // var State = require('State')
+        // State.save()
+      }
+
+      return this
+    },
+    activate: function() {
+      this.isActive = true
+      if (this.target) this.target.keyboardTargetButton.classList.add('active')
+
+
+      return this
+    },
+    deactivate: function() {
+      this.isActive = false
+      if (this.target) this.target.keyboardTargetButton.classList.remove('active')
+
+      return this
     }
   }
 
+  // maps e.keyCode values to noteIndex
   var keymap = {
     65: 0,
     87: 1,
@@ -352,14 +581,50 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     72: 9,
     85: 10,
     74: 11,
-    73: 12,
-    75: 13
+    75: 12,
+    79: 13,
+    76: 14,
+    80: 15,
+    186: 16,
+    222: 17
   }
 
   Keyboard.octave = 4 // middle c
 
   // keys that are down
   var currentNotes = {}
+
+  function startNote(noteIndex) {
+    if (Keyboard.isActive && Keyboard.target !== null && noteIndex !== undefined ) {
+      Keyboard.element.querySelector('rect[data-index="'+noteIndex+'"]').classList.add('note-playing')
+
+      var note = Tone.Frequency().midiToFrequency((Keyboard.octave*12)+noteIndex)
+
+
+      if (currentNotes[note] === undefined) {
+        // console.log('should start')
+        // console.log(currentNotes[note])
+        currentNotes[note] = true
+        Keyboard.target.toneComponent.triggerAttack( note )
+      }
+    }
+  }
+
+  function endNote(noteIndex) {
+    if (Keyboard.isActive && Keyboard.target !== null && noteIndex !== undefined) {
+      Keyboard.element.querySelector('rect[data-index="'+noteIndex+'"]').classList.remove('note-playing')
+
+      var note = Tone.Frequency().midiToFrequency((Keyboard.octave*12)+noteIndex)
+
+      if (currentNotes[note] === true) {
+        // console.log('should end')
+
+        Keyboard.target.toneComponent.triggerRelease( note, '+0' ).triggerRelease()
+        currentNotes[note] = undefined
+      }
+
+    }
+  }
 
   // LISTEN FOR KEY PRESSES (KEYBOARD AND MODIFIERS)
   document.addEventListener('keydown', function(e) {
@@ -373,23 +638,16 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         Keyboard.optionIsDown = true
         break
       case 90:
-        currentOctave --
+        Keyboard.octave--
+        __webpack_require__(1).save()
         break
       case 88:
-        currentOctave ++
+        Keyboard.octave++
+        __webpack_require__(1).save()
         break
       default:
         // play keyboard if active and has target instrument
-        if (Keyboard.isVisible && Keyboard.target !== undefined && noteIndex !== undefined ) {
-          var note = Tone.Frequency().midiToFrequency((Keyboard.octave*12)+noteIndex)
-
-          if (currentNotes[note] === undefined) {
-            console.log('should start')
-            console.log(currentNotes[note])
-            currentNotes[note] = true
-            Keyboard.target.toneComponent.triggerAttack( note )
-          }
-        }
+        startNote(noteIndex)
     }
   })
   document.addEventListener('keyup', function(e) {
@@ -403,17 +661,21 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         Keyboard.optionIsDown = false
         break
       default:
-        if (Keyboard.isVisible && Keyboard.target !== undefined && noteIndex !== undefined) {
-          var note = Tone.Frequency().midiToFrequency((Keyboard.octave*12)+noteIndex)
+        endNote(noteIndex)
 
-          if (currentNotes[note] === true) {
-            console.log('should end')
+    }
+  })
 
-            Keyboard.target.toneComponent.triggerRelease( note, '+0' ).triggerRelease()
-            currentNotes[note] = undefined
-          }
-
-        }
+  Keyboard.element.addEventListener('mousedown', function(e) {
+    if (e.target.classList.contains('key')) {
+      var index = parseInt(e.target.getAttribute('data-index'))
+      startNote(index)
+    }
+  })
+  Keyboard.element.addEventListener('mouseup', function(e) {
+    if (e.target.classList.contains('key')) {
+      var index = parseInt(e.target.getAttribute('data-index'))
+      endNote(index)
     }
   })
 
@@ -423,98 +685,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(1),__webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, ToneEditor, Keyboard, State) {
-
-  var save = function() {
-
-    var components = []
-    ToneEditor.components.forEach( function(component) {
-
-      var storedComponent = {
-        name: component.name,
-        subComponents: []
-      }
-
-      if (component.expandTriangle) {
-        storedComponent.expanded = component.expanded
-
-      }
-
-      //subcomponents
-      component.subComponents.forEach( function(subComponent) {
-        storedComponent.subComponents.push({
-          id: subComponent.id,
-          expanded: subComponent.expanded
-        })
-      })
-
-      components.push(storedComponent)
-    })
-
-    var keyboard = { octave: Keyboard.octave, isVisible: Keyboard.isVisible }
-    if (Keyboard.target) keyboard.targetName = Keyboard.target.name
-
-    var string = JSON.stringify({
-      components: components,
-      keyboard: keyboard
-    })
-
-    console.log('save state')
-
-    window.localStorage.setItem( 'ToneEditor', string )
-
-  }
-
-
-
-  var get = function() {
-    // retreive the stored state
-    var storedState = JSON.parse(window.localStorage.getItem('ToneEditor'))
-
-    // COMPONENTS
-    storedState.components.forEach( updateLiveComponent )
-
-    function updateLiveComponent( storedComponent ) {
-      // get the corresponding component from the Editor
-      var liveComponent = ToneEditor.componentsById[storedComponent.name]
-
-      // check if it exists in the editor now
-      if (liveComponent) {
-        // if it's expandable, expand or collapse it
-        if (liveComponent.expandTriangle !== null) {
-          storedComponent.expanded ? liveComponent.expand() : liveComponent.collapse()
-        }
-
-        storedComponent.subComponents.forEach( function(storedSubComponent) {
-          updateLiveComponent( storedSubComponent )
-        })
-      }
-    }
-
-    // KEYBOARD
-    if (storedState.keyboard.targetName) Keyboard.setTarget( ToneEditor.componentsById[storedState.keyboard.targetName] )
-
-    Keyboard.octave = storedState.keyboard.octave
-
-    return storedState
-  }
-
-  module.exports = {
-    save: save,
-    get: get
-  }
-}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__))
-
-
-/***/ }),
 /* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0),__webpack_require__(1),__webpack_require__(2), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, ToneEditor, Keyboard, Component){
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0),__webpack_require__(2),__webpack_require__(3), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, ToneEditor, Keyboard, Component){
 
   // UIElement base class
   var UIElement = function( parameterName, parentComponent, meta, options) {
@@ -558,7 +732,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 /* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0),__webpack_require__(1),__webpack_require__(4),__webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, ToneEditor, UIElement, Keyboard, State){
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0),__webpack_require__(2),__webpack_require__(4),__webpack_require__(1), __webpack_require__(3) ], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, ToneEditor, UIElement, State, Keyboard){
 
   function Component(name, toneComponent, heritage, options) {
     var options = options || {}
@@ -583,7 +757,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     if (this.isSubcomponent) {
       this.expanded = false
 
-      tempContainer.innerHTML = __webpack_require__(27)
+      tempContainer.innerHTML = __webpack_require__(28)
 
       this.element = tempContainer.firstElementChild
 
@@ -591,20 +765,18 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
       this.expanded = true
 
       if (this.name === "Master") {
-        tempContainer.innerHTML = __webpack_require__(26)
+        tempContainer.innerHTML = __webpack_require__(27)
       } else {
-        tempContainer.innerHTML = __webpack_require__(25)
+        tempContainer.innerHTML = __webpack_require__(26)
       }
 
       this.element = tempContainer.firstElementChild
 
+      if (options.color) this.element.style.background = options.color
+
       this.keyboardTargetButton = this.element.querySelector('.keyboard-target-button')
 
-      if (this.heritage[0] === 'Instrument') {
-
-      } else {
-        this.keyboardTargetButton.remove()
-      }
+      if (this.heritage[0] !== 'Instrument') this.keyboardTargetButton.remove()
 
       // ADD HOOK FOR CLIPBOARD.js
       this.element.querySelector('.copy-button').setAttribute('data-component-id', this.id)
@@ -614,11 +786,17 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
     this.element.addEventListener('click', function(e) {
       var classList = e.target.classList
-      if (classList.contains('keyboardTargetButton')) {
-        Keyboard.setTarget(_this)
+      if (classList.contains('keyboard-target-button')) {
+
+        if (Keyboard.isActive) {
+          Keyboard.deactivate().removeTarget()
+        } else {
+          Keyboard.setTarget(_this).activate().show()
+        }
+
+        State.save()
 
         // save state
-        State.save()
       } else if (classList.contains('expand-triangle') && e.target === _this.expandTriangle) {
 
         if (_this.expanded) {
@@ -629,7 +807,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         // save state
         State.save()
       }
-
 
     })
 
@@ -650,6 +827,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
     this.parameters = []
     this.subComponents = []
+    this.subComponentsByName = {}
 
     utils.iterate( flattenedProps, function(key, prop) {
       if (typeof prop === 'object' && _this.isSubcomponent === false) {
@@ -659,9 +837,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         }
 
         var heritage = utils.classify(_this.toneComponent[key])
-        _this.subComponents.push( new Component( key, _this.toneComponent[key], heritage, options ) )
+        var newComp = new Component( key, _this.toneComponent[key], heritage, options )
+        _this.subComponents.push( newComp )
+        _this.subComponentsByName[key] = newComp
 
       } else if (typeof prop === 'array') {
+        // NOTE this might create problems later with parameters that are arrays (i.e. waveform partials).
+        // Try setting an array and see what happens
 
       } else if (typeof prop === 'number') {
         // console.log('number', key, prop)
@@ -698,7 +880,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
       }
     })
   }
-
 
   Component.prototype.deferUntilDrawn = function(callback) {
     this.deferred.push(callback)
@@ -763,7 +944,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 /* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(21),__webpack_require__(0),__webpack_require__(1), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_RESULT__ = function (Clipboard, utils, ToneEditor, Component) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(22),__webpack_require__(0),__webpack_require__(2),__webpack_require__(1), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_RESULT__ = function (Clipboard, utils, ToneEditor, State, Component) {
 
   Component.prototype.toString = function(minify, useRefObjects) {
     var _this = this
@@ -805,21 +986,29 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
   // RETURNS FLATTENED PROPERTIES OF TONECOMPONENT
   new Clipboard( '.tone-editor_container .copy-button', {
-    text: function(trigger) {
+    text: function(copyButton) {
       var text = ''
 
-      if (trigger.classList.contains('copy-all')) { // it's the copy-all button
+      if (copyButton.classList.contains('copy-all')) { // it's the copy-all button
         ToneEditor.components.forEach( function(component) {
           text+='var '+component.id+'Settings = '+'\n'+component.toString(true, true)+';\n\n'
         })
 
       } else { // It's a component copy button
-        var id = trigger.getAttribute('data-component-id')
+        var id = copyButton.getAttribute('data-component-id')
         var component = ToneEditor.componentsById[id]
 
         text+='var '+id+'Settings = '+'\n'+component.toString()
       }
 
+      // ANIMATION
+      copyButton.innerHTML = '✔️'
+      copyButton.style = '-webkit-animation: copy-button-animation 0.5s forwards; animation: copy-button-animation 0.5s forwards;'
+
+      setTimeout( function() {
+        copyButton.innerHTML = '📋'
+        copyButton.style = ''
+      }, 500)
 
       return text
     }
@@ -846,7 +1035,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
 // EXTENDS UIElement.Slider
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(8), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, Slider, UIElement, Keyboard){
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(8), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, Slider, UIElement, Keyboard){
 
 
   function Scrubber( parameterName, parentComponent, meta, options) {
@@ -877,7 +1066,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
 // pass a UIElement object into this function to add superpowers relevant to the UIType
 
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(4), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, UIElement, Keyboard){
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(4), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, UIElement, Keyboard){
 
 
   function Slider( parameterName, parentComponent, meta, options) {
@@ -915,7 +1104,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
 
 
     // STORE ELEMENT AND DITCH tempContainer
-    this.element = utils.nodeFromString( __webpack_require__(30) )
+    this.element = utils.nodeFromString( __webpack_require__(31) )
 
     // INJECT VALUES INTO TEMPLATE
     this.element.querySelector('.parameter-name').innerHTML = this.name
@@ -1060,7 +1249,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
     UIElement.call(this, parameterName, parentComponent, meta, options)
 
     var tempContainer = document.createElement('div')
-    tempContainer.innerHTML = __webpack_require__(31)
+    tempContainer.innerHTML = __webpack_require__(32)
 
     // INJECT VALUES INTO TEMPLATE
     tempContainer.querySelector('.parameter-name').innerHTML = this.name
@@ -1112,14 +1301,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
 
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
   __webpack_require__(0),
-  __webpack_require__(22),
-  __webpack_require__(1),
-  __webpack_require__(3),
-  __webpack_require__(13),
-  __webpack_require__(12),
+  __webpack_require__(23),
   __webpack_require__(2),
-  __webpack_require__(6),
-  __webpack_require__(14)
+  __webpack_require__(1),
+  __webpack_require__(13),
+  __webpack_require__(14),
+  __webpack_require__(12),
+  __webpack_require__(3),
+  __webpack_require__(6)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, NexusUI, ToneEditor, State, Listen) {
   // incorporate state-saving methods
   // utils.extend(ToneEditor, State)
@@ -1164,10 +1353,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// API
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0),__webpack_require__(1),__webpack_require__(5), __webpack_require__(2),__webpack_require__(6), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, ToneEditor, Component, Keyboard, Copy, State) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0),__webpack_require__(2),__webpack_require__(1), __webpack_require__(5), __webpack_require__(3),__webpack_require__(6)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, ToneEditor, State, Component, Keyboard, Copy) {
 
-  ToneEditor.add = function(name, component) {
-    if (ToneEditor.initialized === false) ToneEditor.init()
+  ToneEditor.add = function(name, component, color) {
+    if (!ToneEditor.initialized) ToneEditor.init()
 
     // PARSE ARGUMENTS
     // check if an object
@@ -1176,6 +1365,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// API
       if ( name instanceof Tone) {
         addComponent(name)
       } else { // it's an object of names and components
+        var color = arguments[1] // allow assigning a color to a group of components
         for (var key in name) {
           addComponent(name[key], key)
         }
@@ -1189,28 +1379,30 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// API
 
       var heritage = utils.classify(component)
 
+      var options = {}
+      if (color) options.color = color
+
       // CHECK IF NEEDS A SPECIAL COMPONENT TYPE (i.e. Transport or Master)
       if (heritage.includes('Transport')) {
 
         var TransportComponent = __webpack_require__(15)
 
         // ADD PARAMETERS TO OBJECT
-        var newComponent = new TransportComponent( name, component, heritage)
+        var newComponent = new TransportComponent( name, component, heritage, options)
 
       } else if (heritage.includes('Master')) {
 
         // ADD PARAMETERS TO OBJECT
-        var newComponent = new Component( name, component, heritage)
+        var newComponent = new Component( name, component, heritage, options)
 
       // } else if (heritage.includes('Instrument') || heritage.includes('Effect') || component instanceof Tone.Sequence){ // Create a generic component
       } else if (component instanceof Tone) {
 
         // ADD PARAMETERS TO OBJECT
-        var newComponent = new Component( name, component, heritage)
+        var newComponent = new Component( name, component, heritage, options)
 
       } else { // UNSUPPORTED TONE OBJECT
         console.log('%cIgnored unsupported Tone object', 'color: DarkOrange', component)
-        // console.log('%cTone-Editor only supports Tone.Instrument or Tone.Effect', 'color: DarkOrange')
 
         return
       }
@@ -1227,9 +1419,21 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// API
     function generateName() {
       return 'component-'+ToneEditor.components.length
     }
+
     return ToneEditor
   }
+  ToneEditor.remove = function(nameOrComponent) {
+    if (typeof nameOrComponent === 'string' && ToneEditor.componentsById[nameOrComponent] !== undefined) {
+      delete ToneEditor.componentsById[name]
+      ToneEditor.components.forEach( function(component, index) {
+        if (component.name === nameOrComponent) ToneEditor.components.splice(index, 1)
+      })
+    }
 
+    State.save()
+
+    return ToneEditor
+  }
   ToneEditor.show = function() {
     if (!ToneEditor.initialized) ToneEditor.init()
 
@@ -1246,7 +1450,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// API
 
   // Shortcut for adding Tone.Master
   ToneEditor.master = function() {
-    ToneEditor.add('Master', Tone.Master)
+    ToneEditor.add('Master', Tone.Master, 'skyblue')
     return ToneEditor
   }
 
@@ -1256,7 +1460,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// API
     if (timeIn) ToneEditor._options.transportScrubIn = Tone.Time(timeIn).toSeconds()
     if (timeOut) ToneEditor._options.transportScrubOut = Tone.Time(timeOut).toSeconds()
 
-    ToneEditor.add('Transport', Tone.Transport)
+    ToneEditor.add('Transport', Tone.Transport, 'orange')
     return ToneEditor
   }
 
@@ -1282,25 +1486,30 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// API
 /* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0),__webpack_require__(1),__webpack_require__(2)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, ToneEditor, Keyboard) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0),__webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, ToneEditor, Keyboard) {
   startListeners = function() {
 
     // DELEGATED CLICK LISTENERS
     ToneEditor.element.addEventListener('click', function(e){
-      if (e.target.hasClass('component-class')) {
+      var classList = e.target.classList
+      if (classList.contains('component-class')) {
         // OPEN PAGE IN DOCS
         window.open('https://tonejs.github.io/docs/#'+e.target.innerHTML, '_blank')
-      } else if (e.target.hasClass('copy-all')) {
+      } else if (classList.contains('copy-all')) {
         e.target.style.animation = 'tone-editor_copied 1s'
 
         //COPY CHANGES
-      } else if (e.target.hasClass('value')) {
+      } else if (classList.contains('value')) {
         if (e.target.getAttribute('contenteditable') === 'false') {
           ToneEditor._focusValueElement(e.target)
           document.execCommand('selectAll',false,null)
         }
-      } else if (e.target.hasClass('keyboard-button')) {
+      } else if (classList.contains('keyboard-button')) {
         Keyboard.toggle()
+      } else if ((classList.contains('panel-expand-triangle') && classList.contains('expand-triangle')) || classList.contains('tone-js-logo')) {
+        ToneEditor.toggle()
+      } else if (classList.contains('tone-editor_container') && classList.contains('collapsed') ) {
+        ToneEditor.expand()
       }
     })
     ToneEditor.element.addEventListener('dblclick', function(e) {
@@ -1328,7 +1537,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 /* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1),__webpack_require__(0)], __WEBPACK_AMD_DEFINE_RESULT__ = function(ToneEditor, utils) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(2),__webpack_require__(0),__webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function(ToneEditor, utils, State) {
 
   var resizeHandle = document.createElement('div')
   resizeHandle.classList.add('resize-handle')
@@ -1337,6 +1546,21 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
   var resizing = false
   var mouseX
   var width
+
+  var saveTimer
+
+  ToneEditor.resize = function(width) {
+    ToneEditor.element.style.width = width + 'px'
+    ToneEditor.resizedWidth = width
+
+    if (width >= ToneEditor._options.columnWidth * 2) {
+      ToneEditor.componentContainer.classList.add('multi-column')
+    } else {
+      ToneEditor.componentContainer.classList.remove('multi-column')
+    }
+
+    return this
+  }
 
   document.addEventListener('mousemove', function(e) {
     if (resizing) {
@@ -1358,28 +1582,20 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         width = mouseX
       }
 
-      ToneEditor.element.style.width = width + 'px'
+      ToneEditor.resize(width)
 
-      // store panel width ratio
-      localStorage.panelWidthRatio = width / windowWidth
+      // after a second, save the resizedWidth
+      clearTimeout(saveTimer)
 
-      // var canvases = ToneEditor.element.querySelectorAll('canvas.nx')
-      //
-      // for (var i=0; i<canvases.length; i++) {
-      //   canvases[i].width = canvases[i].parentElement.offsetWidth
-      // }
-      //
-      // // resize all components
-      // ToneEditor.components.forEach(function(component) {
-      //   component.update()
-      // })
+      saveTimer = setTimeout( function() {
+        State.save()
+      }, 500)
 
     }
   }, false)
   document.addEventListener('mousedown', function(e) {
     if (e.target.classList.contains('resize-handle')) {
       resizing = true
-
     }
   }, false)
   document.addEventListener('mouseup', function() {
@@ -1398,7 +1614,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// WRAPPER FOR COMPONENT WITH SPECIAL PROPERTIES
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0),__webpack_require__(1), __webpack_require__(5), __webpack_require__(7),__webpack_require__(2)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, ToneEditor, Component, Scrubber, Keyboard){
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0),__webpack_require__(2), __webpack_require__(5), __webpack_require__(7),__webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, ToneEditor, Component, Scrubber, Keyboard){
 
   function Transport(name, toneComponent, heritage, options) {
     var _this = this
@@ -1464,7 +1680,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// WRAPPER FOR C
       }
     }, "0.01");
 
-    this.controlCluster = utils.nodeFromString( __webpack_require__(32) )
+    this.controlCluster = utils.nodeFromString( __webpack_require__(33) )
 
     // add scrubber to cluster
     this.controlCluster.insertBefore(this.scrubber.element, this.buttonRow)
@@ -1497,7 +1713,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// WRAPPER FOR C
 
     // listen for changes in play state
     Tone.Transport.on('start', function() {
-      playPause.innerHTML = __webpack_require__(36)
+      playPause.innerHTML = __webpack_require__(37)
     }).on('pause', function() {
       playPause.innerHTML = __webpack_require__(10)
     }).on('stop', function() {
@@ -1554,7 +1770,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// pass a UIElem
 
     // BUILD HTML
     var tempContainer = document.createElement('div')
-    tempContainer.innerHTML = __webpack_require__(29)
+    tempContainer.innerHTML = __webpack_require__(30)
 
     // INJECT VALUES INTO TEMPLATE
     tempContainer.querySelector('.parameter-name').innerHTML = this.name
@@ -1874,6 +2090,100 @@ var __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_RESULT__ = function() {
 /* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (root, factory) {
+    if (true) {
+        !(__WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.call(exports, __webpack_require__, exports, module)) :
+				__WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+    } else if (typeof exports === 'object') {
+        module.exports = factory();
+    } else {
+        root.deepmerge = factory();
+    }
+}(this, function () {
+
+function isMergeableObject(val) {
+    var nonNullObject = val && typeof val === 'object'
+
+    return nonNullObject
+        && Object.prototype.toString.call(val) !== '[object RegExp]'
+        && Object.prototype.toString.call(val) !== '[object Date]'
+}
+
+function emptyTarget(val) {
+    return Array.isArray(val) ? [] : {}
+}
+
+function cloneIfNecessary(value, optionsArgument) {
+    var clone = optionsArgument && optionsArgument.clone === true
+    return (clone && isMergeableObject(value)) ? deepmerge(emptyTarget(value), value, optionsArgument) : value
+}
+
+function defaultArrayMerge(target, source, optionsArgument) {
+    var destination = target.slice()
+    source.forEach(function(e, i) {
+        if (typeof destination[i] === 'undefined') {
+            destination[i] = cloneIfNecessary(e, optionsArgument)
+        } else if (isMergeableObject(e)) {
+            destination[i] = deepmerge(target[i], e, optionsArgument)
+        } else if (target.indexOf(e) === -1) {
+            destination.push(cloneIfNecessary(e, optionsArgument))
+        }
+    })
+    return destination
+}
+
+function mergeObject(target, source, optionsArgument) {
+    var destination = {}
+    if (isMergeableObject(target)) {
+        Object.keys(target).forEach(function (key) {
+            destination[key] = cloneIfNecessary(target[key], optionsArgument)
+        })
+    }
+    Object.keys(source).forEach(function (key) {
+        if (!isMergeableObject(source[key]) || !target[key]) {
+            destination[key] = cloneIfNecessary(source[key], optionsArgument)
+        } else {
+            destination[key] = deepmerge(target[key], source[key], optionsArgument)
+        }
+    })
+    return destination
+}
+
+function deepmerge(target, source, optionsArgument) {
+    var array = Array.isArray(source);
+    var options = optionsArgument || { arrayMerge: defaultArrayMerge }
+    var arrayMerge = options.arrayMerge || defaultArrayMerge
+
+    if (array) {
+        return Array.isArray(target) ? arrayMerge(target, source, optionsArgument) : cloneIfNecessary(source, optionsArgument)
+    } else {
+        return mergeObject(target, source, optionsArgument)
+    }
+}
+
+deepmerge.all = function deepmergeAll(array, optionsArgument) {
+    if (!Array.isArray(array) || array.length < 2) {
+        throw new Error('first argument should be an array with at least two elements')
+    }
+
+    // we are sure there are at least 2 values, so it is safe to have no initial value
+    return array.reduce(function(prev, next) {
+        return deepmerge(prev, next, optionsArgument)
+    })
+}
+
+return deepmerge
+
+}));
+
+
+/***/ }),
+/* 21 */
+/***/ (function(module, exports, __webpack_require__) {
+
 var __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_RESULT__ = function() {
   // needs testing and work
   module.exports = function(toneComponent) {
@@ -1884,7 +2194,7 @@ var __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_RESULT__ = function() {
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var require;var require;/*!
@@ -1896,7 +2206,7 @@ var require;var require;/*!
 !function(e){if(true)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var t;t="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof self?self:this,t.Clipboard=e()}}(function(){var e,t,n;return function e(t,n,o){function i(a,c){if(!n[a]){if(!t[a]){var l="function"==typeof require&&require;if(!c&&l)return require(a,!0);if(r)return require(a,!0);var u=new Error("Cannot find module '"+a+"'");throw u.code="MODULE_NOT_FOUND",u}var s=n[a]={exports:{}};t[a][0].call(s.exports,function(e){var n=t[a][1][e];return i(n?n:e)},s,s.exports,e,t,n,o)}return n[a].exports}for(var r="function"==typeof require&&require,a=0;a<o.length;a++)i(o[a]);return i}({1:[function(e,t,n){function o(e,t){for(;e&&e.nodeType!==i;){if(e.matches(t))return e;e=e.parentNode}}var i=9;if("undefined"!=typeof Element&&!Element.prototype.matches){var r=Element.prototype;r.matches=r.matchesSelector||r.mozMatchesSelector||r.msMatchesSelector||r.oMatchesSelector||r.webkitMatchesSelector}t.exports=o},{}],2:[function(e,t,n){function o(e,t,n,o,r){var a=i.apply(this,arguments);return e.addEventListener(n,a,r),{destroy:function(){e.removeEventListener(n,a,r)}}}function i(e,t,n,o){return function(n){n.delegateTarget=r(n.target,t),n.delegateTarget&&o.call(e,n)}}var r=e("./closest");t.exports=o},{"./closest":1}],3:[function(e,t,n){n.node=function(e){return void 0!==e&&e instanceof HTMLElement&&1===e.nodeType},n.nodeList=function(e){var t=Object.prototype.toString.call(e);return void 0!==e&&("[object NodeList]"===t||"[object HTMLCollection]"===t)&&"length"in e&&(0===e.length||n.node(e[0]))},n.string=function(e){return"string"==typeof e||e instanceof String},n.fn=function(e){var t=Object.prototype.toString.call(e);return"[object Function]"===t}},{}],4:[function(e,t,n){function o(e,t,n){if(!e&&!t&&!n)throw new Error("Missing required arguments");if(!c.string(t))throw new TypeError("Second argument must be a String");if(!c.fn(n))throw new TypeError("Third argument must be a Function");if(c.node(e))return i(e,t,n);if(c.nodeList(e))return r(e,t,n);if(c.string(e))return a(e,t,n);throw new TypeError("First argument must be a String, HTMLElement, HTMLCollection, or NodeList")}function i(e,t,n){return e.addEventListener(t,n),{destroy:function(){e.removeEventListener(t,n)}}}function r(e,t,n){return Array.prototype.forEach.call(e,function(e){e.addEventListener(t,n)}),{destroy:function(){Array.prototype.forEach.call(e,function(e){e.removeEventListener(t,n)})}}}function a(e,t,n){return l(document.body,e,t,n)}var c=e("./is"),l=e("delegate");t.exports=o},{"./is":3,delegate:2}],5:[function(e,t,n){function o(e){var t;if("SELECT"===e.nodeName)e.focus(),t=e.value;else if("INPUT"===e.nodeName||"TEXTAREA"===e.nodeName){var n=e.hasAttribute("readonly");n||e.setAttribute("readonly",""),e.select(),e.setSelectionRange(0,e.value.length),n||e.removeAttribute("readonly"),t=e.value}else{e.hasAttribute("contenteditable")&&e.focus();var o=window.getSelection(),i=document.createRange();i.selectNodeContents(e),o.removeAllRanges(),o.addRange(i),t=o.toString()}return t}t.exports=o},{}],6:[function(e,t,n){function o(){}o.prototype={on:function(e,t,n){var o=this.e||(this.e={});return(o[e]||(o[e]=[])).push({fn:t,ctx:n}),this},once:function(e,t,n){function o(){i.off(e,o),t.apply(n,arguments)}var i=this;return o._=t,this.on(e,o,n)},emit:function(e){var t=[].slice.call(arguments,1),n=((this.e||(this.e={}))[e]||[]).slice(),o=0,i=n.length;for(o;o<i;o++)n[o].fn.apply(n[o].ctx,t);return this},off:function(e,t){var n=this.e||(this.e={}),o=n[e],i=[];if(o&&t)for(var r=0,a=o.length;r<a;r++)o[r].fn!==t&&o[r].fn._!==t&&i.push(o[r]);return i.length?n[e]=i:delete n[e],this}},t.exports=o},{}],7:[function(t,n,o){!function(i,r){if("function"==typeof e&&e.amd)e(["module","select"],r);else if("undefined"!=typeof o)r(n,t("select"));else{var a={exports:{}};r(a,i.select),i.clipboardAction=a.exports}}(this,function(e,t){"use strict";function n(e){return e&&e.__esModule?e:{default:e}}function o(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}var i=n(t),r="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e},a=function(){function e(e,t){for(var n=0;n<t.length;n++){var o=t[n];o.enumerable=o.enumerable||!1,o.configurable=!0,"value"in o&&(o.writable=!0),Object.defineProperty(e,o.key,o)}}return function(t,n,o){return n&&e(t.prototype,n),o&&e(t,o),t}}(),c=function(){function e(t){o(this,e),this.resolveOptions(t),this.initSelection()}return a(e,[{key:"resolveOptions",value:function e(){var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{};this.action=t.action,this.emitter=t.emitter,this.target=t.target,this.text=t.text,this.trigger=t.trigger,this.selectedText=""}},{key:"initSelection",value:function e(){this.text?this.selectFake():this.target&&this.selectTarget()}},{key:"selectFake",value:function e(){var t=this,n="rtl"==document.documentElement.getAttribute("dir");this.removeFake(),this.fakeHandlerCallback=function(){return t.removeFake()},this.fakeHandler=document.body.addEventListener("click",this.fakeHandlerCallback)||!0,this.fakeElem=document.createElement("textarea"),this.fakeElem.style.fontSize="12pt",this.fakeElem.style.border="0",this.fakeElem.style.padding="0",this.fakeElem.style.margin="0",this.fakeElem.style.position="absolute",this.fakeElem.style[n?"right":"left"]="-9999px";var o=window.pageYOffset||document.documentElement.scrollTop;this.fakeElem.style.top=o+"px",this.fakeElem.setAttribute("readonly",""),this.fakeElem.value=this.text,document.body.appendChild(this.fakeElem),this.selectedText=(0,i.default)(this.fakeElem),this.copyText()}},{key:"removeFake",value:function e(){this.fakeHandler&&(document.body.removeEventListener("click",this.fakeHandlerCallback),this.fakeHandler=null,this.fakeHandlerCallback=null),this.fakeElem&&(document.body.removeChild(this.fakeElem),this.fakeElem=null)}},{key:"selectTarget",value:function e(){this.selectedText=(0,i.default)(this.target),this.copyText()}},{key:"copyText",value:function e(){var t=void 0;try{t=document.execCommand(this.action)}catch(e){t=!1}this.handleResult(t)}},{key:"handleResult",value:function e(t){this.emitter.emit(t?"success":"error",{action:this.action,text:this.selectedText,trigger:this.trigger,clearSelection:this.clearSelection.bind(this)})}},{key:"clearSelection",value:function e(){this.target&&this.target.blur(),window.getSelection().removeAllRanges()}},{key:"destroy",value:function e(){this.removeFake()}},{key:"action",set:function e(){var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:"copy";if(this._action=t,"copy"!==this._action&&"cut"!==this._action)throw new Error('Invalid "action" value, use either "copy" or "cut"')},get:function e(){return this._action}},{key:"target",set:function e(t){if(void 0!==t){if(!t||"object"!==("undefined"==typeof t?"undefined":r(t))||1!==t.nodeType)throw new Error('Invalid "target" value, use a valid Element');if("copy"===this.action&&t.hasAttribute("disabled"))throw new Error('Invalid "target" attribute. Please use "readonly" instead of "disabled" attribute');if("cut"===this.action&&(t.hasAttribute("readonly")||t.hasAttribute("disabled")))throw new Error('Invalid "target" attribute. You can\'t cut text from elements with "readonly" or "disabled" attributes');this._target=t}},get:function e(){return this._target}}]),e}();e.exports=c})},{select:5}],8:[function(t,n,o){!function(i,r){if("function"==typeof e&&e.amd)e(["module","./clipboard-action","tiny-emitter","good-listener"],r);else if("undefined"!=typeof o)r(n,t("./clipboard-action"),t("tiny-emitter"),t("good-listener"));else{var a={exports:{}};r(a,i.clipboardAction,i.tinyEmitter,i.goodListener),i.clipboard=a.exports}}(this,function(e,t,n,o){"use strict";function i(e){return e&&e.__esModule?e:{default:e}}function r(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}function a(e,t){if(!e)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return!t||"object"!=typeof t&&"function"!=typeof t?e:t}function c(e,t){if("function"!=typeof t&&null!==t)throw new TypeError("Super expression must either be null or a function, not "+typeof t);e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,enumerable:!1,writable:!0,configurable:!0}}),t&&(Object.setPrototypeOf?Object.setPrototypeOf(e,t):e.__proto__=t)}function l(e,t){var n="data-clipboard-"+e;if(t.hasAttribute(n))return t.getAttribute(n)}var u=i(t),s=i(n),f=i(o),d=function(){function e(e,t){for(var n=0;n<t.length;n++){var o=t[n];o.enumerable=o.enumerable||!1,o.configurable=!0,"value"in o&&(o.writable=!0),Object.defineProperty(e,o.key,o)}}return function(t,n,o){return n&&e(t.prototype,n),o&&e(t,o),t}}(),h=function(e){function t(e,n){r(this,t);var o=a(this,(t.__proto__||Object.getPrototypeOf(t)).call(this));return o.resolveOptions(n),o.listenClick(e),o}return c(t,e),d(t,[{key:"resolveOptions",value:function e(){var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{};this.action="function"==typeof t.action?t.action:this.defaultAction,this.target="function"==typeof t.target?t.target:this.defaultTarget,this.text="function"==typeof t.text?t.text:this.defaultText}},{key:"listenClick",value:function e(t){var n=this;this.listener=(0,f.default)(t,"click",function(e){return n.onClick(e)})}},{key:"onClick",value:function e(t){var n=t.delegateTarget||t.currentTarget;this.clipboardAction&&(this.clipboardAction=null),this.clipboardAction=new u.default({action:this.action(n),target:this.target(n),text:this.text(n),trigger:n,emitter:this})}},{key:"defaultAction",value:function e(t){return l("action",t)}},{key:"defaultTarget",value:function e(t){var n=l("target",t);if(n)return document.querySelector(n)}},{key:"defaultText",value:function e(t){return l("text",t)}},{key:"destroy",value:function e(){this.listener.destroy(),this.clipboardAction&&(this.clipboardAction.destroy(),this.clipboardAction=null)}}],[{key:"isSupported",value:function e(){var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:["copy","cut"],n="string"==typeof t?[t]:t,o=!!document.queryCommandSupported;return n.forEach(function(e){o=o&&!!document.queryCommandSupported(e)}),o}}]),t}(s.default);e.exports=h})},{"./clipboard-action":7,"good-listener":4,"tiny-emitter":6}]},{},[8])(8)});
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {var require;var require;var __WEBPACK_AMD_DEFINE_RESULT__;(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return require(o,!0);if(i)return require(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
@@ -9925,24 +10235,24 @@ Y.prototype.load=function(a){function b(){if(e["__mti_fntLst"+c]){var d=e["__mti
 
 },{}]},{},[1]);
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(39)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(41)))
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(24)(undefined);
+exports = module.exports = __webpack_require__(25)(undefined);
 // imports
 exports.push([module.i, "@import url(https://fonts.googleapis.com/css?family=Inconsolata);", ""]);
 
 // module
-exports.push([module.i, ".tone-editor_container.align-right {\n  left: auto;\n  right: 0;\n  border-right: none;\n  border-left: 2px solid rgba(0, 0, 0, 0.2); }\n  .tone-editor_container.align-right .resize-handle {\n    left: -5px;\n    right: auto; }\n\n.tone-editor_container {\n  position: relative;\n  width: 272px;\n  height: 100vh;\n  position: fixed;\n  top: 0;\n  left: 0;\n  background: white;\n  padding: 10px;\n  overflow-y: scroll;\n  border-right: 2px solid rgba(0, 0, 0, 0.2); }\n  .tone-editor_container * {\n    user-select: none;\n    font-family: 'Inconsolata'; }\n  .tone-editor_container .component-container {\n    display: flex;\n    align-items: flex-start;\n    flex-wrap: wrap;\n    padding-top: 20px;\n    padding-bottom: 40px; }\n  .tone-editor_container div.header {\n    width: 100%;\n    display: flex;\n    justify-content: flex-start;\n    position: fixed;\n    top: 10px; }\n    .tone-editor_container div.header * {\n      margin-right: 4px; }\n    .tone-editor_container div.header h3 {\n      opacity: 0.5;\n      display: inline-block;\n      margin: 4px 6px 4px 0; }\n    .tone-editor_container div.header div.keyboard-button {\n      display: block;\n      cursor: pointer; }\n    .tone-editor_container div.header .copy-all {\n      display: block;\n      cursor: pointer; }\n  .tone-editor_container svg.keyboard {\n    width: 100%;\n    margin-bottom: 6px;\n    transition: height 0.15s;\n    cursor: pointer; }\n    .tone-editor_container svg.keyboard g#labels {\n      opacity: 0.4; }\n  .tone-editor_container svg.keyboard.collapsed {\n    height: 0;\n    margin-bottom: 0;\n    transition: height 0.15s; }\n  .tone-editor_container div.component {\n    width: 266px;\n    position: relative;\n    background: darkGray;\n    padding-left: 6px;\n    font-size: 16px;\n    flex-grow: 0;\n    flex-shrink: 0;\n    max-height: 24px;\n    border-bottom: 1px solid rgba(0, 0, 0, 0.1);\n    border-top: 1px solid rgba(255, 255, 255, 0.5);\n    box-shadow: 2px 2px 8px rgba(100, 100, 100, 0.2);\n    overflow: hidden;\n    border-radius: 4px;\n    margin-bottom: 10px;\n    margin-right: 10px; }\n  .tone-editor_container div.component.expanded {\n    max-height: 3000px;\n    padding-bottom: 4px; }\n  .tone-editor_container .keyboard-target-button.active {\n    opacity: 1; }\n  .tone-editor_container div.subcomponent {\n    position: relative;\n    background: darkGray;\n    font-size: 16px;\n    max-height: 24px;\n    border-bottom: 1px solid rgba(0, 0, 0, 0.1);\n    background-color: rgba(0, 0, 0, 0.2);\n    overflow: hidden; }\n    .tone-editor_container div.subcomponent div.component-header h3.component-name {\n      margin-left: 12px;\n      font-weight: 200; }\n  .tone-editor_container div.subcomponent.expanded {\n    max-height: 3000px; }\n  .tone-editor_container div.component-header {\n    position: relative;\n    width: 100%;\n    display: flex;\n    align-items: center;\n    height: 24px; }\n    .tone-editor_container div.component-header h3 {\n      margin: 0;\n      font-size: 16px; }\n    .tone-editor_container div.component-header h3.component-name {\n      font-weight: 800;\n      margin-left: 2px;\n      margin-bottom: 1px; }\n    .tone-editor_container div.component-header a.component-class {\n      margin-left: 10px;\n      opacity: 0.4;\n      font-weight: 200;\n      cursor: pointer;\n      margin-left: 6px;\n      opacity: 0.4;\n      font-weight: 200;\n      cursor: pointer;\n      font-size: 13px;\n      flex-grow: 0;\n      margin-bottom: 0px;\n      text-overflow: ellipsis; }\n    .tone-editor_container div.component-header a.component-class:hover {\n      text-decoration: underline;\n      cursor: pointer; }\n    .tone-editor_container div.component-header .expand-triangle {\n      width: 13px;\n      height: 26px;\n      background-image: url(" + __webpack_require__(38) + ");\n      background-size: contain;\n      background-position: center;\n      background-repeat: no-repeat;\n      position: absolute;\n      right: 7px;\n      top: -1px;\n      opacity: 0.9;\n      cursor: pointer;\n      transition: transform 0.05s; }\n    .tone-editor_container div.component-header .expand-triangle.expanded {\n      transform: rotateZ(-90deg);\n      transition: transform 0.05s; }\n    .tone-editor_container div.component-header .expand-triangle.expanded:hover {\n      opacity: 1; }\n    .tone-editor_container div.component-header .extra-buttons {\n      margin-left: 10px;\n      overflow: hidden;\n      transition: opacity 0.15s;\n      display: flex; }\n      .tone-editor_container div.component-header .extra-buttons * {\n        cursor: pointer;\n        opacity: 0;\n        transition: opacity 0.15s;\n        margin-right: 4px; }\n      .tone-editor_container div.component-header .extra-buttons .keyboard-target-button.active {\n        opacity: 1; }\n  .tone-editor_container .component-header:hover .extra-buttons > * {\n    opacity: 0.75;\n    transition: opacity 0.15s; }\n  .tone-editor_container .parameter-group {\n    width: 100%;\n    max-height: calc(100vh - 100px);\n    background-color: rgba(255, 255, 255, 0.2);\n    box-sizing: border-box;\n    overflow-y: scroll; }\n    .tone-editor_container .parameter-group .parameter:hover .parameter-name, .tone-editor_container .parameter-group .parameter:hover .value {\n      color: rgba(0, 0, 0, 0.6); }\n    .tone-editor_container .parameter-group .parameter::before {\n      position: absolute;\n      content: \"\";\n      display: block;\n      width: 100%;\n      height: 1px;\n      top: 0px;\n      background: rgba(0, 0, 0, 0.1);\n      z-index: 10; }\n    .tone-editor_container .parameter-group .parameter.overwritten .parameter-name {\n      font-style: italic; }\n    .tone-editor_container .parameter-group .parameter.overwritten canvas {\n      opacity: 1; }\n    .tone-editor_container .parameter-group .parameter.overridden-by-signal {\n      pointer-events: none; }\n      .tone-editor_container .parameter-group .parameter.overridden-by-signal .blocker {\n        width: 100%;\n        height: 100%;\n        position: absolute;\n        top: 0;\n        left: 0;\n        background-image: url(" + __webpack_require__(37) + ");\n        background-size: contain;\n        opacity: 0.7;\n        pointer-events: none; }\n      .tone-editor_container .parameter-group .parameter.overridden-by-signal canvas {\n        opacity: 0; }\n    .tone-editor_container .parameter-group .parameter {\n      position: relative;\n      width: 100%;\n      height: 30px;\n      box-sizing: border-box;\n      display: flex;\n      align-items: center;\n      justify-content: space-between;\n      color: rgba(0, 0, 0, 0.5);\n      font-weight: 200;\n      overflow: hidden; }\n      .tone-editor_container .parameter-group .parameter canvas {\n        position: absolute;\n        left: 0;\n        top: 0;\n        opacity: 0.5;\n        filter: drop-shadow(1px 0px 2px rgba(0, 0, 0, 0.2)); }\n      .tone-editor_container .parameter-group .parameter .parameter-name {\n        margin-left: 10px;\n        z-index: 1;\n        position: relative;\n        top: -1px;\n        pointer-events: none; }\n      .tone-editor_container .parameter-group .parameter .parameter-value {\n        margin-right: 10px;\n        display: flex;\n        font-size: 16px;\n        z-index: 1;\n        position: relative;\n        top: -1px; }\n        .tone-editor_container .parameter-group .parameter .parameter-value div.value {\n          min-width: 20px;\n          width: auto;\n          margin-right: 2px;\n          padding: 0 2px 0 2px;\n          text-align: right;\n          font-size: 16px;\n          display: block;\n          cursor: text; }\n        .tone-editor_container .parameter-group .parameter .parameter-value div.value::selection {\n          font-size: 40px;\n          background: yellow;\n          opacity: 1; }\n        .tone-editor_container .parameter-group .parameter .parameter-value div.value:hover {\n          background: rgba(0, 0, 0, 0.15);\n          cursor: text; }\n        .tone-editor_container .parameter-group .parameter .parameter-value div.value:focus {\n          background: rgba(0, 0, 0, 0.15);\n          color: rgba(0, 0, 0, 0.6);\n          outline: none; }\n        .tone-editor_container .parameter-group .parameter .parameter-value div.unit {\n          opacity: 0.7;\n          min-width: 24px; }\n    .tone-editor_container .parameter-group .parameter.signal .parameter-name::after {\n      content: \"~\";\n      display: inline-block;\n      font-size: 22px;\n      font-weight: bold;\n      position: relative;\n      top: 2px;\n      opacity: 0.8; }\n    .tone-editor_container .parameter-group .parameter.signal:hover .parameter-name::after {\n      animation: signal-icon-spin 0.8s infinite linear; }\n    .tone-editor_container .parameter-group div.menu {\n      cursor: pointer;\n      background: rgba(255, 255, 255, 0.5); }\n      .tone-editor_container .parameter-group div.menu div.value {\n        cursor: pointer; }\n      .tone-editor_container .parameter-group div.menu span.menu-icon {\n        width: 1px;\n        position: relative;\n        top: 4px;\n        height: 11px;\n        border: dotted rgba(0, 0, 0, 0.2) 3px;\n        box-sizing: border-box; }\n      .tone-editor_container .parameter-group div.menu select {\n        background: white;\n        border: none;\n        opacity: 0;\n        width: 100%;\n        height: 100%;\n        position: absolute;\n        top: 0;\n        left: 0; }\n    .tone-editor_container .parameter-group div.cslider {\n      cursor: ew-resize; }\n      .tone-editor_container .parameter-group div.cslider div.cslider-inner {\n        position: absolute;\n        top: 0;\n        left: 50%;\n        height: 100%;\n        width: 60px;\n        opacity: 0.5;\n        background: #c8c8c8;\n        box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.3);\n        background: white; }\n      .tone-editor_container .parameter-group div.cslider div.center-line {\n        width: 1px;\n        height: 100%;\n        position: absolute;\n        left: 50%;\n        border: dashed rgba(0, 0, 0, 0.3) 1px;\n        box-sizing: border-box;\n        pointer-events: none; }\n    .tone-editor_container .parameter-group div.hslider {\n      cursor: ew-resize; }\n      .tone-editor_container .parameter-group div.hslider div.hslider-inner {\n        position: absolute;\n        top: 0;\n        left: 0;\n        height: 100%;\n        width: 60%;\n        background: #c8c8c8;\n        box-shadow: 2px 0px 2px rgba(0, 0, 0, 0.1);\n        background: white;\n        opacity: 0.5; }\n    .tone-editor_container .parameter-group .button-row {\n      display: flex;\n      flex-wrap: nowrap;\n      align-items: center;\n      justify-content: flex-start; }\n      .tone-editor_container .parameter-group .button-row div {\n        display: flex;\n        align-items: center;\n        justify-content: center;\n        width: 30px;\n        height: 100%;\n        border-right: 1px solid rgba(0, 0, 0, 0.1);\n        font-size: 13px;\n        text-align: center; }\n        .tone-editor_container .parameter-group .button-row div svg {\n          width: 35%;\n          opacity: 0.45;\n          pointer-events: none; }\n      .tone-editor_container .parameter-group .button-row div:hover {\n        cursor: pointer;\n        background: rgba(255, 255, 255, 0.3); }\n    .tone-editor_container .parameter-group .scrubber .parameter-value {\n      pointer-events: none; }\n  .tone-editor_container .resize-handle {\n    width: 10px;\n    height: 100%;\n    position: absolute;\n    right: -5px;\n    top: 0;\n    cursor: ew-resize;\n    z-index: 10000; }\n\n@keyframes signal-icon-spin {\n  0% {\n    transform: rotateX(0deg); }\n  50% {\n    transform: rotateX(50deg); }\n  100% {\n    transform: rotateX(0deg); } }\n", ""]);
+exports.push([module.i, ".tone-editor_container.align-right {\n  left: auto;\n  right: 0;\n  border-right: none;\n  border-left: 1px solid rgba(0, 0, 0, 0.3); }\n  .tone-editor_container.align-right .resize-handle {\n    left: -5px;\n    right: auto; }\n\n.tone-editor_container.keyboard-visible .header {\n  height: 75px;\n  transition: height 0.2s ease-in-out;\n  overflow: hidden; }\n\n.tone-editor_container.collapsed {\n  width: 23px;\n  cursor: pointer; }\n  .tone-editor_container.collapsed .collapsed-tone-js-logo {\n    opacity: 0.5;\n    transition: opacity 0.2s 0.15s;\n    cursor: pointer; }\n  .tone-editor_container.collapsed .panel-expand-triangle {\n    left: -1px;\n    top: 8px;\n    transform: rotateZ(-180deg);\n    transition: all 0.2s ease-out; }\n  .tone-editor_container.collapsed .resize-handle {\n    display: none; }\n  .tone-editor_container.collapsed .header, .tone-editor_container.collapsed .component-container {\n    opacity: 0;\n    transition: opacity 0.2s;\n    pointer-events: none; }\n\n.tone-editor_container.transition-width {\n  transition: width 0.2s ease-out; }\n\n.tone-editor_container {\n  position: relative;\n  width: 272px;\n  height: 100vh;\n  position: fixed;\n  display: flex;\n  flex-direction: column;\n  top: 0;\n  left: 0;\n  background: white;\n  padding-top: 0;\n  overflow-y: hidden;\n  overflow-x: hidden;\n  border-right: 1px solid rgba(0, 0, 0, 0.3);\n  transition: width 0.2s ease-out; }\n  .tone-editor_container .header, .tone-editor_container .component-container {\n    transition: opacity 0.2s 0.15s; }\n  .tone-editor_container * {\n    user-select: none;\n    font-family: 'Inconsolata'; }\n  .tone-editor_container .panel-expand-triangle {\n    top: 0;\n    left: 0;\n    position: absolute;\n    transform: rotate(-180deg);\n    transition: all 0.2s; }\n  .tone-editor_container .extra-buttons {\n    overflow: hidden;\n    transition: opacity 0.15s;\n    display: flex;\n    position: absolute;\n    right: 0;\n    overflow: visible; }\n    .tone-editor_container .extra-buttons *:not(.expand-triangle) {\n      cursor: pointer;\n      transition: opacity 0.2s;\n      margin-left: 5px; }\n    .tone-editor_container .extra-buttons .keyboard-target-button {\n      opacity: 0.3; }\n    .tone-editor_container .extra-buttons .keyboard-target-button.active {\n      opacity: 1; }\n    .tone-editor_container .extra-buttons .copy-button {\n      opacity: 1;\n      overflow: visible; }\n  .tone-editor_container .expand-triangle {\n    width: 26px;\n    height: 26px;\n    background-image: url(" + __webpack_require__(40) + ");\n    background-size: 56%;\n    background-position: center;\n    background-repeat: no-repeat;\n    opacity: 0.7;\n    cursor: pointer;\n    transition: transform 0.05s; }\n  .tone-editor_container .expand-triangle.expanded {\n    transform: rotateZ(-90deg);\n    transition: transform 0.05s; }\n  .tone-editor_container .expand-triangle.expanded:hover {\n    opacity: 1; }\n  .tone-editor_container .panel-expand-triangle {\n    width: 26px;\n    height: 26px;\n    left: 6px;\n    top: 2px;\n    background-size: 56%;\n    background-position: center;\n    background-repeat: no-repeat;\n    cursor: pointer;\n    transform: rotateZ(-90deg);\n    transition: all 0.05s;\n    background-image: url(" + __webpack_require__(39) + ");\n    opacity: 0.4;\n    z-index: 1000; }\n  .tone-editor_container .panel-expand-triangle:hover {\n    opacity: 0.7; }\n  .tone-editor_container .component-container {\n    width: calc(100% - 4px);\n    display: flex;\n    align-items: flex-start;\n    justify-content: flex-start;\n    flex-wrap: nowrap;\n    overflow-x: scroll;\n    padding: 0 0 30px 0;\n    flex-direction: column; }\n  .tone-editor_container .component-container.multi-column {\n    align-content: flex-start;\n    flex-wrap: wrap;\n    justify-content: flex-start;\n    flex-direction: column; }\n    .tone-editor_container .component-container.multi-column .component {\n      margin-left: 10px; }\n  .tone-editor_container .header {\n    width: 100%;\n    flex-shrink: 0;\n    background: white;\n    height: 27px;\n    z-index: 100;\n    overflow: hidden;\n    position: relative;\n    z-index: 100;\n    border-bottom: 0.001em solid rgba(0, 0, 0, 0.1);\n    box-sizing: border-box;\n    transition: height 0.2s ease-in-out; }\n    .tone-editor_container .header .top-row {\n      width: calc(100% - 20px);\n      position: relative;\n      display: flex;\n      justify-content: flex-start;\n      overflow: visible;\n      margin: 0 10px 0 10px; }\n    .tone-editor_container .header h3 {\n      opacity: 0.5;\n      color: #000;\n      display: inline-block;\n      margin: 4px 6px 2px 21px;\n      cursor: pointer; }\n  .tone-editor_container .keyboard-container {\n    border-top: 0.001em solid rgba(0, 0, 0, 0.1);\n    background: #f5f5f5; }\n  .tone-editor_container svg.keyboard {\n    width: 272px;\n    transition: height 0.15s;\n    cursor: pointer;\n    display: block;\n    margin: -1px auto; }\n    .tone-editor_container svg.keyboard g#labels {\n      opacity: 0.4;\n      pointer-events: none; }\n    .tone-editor_container svg.keyboard .white:hover {\n      fill: rgba(0, 0, 0, 0.04);\n      cursor: pointer; }\n    .tone-editor_container svg.keyboard .white.note-playing {\n      fill: lightgray; }\n    .tone-editor_container svg.keyboard .black.note-playing {\n      fill: darkgray; }\n    .tone-editor_container svg.keyboard .black:hover {\n      fill: rgba(0, 0, 0, 0.8); }\n  .tone-editor_container svg.keyboard.collapsed {\n    height: 0;\n    margin-bottom: 0;\n    transition: height 0.15s; }\n  .tone-editor_container div.component {\n    width: calc(272px - 20px);\n    position: relative;\n    background: darkGray;\n    padding-left: 6px;\n    font-size: 16px;\n    flex-grow: 0;\n    flex-shrink: 0;\n    max-height: 24px;\n    border-bottom: 1px solid rgba(0, 0, 0, 0.1);\n    box-shadow: 2px 2px 8px rgba(100, 100, 100, 0.2);\n    overflow: hidden;\n    border-radius: 2px;\n    margin: 10px auto 0 auto; }\n  .tone-editor_container div.component.expanded {\n    max-height: 3000px;\n    padding-bottom: 4px; }\n  .tone-editor_container .keyboard-target-button.active {\n    opacity: 1; }\n  .tone-editor_container div.subcomponent {\n    position: relative;\n    font-size: 16px;\n    max-height: 24px;\n    border-bottom: 1px solid rgba(0, 0, 0, 0.1);\n    overflow: hidden; }\n    .tone-editor_container div.subcomponent div.component-header h3.component-name {\n      margin-left: 10px;\n      font-weight: 200; }\n  .tone-editor_container div.subcomponent.expanded {\n    max-height: 3000px; }\n  .tone-editor_container div.component-header {\n    position: relative;\n    width: 100%;\n    display: flex;\n    align-items: center;\n    height: 24px; }\n    .tone-editor_container div.component-header h3 {\n      margin: 0;\n      font-size: 16px; }\n    .tone-editor_container div.component-header h3.component-name {\n      font-weight: 800;\n      margin-left: 2px;\n      margin-bottom: 1px; }\n    .tone-editor_container div.component-header a.component-class {\n      margin-left: 10px;\n      opacity: 0.4;\n      font-weight: 200;\n      cursor: pointer;\n      margin-left: 6px;\n      opacity: 0.4;\n      font-weight: 200;\n      cursor: pointer;\n      font-size: 13px;\n      flex-grow: 0;\n      margin-bottom: 0px;\n      text-overflow: ellipsis; }\n    .tone-editor_container div.component-header a.component-class:hover {\n      text-decoration: underline;\n      cursor: pointer; }\n  .tone-editor_container .parameter-group {\n    width: 100%;\n    max-height: calc(100vh - 100px);\n    background-color: rgba(255, 255, 255, 0.2);\n    box-sizing: border-box;\n    overflow-y: scroll; }\n    .tone-editor_container .parameter-group .parameter:hover .parameter-name, .tone-editor_container .parameter-group .parameter:hover .value {\n      color: rgba(0, 0, 0, 0.6); }\n    .tone-editor_container .parameter-group .parameter::before {\n      position: absolute;\n      content: \"\";\n      display: block;\n      width: 100%;\n      height: 1px;\n      top: 0px;\n      background: rgba(0, 0, 0, 0.1);\n      z-index: 10; }\n    .tone-editor_container .parameter-group .parameter.overwritten .parameter-name {\n      font-style: italic; }\n    .tone-editor_container .parameter-group .parameter.overwritten canvas {\n      opacity: 1; }\n    .tone-editor_container .parameter-group .parameter.overridden-by-signal {\n      pointer-events: none; }\n      .tone-editor_container .parameter-group .parameter.overridden-by-signal .blocker {\n        width: 100%;\n        height: 100%;\n        position: absolute;\n        top: 0;\n        left: 0;\n        background-image: url(" + __webpack_require__(38) + ");\n        background-size: contain;\n        opacity: 0.7;\n        pointer-events: none; }\n      .tone-editor_container .parameter-group .parameter.overridden-by-signal canvas {\n        opacity: 0; }\n    .tone-editor_container .parameter-group .parameter {\n      position: relative;\n      width: 100%;\n      height: 30px;\n      box-sizing: border-box;\n      display: flex;\n      align-items: center;\n      justify-content: space-between;\n      color: rgba(0, 0, 0, 0.5);\n      font-weight: 200;\n      overflow: hidden; }\n      .tone-editor_container .parameter-group .parameter canvas {\n        position: absolute;\n        left: 0;\n        top: 0;\n        opacity: 0.5;\n        filter: drop-shadow(1px 0px 2px rgba(0, 0, 0, 0.2)); }\n      .tone-editor_container .parameter-group .parameter .parameter-name {\n        margin-left: 10px;\n        z-index: 1;\n        position: relative;\n        top: -1px;\n        pointer-events: none; }\n      .tone-editor_container .parameter-group .parameter .parameter-value {\n        margin-right: 10px;\n        display: flex;\n        font-size: 16px;\n        z-index: 1;\n        position: relative;\n        top: -1px; }\n        .tone-editor_container .parameter-group .parameter .parameter-value div.value {\n          min-width: 20px;\n          width: auto;\n          margin-right: 2px;\n          padding: 0 2px 0 2px;\n          text-align: right;\n          font-size: 16px;\n          display: block;\n          cursor: text; }\n        .tone-editor_container .parameter-group .parameter .parameter-value div.value::selection {\n          font-size: 40px;\n          background: yellow;\n          opacity: 1; }\n        .tone-editor_container .parameter-group .parameter .parameter-value div.value:hover {\n          background: rgba(0, 0, 0, 0.15);\n          cursor: text; }\n        .tone-editor_container .parameter-group .parameter .parameter-value div.value:focus {\n          background: rgba(0, 0, 0, 0.15);\n          color: rgba(0, 0, 0, 0.6);\n          outline: none; }\n        .tone-editor_container .parameter-group .parameter .parameter-value div.unit {\n          opacity: 0.7;\n          min-width: 24px; }\n    .tone-editor_container .parameter-group .parameter.signal .parameter-name::after {\n      content: \"~\";\n      display: inline-block;\n      font-size: 22px;\n      font-weight: bold;\n      position: relative;\n      top: 2px;\n      opacity: 0.8; }\n    .tone-editor_container .parameter-group .parameter.signal:hover .parameter-name::after {\n      animation: signal-icon-spin 0.8s infinite linear; }\n    .tone-editor_container .parameter-group div.menu {\n      cursor: pointer;\n      background: rgba(255, 255, 255, 0.5); }\n      .tone-editor_container .parameter-group div.menu div.value {\n        cursor: pointer; }\n      .tone-editor_container .parameter-group div.menu span.menu-icon {\n        width: 1px;\n        position: relative;\n        top: 4px;\n        height: 11px;\n        border: dotted rgba(0, 0, 0, 0.2) 3px;\n        box-sizing: border-box; }\n      .tone-editor_container .parameter-group div.menu select {\n        background: white;\n        border: none;\n        opacity: 0;\n        width: 100%;\n        height: 100%;\n        position: absolute;\n        top: 0;\n        left: 0; }\n    .tone-editor_container .parameter-group div.cslider {\n      cursor: ew-resize; }\n      .tone-editor_container .parameter-group div.cslider div.cslider-inner {\n        position: absolute;\n        top: 0;\n        left: 50%;\n        height: 100%;\n        width: 60px;\n        opacity: 0.5;\n        background: #c8c8c8;\n        box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.3);\n        background: white; }\n      .tone-editor_container .parameter-group div.cslider div.center-line {\n        width: 1px;\n        height: 100%;\n        position: absolute;\n        left: 50%;\n        border: dashed rgba(0, 0, 0, 0.3) 1px;\n        box-sizing: border-box;\n        pointer-events: none; }\n    .tone-editor_container .parameter-group div.hslider {\n      cursor: ew-resize; }\n      .tone-editor_container .parameter-group div.hslider div.hslider-inner {\n        position: absolute;\n        top: 0;\n        left: 0;\n        height: 100%;\n        width: 60%;\n        background: #c8c8c8;\n        box-shadow: 2px 0px 2px rgba(0, 0, 0, 0.1);\n        background: white;\n        opacity: 0.5; }\n    .tone-editor_container .parameter-group .button-row {\n      display: flex;\n      flex-wrap: nowrap;\n      align-items: center;\n      justify-content: flex-start; }\n      .tone-editor_container .parameter-group .button-row div {\n        display: flex;\n        align-items: center;\n        justify-content: center;\n        width: 30px;\n        height: 100%;\n        border-right: 1px solid rgba(0, 0, 0, 0.1);\n        font-size: 13px;\n        text-align: center; }\n        .tone-editor_container .parameter-group .button-row div svg {\n          width: 35%;\n          opacity: 0.45;\n          pointer-events: none; }\n      .tone-editor_container .parameter-group .button-row div:hover {\n        cursor: pointer;\n        background: rgba(255, 255, 255, 0.3); }\n    .tone-editor_container .parameter-group .scrubber .parameter-value {\n      pointer-events: none; }\n    .tone-editor_container .parameter-group .toggle input.toggle {\n      width: 14px;\n      height: 14px;\n      position: relative;\n      top: 1px; }\n  .tone-editor_container .resize-handle {\n    width: 10px;\n    height: 100%;\n    position: absolute;\n    right: -5px;\n    top: 0;\n    cursor: ew-resize;\n    z-index: 10000; }\n  .tone-editor_container .collapsed-tone-js-logo {\n    opacity: 0;\n    left: -22px;\n    top: 42px;\n    transform: rotateZ(-90deg);\n    position: absolute;\n    transition: opacity 0.2s;\n    pointer-events: none;\n    cursor: pointer; }\n\n@keyframes copy-button-animation {\n  0% {\n    transform: scale(1); }\n  50% {\n    transform: scale(1.35); }\n  100% {\n    transform: scale(1.5);\n    opacity: 0; } }\n\n@keyframes signal-icon-spin {\n  0% {\n    transform: rotateX(0deg); }\n  50% {\n    transform: rotateX(50deg); }\n  100% {\n    transform: rotateX(0deg); } }\n", ""]);
 
 // exports
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports) {
 
 /*
@@ -10024,55 +10334,55 @@ function toComment(sourceMap) {
 
 
 /***/ }),
-/* 25 */
-/***/ (function(module, exports) {
-
-module.exports = "<div class=\"component expanded\"> <div class=component-header> <h3 class=component-name>Name</h3><a class=component-class>Class</a><div class=extra-buttons><div class=keyboard-target-button>🎹</div><div class=copy-button>📋</div></div><div class=\"expand-triangle component-expand-triangle expanded\"></div> </div> <div class=parameter-group> </div> </div> ";
-
-/***/ }),
 /* 26 */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"component master expanded\"> <div class=component-header> <h3 class=component-name>Name</h3><a class=component-class>Class</a><div class=extra-buttons><div class=keyboard-target-button>🎹</div><div class=copy-button>📋</div></div> </div> <div class=parameter-group> </div> </div> ";
+module.exports = "<div class=\"component expanded\"> <div class=component-header> <h3 class=component-name>Name</h3><a class=component-class>Class</a><div class=extra-buttons><div class=keyboard-target-button>🎹</div><div class=copy-button>📋</div><div class=\"expand-triangle component-expand-triangle expanded\"></div></div> </div> <div class=parameter-group> </div> </div> ";
 
 /***/ }),
 /* 27 */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=subcomponent style=background:#add8e6> <div class=component-header> <h3 class=component-name>envelope</h3><a class=component-class>Envelope</a><div class=expand-triangle></div> </div> <div class=parameter-group> </div> </div> ";
+module.exports = "<div class=\"component master expanded\"> <div class=component-header> <h3 class=component-name>Name</h3><a class=component-class>Class</a><div class=extra-buttons><div class=keyboard-target-button>🎹</div><div class=copy-button>📋</div><div class=\"expand-triangle component-expand-triangle expanded\"></div></div> </div> <div class=parameter-group> </div> </div> ";
 
 /***/ }),
 /* 28 */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=tone-editor_container> <div class=header><h3>Tone.js</h3><div class=keyboard-button>🎹</div><div class=\"copy-button copy-all\">📋</div></div> <svg class=\"keyboard collapsed\" width=402px viewBox=\"0 0 402 108\" version=1.1 xmlns=http://www.w3.org/2000/svg xmlns:xlink=http://www.w3.org/1999/xlink> <g id=Page-1 stroke=none stroke-width=1 fill=none fill-rule=evenodd> <g id=keyboard transform=\"translate(1.000000, 1.000000)\"> <g id=white-keys stroke=#979797 stroke-width=0.5 fill=#FFFFFF> <rect id=Rectangle-3 x=0 y=0 width=36.3636364 height=106></rect> <rect id=Rectangle-3-Copy-6 x=218.181818 y=0 width=36.3636364 height=106></rect> <rect id=Rectangle-3-Copy-3 x=109.090909 y=0 width=36.3636364 height=106></rect> <rect id=Rectangle-3-Copy-7 x=327.272727 y=0 width=36.3636364 height=106></rect> <rect id=Rectangle-3-Copy x=36.3636364 y=0 width=36.3636364 height=106></rect> <rect id=Rectangle-3-Copy-8 x=254.545455 y=0 width=36.3636364 height=106></rect> <rect id=Rectangle-3-Copy-4 x=145.454545 y=0 width=36.3636364 height=106></rect> <rect id=Rectangle-3-Copy-9 x=364 y=0 width=36.3636364 height=106></rect> <rect id=Rectangle-3-Copy-2 x=72.7272727 y=0 width=36.3636364 height=106></rect> <rect id=Rectangle-3-Copy-10 x=290.909091 y=0 width=36.3636364 height=106></rect> <rect id=Rectangle-3-Copy-5 x=181.818182 y=0 width=36.3636364 height=106></rect> </g> <g id=black-keys transform=\"translate(22.000000, 0.000000)\" stroke=#979797 stroke-width=0.5 fill=#494949> <rect id=Rectangle-3-Copy-11 x=3.55271368e-15 y=0 width=29.1204057 height=64.4568302></rect> <rect id=Rectangle-3-Copy-12 x=36 y=0 width=29.1204057 height=64.4568302></rect> <rect id=Rectangle-3-Copy-14 x=109 y=0 width=29.1204057 height=64.4568302></rect> <rect id=Rectangle-3-Copy-15 x=145 y=0 width=29.1204057 height=64.4568302></rect> <rect id=Rectangle-3-Copy-16 x=182 y=0 width=29.1204057 height=64.4568302></rect> <rect id=Rectangle-3-Copy-17 x=254 y=0 width=29.1204057 height=64.4568302></rect> <rect id=Rectangle-3-Copy-18 x=291 y=0 width=29.1204057 height=64.4568302></rect> </g> <g id=labels transform=\"translate(5.000000, 35.249990)\" font-size=24 font-family=\"Inconsolata-Bold, Inconsolata\" letter-spacing=1.24347818 font-weight=bold> <text id=A fill=#5E5E5E> <tspan x=7.51701689 y=61.8296296>A</tspan> </text> <text id=J fill=#5E5E5E> <tspan x=225.698835 y=61.8296296>J</tspan> </text> <text id=F fill=#5E5E5E> <tspan x=116.607926 y=61.8296296>F</tspan> </text> <text id=; fill=#5E5E5E> <tspan x=334.789744 y=61.8296296>;</tspan> </text> <text id=S fill=#5E5E5E> <tspan x=43.8806533 y=61.8296296>S</tspan> </text> <text id=K fill=#5E5E5E> <tspan x=262.062471 y=61.8296296>K</tspan> </text> <text id=G fill=#5E5E5E> <tspan x=152.971562 y=61.8296296>G</tspan> </text> <text id=‘ fill=#5E5E5E> <tspan x=370.77539 y=61.8296296>‘</tspan> </text> <text id=D fill=#5E5E5E> <tspan x=78.330414 y=61.8296296>D</tspan> </text> <text id=L fill=#5E5E5E> <tspan x=296.512232 y=61.8296296>L</tspan> </text> <text id=H fill=#5E5E5E> <tspan x=187.421323 y=61.8296296>H</tspan> </text> <text id=W fill=#FFFFFF> <tspan x=25.1068314 y=21.1808804>W</tspan> </text> <text id=E fill=#FFFFFF> <tspan x=61.1068314 y=21.1808804>E</tspan> </text> <text id=T fill=#FFFFFF> <tspan x=134.106831 y=21.1808804>T</tspan> </text> <text id=Y fill=#FFFFFF> <tspan x=170.106831 y=21.1808804>Y</tspan> </text> <text id=U fill=#FFFFFF> <tspan x=207.106831 y=21.1808804>U</tspan> </text> <text id=O fill=#FFFFFF> <tspan x=279.106831 y=21.1808804>O</tspan> </text> <text id=P fill=#FFFFFF> <tspan x=316.106831 y=21.1808804>P</tspan> </text> </g> </g> </g> </svg> <div class=component-container> </div> <div class=copy-all></div> </div> ";
+module.exports = "<div class=subcomponent> <div class=component-header> <h3 class=component-name>envelope</h3><a class=component-class>Envelope</a> <div class=extra-buttons> <div class=\"expand-triangle expanded\"></div> </div> </div> <div class=parameter-group> </div> </div> ";
 
 /***/ }),
 /* 29 */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"parameter menu\"> <div class=parameter-name>NAME</div> <div class=parameter-value> <div class=value contenteditable=true>VALUE</div><span class=menu-icon></span> </div> <select> </select> </div> ";
+module.exports = "<div class=tone-editor_container> <div class=\"expand-triangle panel-expand-triangle expanded\"></div> <h3 class=collapsed-tone-js-logo> Tone.js </h3> <div class=header> <div class=top-row> <h3 class=tone-js-logo>Tone.js</h3> <div class=extra-buttons> <div class=keyboard-button>🎹</div> <div class=\"copy-button copy-all\">📋</div> </div> </div> <div class=keyboard-container> <svg class=keyboard xmlns=http://www.w3.org/2000/svg viewBox=\"0 0 400.5 70\"> <defs> <style>.cls-5,.white{fill:#fff}.black,.white{stroke:#979797;stroke-width:.5px}.black{fill:#494949}.black,.cls-4,.cls-5{isolation:isolate}.cls-4,.cls-5{font-size:24px;font-family:Inconsolata-Bold,Inconsolata;font-weight:700;letter-spacing:.05em}.cls-4{fill:#5e5e5e}</style> </defs> <g id=white-keys> <rect data-index=0 class=\"key white\" x=0.25 y=0.25 width=36.36 height=70 /> <rect data-index=2 class=\"key white\" x=36.61 y=0.25 width=36.36 height=70 /> <rect data-index=4 class=\"key white\" x=72.98 y=0.25 width=36.36 height=70 /> <rect data-index=5 class=\"key white\" x=109.34 y=0.25 width=36.36 height=70 /> <rect data-index=7 class=\"key white\" x=145.7 y=0.25 width=36.36 height=70 /> <rect data-index=9 class=\"key white\" x=182.07 y=0.25 width=36.36 height=70 /> <rect data-index=11 class=\"key white\" x=218.43 y=0.25 width=36.36 height=70 /> <rect data-index=12 class=\"key white\" x=254.8 y=0.25 width=36.36 height=70 /> <rect data-index=14 class=\"key white\" x=291.16 y=0.25 width=36.36 height=70 /> <rect data-index=16 class=\"key white\" x=327.52 y=0.25 width=36.36 height=70 /> <rect data-index=17 class=\"key white\" x=363.89 y=0.25 width=36.36 height=70 /> </g> <g id=black-keys> <rect data-index=1 class=\"key black\" x=22.25 y=0.25 width=29.12 height=34.46 /> <rect data-index=3 class=\"key black\" x=58.25 y=0.25 width=29.12 height=34.46 /> <rect data-index=6 class=\"key black\" x=131.25 y=0.25 width=29.12 height=34.46 /> <rect data-index=8 class=\"key black\" x=167.25 y=0.25 width=29.12 height=34.46 /> <rect data-index=10 class=\"key black\" x=204.25 y=0.25 width=29.12 height=34.46 /> <rect data-index=13 class=\"key black\" x=276.25 y=0.25 width=29.12 height=34.46 /> <rect data-index=15 class=\"key black\" x=313.25 y=0.25 width=29.12 height=34.46 /> </g> <g id=labels> <g id=A class=black> <text class=cls-4 transform=\"translate(12.77 61.33)\">A</text> </g> <g id=J class=black> <text class=cls-4 transform=\"translate(230.95 61.33)\">J</text> </g> <g id=F class=black> <text class=cls-4 transform=\"translate(121.86 61.33)\">F</text> </g> <g id=_ data-name=; class=black> <text class=cls-4 transform=\"translate(340.04 61.33)\">;</text> </g> <g id=S class=black> <text class=cls-4 transform=\"translate(49.13 61.33)\">S</text> </g> <g id=K class=black> <text class=cls-4 transform=\"translate(267.31 61.33)\">K</text> </g> <g id=G class=black> <text class=cls-4 transform=\"translate(158.22 61.33)\">G</text> </g> <g id=_2 data-name=‘ class=black> <text class=cls-4 transform=\"translate(376.03 61.33)\">‘</text> </g> <g id=D class=black> <text class=cls-4 transform=\"translate(83.58 61.33)\">D</text> </g> <g id=L class=black> <text class=cls-4 transform=\"translate(301.76 61.33)\">L</text> </g> <g id=H class=black> <text class=cls-4 transform=\"translate(192.67 61.33)\">H</text> </g> <g id=W class=black> <text class=cls-5 transform=\"translate(30.36 25.68)\">W</text> </g> <g id=E class=black> <text class=cls-5 transform=\"translate(66.36 25.68)\">E</text> </g> <g id=T class=black> <text class=cls-5 transform=\"translate(139.36 25.68)\">T</text> </g> <g id=Y class=black> <text class=cls-5 transform=\"translate(175.36 25.68)\">Y</text> </g> <g id=U class=black> <text class=cls-5 transform=\"translate(212.36 25.68)\">U</text> </g> <g id=O class=black> <text class=cls-5 transform=\"translate(284.36 25.68)\">O</text> </g> <g id=P class=black> <text class=cls-5 transform=\"translate(321.36 25.68)\">P</text> </g> </g> </svg> </div> </div> <div class=component-container> </div> </div> ";
 
 /***/ }),
 /* 30 */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"parameter hslider\"> <div class=parameter-name>NAME</div> <div class=parameter-value> <div class=value contenteditable=false></div> <div class=unit>UNIT</div> </div> </div> ";
+module.exports = "<div class=\"parameter menu\"> <div class=parameter-name>NAME</div> <div class=parameter-value> <div class=value contenteditable=true>VALUE</div><span class=menu-icon></span> </div> <select> </select> </div> ";
 
 /***/ }),
 /* 31 */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"parameter toggle\"> <div class=parameter-name>NAME</div> <div class=parameter-value> <input class=toggle type=checkbox name=\"\" value=\"\"> </div> </div> ";
+module.exports = "<div class=\"parameter hslider\"> <div class=parameter-name>NAME</div> <div class=parameter-value> <div class=value contenteditable=false></div> <div class=unit>UNIT</div> </div> </div> ";
 
 /***/ }),
 /* 32 */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=parameter-group> <div class=\"parameter button-row\"> <div class=rewind> <svg width=100% height=100% viewBox=\"0 0 100 100\" version=1.1 xmlns=http://www.w3.org/2000/svg xmlns:xlink=http://www.w3.org/1999/xlink> <g id=Page-1 stroke=none stroke-width=1 fill=none fill-rule=evenodd> <g id=rewind fill=#000000> <polygon id=Triangle-Copy transform=\"translate(50.000000, 50.000000) rotate(-180.000000) translate(-50.000000, -50.000000) \" points=\"100 50 0 100 1.42108547e-14 0\"></polygon> <rect id=Rectangle x=0 y=0 width=14 height=100></rect> </g> </g> </svg> </div> <div class=play-pause> <svg width=100% height=100% viewBox=\"0 0 100 100\" version=1.1 xmlns=http://www.w3.org/2000/svg xmlns:xlink=http://www.w3.org/1999/xlink> <g id=Page-1 stroke=none stroke-width=1 fill=none fill-rule=evenodd> <g id=play fill=#000000> <polygon id=Triangle points=\"100 50 0 100 1.42108547e-14 0\"></polygon> </g> </g> </svg> </div> </div> </div> ";
+module.exports = "<div class=\"parameter toggle\"> <div class=parameter-name>NAME</div> <div class=parameter-value> <input class=toggle type=checkbox name=\"\" value=\"\"> </div> </div> ";
 
 /***/ }),
 /* 33 */
+/***/ (function(module, exports) {
+
+module.exports = "<div class=parameter-group> <div class=\"parameter button-row\"> <div class=rewind> <svg width=100% height=100% viewBox=\"0 0 100 100\" version=1.1 xmlns=http://www.w3.org/2000/svg xmlns:xlink=http://www.w3.org/1999/xlink> <g id=Page-1 stroke=none stroke-width=1 fill=none fill-rule=evenodd> <g id=rewind fill=#000000> <polygon id=Triangle-Copy transform=\"translate(50.000000, 50.000000) rotate(-180.000000) translate(-50.000000, -50.000000) \" points=\"100 50 0 100 1.42108547e-14 0\"></polygon> <rect id=Rectangle x=0 y=0 width=14 height=100></rect> </g> </g> </svg> </div> <div class=play-pause> <svg width=100% height=100% viewBox=\"0 0 100 100\" version=1.1 xmlns=http://www.w3.org/2000/svg xmlns:xlink=http://www.w3.org/1999/xlink> <g id=Page-1 stroke=none stroke-width=1 fill=none fill-rule=evenodd> <g id=play fill=#000000> <polygon id=Triangle points=\"100 50 0 100 1.42108547e-14 0\"></polygon> </g> </g> </svg> </div> </div> </div> ";
+
+/***/ }),
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -10109,7 +10419,7 @@ var stylesInDom = {},
 	singletonElement = null,
 	singletonCounter = 0,
 	styleElementsInsertedAtTop = [],
-	fixUrls = __webpack_require__(34);
+	fixUrls = __webpack_require__(35);
 
 module.exports = function(list, options) {
 	if(typeof DEBUG !== "undefined" && DEBUG) {
@@ -10385,7 +10695,7 @@ function updateLink(linkElement, options, obj) {
 
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports) {
 
 
@@ -10480,13 +10790,13 @@ module.exports = function (css) {
 
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(23);
+var content = __webpack_require__(24);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // Prepare cssTransformation
 var transform;
@@ -10494,7 +10804,7 @@ var transform;
 var options = {}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(33)(content, options);
+var update = __webpack_require__(34)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -10511,25 +10821,31 @@ if(false) {
 }
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports) {
 
 module.exports = "<svg viewBox=\"0 0 100 100\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"><title>pause</title><desc>Created with Sketch.</desc><defs></defs><g id=\"Page-1\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"><g id=\"pause\" fill=\"#000000\"><rect id=\"Rectangle-Copy\" x=\"11\" y=\"0\" width=\"27\" height=\"100\"></rect><rect id=\"Rectangle-Copy-2\" x=\"62\" y=\"0\" width=\"27\" height=\"100\"></rect></g></g></svg>"
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports) {
 
 module.exports = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAABNElEQVRogdXaSW7DMBBE0W9ezJWTJTlZlJMxi9CAIXjQwCK7GyBEbdR4+Ftdaq1X4BfvLMDVuaAAX84Fbew7CqB2nLO0Y5vSnp/OJW2+nR+/QUTyKuXunrrKPUQkrlJW72mrrCEiaZU1BJJWeQQRCas8gkDCKs8gIlmVZxBIVuUVRCSq8goCiaq8g4gkVd5BIEmVLRCRoMoWCCSoshUiglfZCoHgVfZAROAqeyAQuMpeiAhaZS8EglY5AhEBqxyBQMAqRyEiWJWjEAhW5QxEBKpyBgKBqpyFiCBVzkIgSJUeEBGgSg8IBKjSCyImV+kFgclVekLExCo9ITCxSm+ImFSlNwQmVXFAxIQqDghMqOKCiMFVXBAYXMUJEQOrOCEwsMql1lrNiz4w/xkE/IyALPxjnKM/+MdWV+cSHe8AAAAASUVORK5CYII="
 
 /***/ }),
-/* 38 */
+/* 39 */
+/***/ (function(module, exports) {
+
+module.exports = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAACXBIWXMAAAsTAAALEwEAmpwYAAA6FmlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxMzggNzkuMTU5ODI0LCAyMDE2LzA5LzE0LTAxOjA5OjAxICAgICAgICAiPgogICA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPgogICAgICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgICAgICAgICB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iCiAgICAgICAgICAgIHhtbG5zOmRjPSJodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIKICAgICAgICAgICAgeG1sbnM6cGhvdG9zaG9wPSJodHRwOi8vbnMuYWRvYmUuY29tL3Bob3Rvc2hvcC8xLjAvIgogICAgICAgICAgICB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIKICAgICAgICAgICAgeG1sbnM6c3RFdnQ9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZUV2ZW50IyIKICAgICAgICAgICAgeG1sbnM6dGlmZj0iaHR0cDovL25zLmFkb2JlLmNvbS90aWZmLzEuMC8iCiAgICAgICAgICAgIHhtbG5zOmV4aWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20vZXhpZi8xLjAvIj4KICAgICAgICAgPHhtcDpDcmVhdGVEYXRlPjIwMTctMDEtMjJUMjA6NDI6NDFaPC94bXA6Q3JlYXRlRGF0ZT4KICAgICAgICAgPHhtcDpNb2RpZnlEYXRlPjIwMTctMDUtMjVUMTk6MzY6NDEtMDc6MDA8L3htcDpNb2RpZnlEYXRlPgogICAgICAgICA8eG1wOk1ldGFkYXRhRGF0ZT4yMDE3LTA1LTI1VDE5OjM2OjQxLTA3OjAwPC94bXA6TWV0YWRhdGFEYXRlPgogICAgICAgICA8eG1wOkNyZWF0b3JUb29sPkFkb2JlIFBob3Rvc2hvcCBDQyAyMDE3IChNYWNpbnRvc2gpPC94bXA6Q3JlYXRvclRvb2w+CiAgICAgICAgIDxkYzpmb3JtYXQ+aW1hZ2UvcG5nPC9kYzpmb3JtYXQ+CiAgICAgICAgIDxwaG90b3Nob3A6Q29sb3JNb2RlPjM8L3Bob3Rvc2hvcDpDb2xvck1vZGU+CiAgICAgICAgIDx4bXBNTTpJbnN0YW5jZUlEPnhtcC5paWQ6MDQ0NWQwZjAtZjYwNy00YTcwLTlhNDMtZjMzMTM2MmE5MzNlPC94bXBNTTpJbnN0YW5jZUlEPgogICAgICAgICA8eG1wTU06RG9jdW1lbnRJRD5hZG9iZTpkb2NpZDpwaG90b3Nob3A6OGU3NGE0NzEtODI0YS0xMTdhLWE1YWYtYTZmZmUxZmUzZjkxPC94bXBNTTpEb2N1bWVudElEPgogICAgICAgICA8eG1wTU06T3JpZ2luYWxEb2N1bWVudElEPnhtcC5kaWQ6YzAxZjYxYmYtYWEzNy00MjUyLTkxYzktMGNlYTY4YmVhNDBlPC94bXBNTTpPcmlnaW5hbERvY3VtZW50SUQ+CiAgICAgICAgIDx4bXBNTTpIaXN0b3J5PgogICAgICAgICAgICA8cmRmOlNlcT4KICAgICAgICAgICAgICAgPHJkZjpsaSByZGY6cGFyc2VUeXBlPSJSZXNvdXJjZSI+CiAgICAgICAgICAgICAgICAgIDxzdEV2dDphY3Rpb24+c2F2ZWQ8L3N0RXZ0OmFjdGlvbj4KICAgICAgICAgICAgICAgICAgPHN0RXZ0Omluc3RhbmNlSUQ+eG1wLmlpZDpjMDFmNjFiZi1hYTM3LTQyNTItOTFjOS0wY2VhNjhiZWE0MGU8L3N0RXZ0Omluc3RhbmNlSUQ+CiAgICAgICAgICAgICAgICAgIDxzdEV2dDp3aGVuPjIwMTctMDEtMjNUMDA6MTBaPC9zdEV2dDp3aGVuPgogICAgICAgICAgICAgICAgICA8c3RFdnQ6c29mdHdhcmVBZ2VudD5BZG9iZSBQaG90b3Nob3AgQ0MgMjAxNyAoTWFjaW50b3NoKTwvc3RFdnQ6c29mdHdhcmVBZ2VudD4KICAgICAgICAgICAgICAgICAgPHN0RXZ0OmNoYW5nZWQ+Lzwvc3RFdnQ6Y2hhbmdlZD4KICAgICAgICAgICAgICAgPC9yZGY6bGk+CiAgICAgICAgICAgICAgIDxyZGY6bGkgcmRmOnBhcnNlVHlwZT0iUmVzb3VyY2UiPgogICAgICAgICAgICAgICAgICA8c3RFdnQ6YWN0aW9uPnNhdmVkPC9zdEV2dDphY3Rpb24+CiAgICAgICAgICAgICAgICAgIDxzdEV2dDppbnN0YW5jZUlEPnhtcC5paWQ6MDQ0NWQwZjAtZjYwNy00YTcwLTlhNDMtZjMzMTM2MmE5MzNlPC9zdEV2dDppbnN0YW5jZUlEPgogICAgICAgICAgICAgICAgICA8c3RFdnQ6d2hlbj4yMDE3LTA1LTI1VDE5OjM2OjQxLTA3OjAwPC9zdEV2dDp3aGVuPgogICAgICAgICAgICAgICAgICA8c3RFdnQ6c29mdHdhcmVBZ2VudD5BZG9iZSBQaG90b3Nob3AgQ0MgMjAxNyAoTWFjaW50b3NoKTwvc3RFdnQ6c29mdHdhcmVBZ2VudD4KICAgICAgICAgICAgICAgICAgPHN0RXZ0OmNoYW5nZWQ+Lzwvc3RFdnQ6Y2hhbmdlZD4KICAgICAgICAgICAgICAgPC9yZGY6bGk+CiAgICAgICAgICAgIDwvcmRmOlNlcT4KICAgICAgICAgPC94bXBNTTpIaXN0b3J5PgogICAgICAgICA8dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPgogICAgICAgICA8dGlmZjpYUmVzb2x1dGlvbj43MjAwMDAvMTAwMDA8L3RpZmY6WFJlc29sdXRpb24+CiAgICAgICAgIDx0aWZmOllSZXNvbHV0aW9uPjcyMDAwMC8xMDAwMDwvdGlmZjpZUmVzb2x1dGlvbj4KICAgICAgICAgPHRpZmY6UmVzb2x1dGlvblVuaXQ+MjwvdGlmZjpSZXNvbHV0aW9uVW5pdD4KICAgICAgICAgPGV4aWY6Q29sb3JTcGFjZT42NTUzNTwvZXhpZjpDb2xvclNwYWNlPgogICAgICAgICA8ZXhpZjpQaXhlbFhEaW1lbnNpb24+NDA8L2V4aWY6UGl4ZWxYRGltZW5zaW9uPgogICAgICAgICA8ZXhpZjpQaXhlbFlEaW1lbnNpb24+NDA8L2V4aWY6UGl4ZWxZRGltZW5zaW9uPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAKPD94cGFja2V0IGVuZD0idyI/PvQvGTIAAAAgY0hSTQAAeiUAAICDAAD5/wAAgOkAAHUwAADqYAAAOpgAABdvkl/FRgAAAMxJREFUeNrs2d0KgzAMBeBEfOq5qRX23NnFYAhqf9KaHEYDuVP8oKWcRhYRQq4h9QAzt+qHSigi0W5U0/dTQqVtAZyISFCBPxwi8LnHoQEPOCTg6wyHArzEIQCjOG/gnMJ5ArNwXsAlF+cBLMJZA4txlsBVg7MCqnEWwCrc3cBQi7sTuLXAaYEDoVfmEm/IS9xsH1ocMwEdCH9QVyGtw8KKDoSPW8VIz8i/oAOzon+/dv7DxT2K7MOjWmQfYHqMgEejXPzWvsjovyE+AwC8DPAjPe8RHgAAAABJRU5ErkJggg=="
+
+/***/ }),
+/* 40 */
 /***/ (function(module, exports) {
 
 module.exports = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAACXBIWXMAAAsTAAALEwEAmpwYAAA4PGlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxMzggNzkuMTU5ODI0LCAyMDE2LzA5LzE0LTAxOjA5OjAxICAgICAgICAiPgogICA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPgogICAgICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgICAgICAgICB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iCiAgICAgICAgICAgIHhtbG5zOmRjPSJodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIKICAgICAgICAgICAgeG1sbnM6cGhvdG9zaG9wPSJodHRwOi8vbnMuYWRvYmUuY29tL3Bob3Rvc2hvcC8xLjAvIgogICAgICAgICAgICB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIKICAgICAgICAgICAgeG1sbnM6c3RFdnQ9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZUV2ZW50IyIKICAgICAgICAgICAgeG1sbnM6dGlmZj0iaHR0cDovL25zLmFkb2JlLmNvbS90aWZmLzEuMC8iCiAgICAgICAgICAgIHhtbG5zOmV4aWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20vZXhpZi8xLjAvIj4KICAgICAgICAgPHhtcDpDcmVhdGVEYXRlPjIwMTctMDEtMjJUMjA6NDI6NDFaPC94bXA6Q3JlYXRlRGF0ZT4KICAgICAgICAgPHhtcDpNb2RpZnlEYXRlPjIwMTctMDEtMjNUMDA6MTBaPC94bXA6TW9kaWZ5RGF0ZT4KICAgICAgICAgPHhtcDpNZXRhZGF0YURhdGU+MjAxNy0wMS0yM1QwMDoxMFo8L3htcDpNZXRhZGF0YURhdGU+CiAgICAgICAgIDx4bXA6Q3JlYXRvclRvb2w+QWRvYmUgUGhvdG9zaG9wIENDIDIwMTcgKE1hY2ludG9zaCk8L3htcDpDcmVhdG9yVG9vbD4KICAgICAgICAgPGRjOmZvcm1hdD5pbWFnZS9wbmc8L2RjOmZvcm1hdD4KICAgICAgICAgPHBob3Rvc2hvcDpDb2xvck1vZGU+MzwvcGhvdG9zaG9wOkNvbG9yTW9kZT4KICAgICAgICAgPHhtcE1NOkluc3RhbmNlSUQ+eG1wLmlpZDpjMDFmNjFiZi1hYTM3LTQyNTItOTFjOS0wY2VhNjhiZWE0MGU8L3htcE1NOkluc3RhbmNlSUQ+CiAgICAgICAgIDx4bXBNTTpEb2N1bWVudElEPnhtcC5kaWQ6YzAxZjYxYmYtYWEzNy00MjUyLTkxYzktMGNlYTY4YmVhNDBlPC94bXBNTTpEb2N1bWVudElEPgogICAgICAgICA8eG1wTU06T3JpZ2luYWxEb2N1bWVudElEPnhtcC5kaWQ6YzAxZjYxYmYtYWEzNy00MjUyLTkxYzktMGNlYTY4YmVhNDBlPC94bXBNTTpPcmlnaW5hbERvY3VtZW50SUQ+CiAgICAgICAgIDx4bXBNTTpIaXN0b3J5PgogICAgICAgICAgICA8cmRmOlNlcT4KICAgICAgICAgICAgICAgPHJkZjpsaSByZGY6cGFyc2VUeXBlPSJSZXNvdXJjZSI+CiAgICAgICAgICAgICAgICAgIDxzdEV2dDphY3Rpb24+c2F2ZWQ8L3N0RXZ0OmFjdGlvbj4KICAgICAgICAgICAgICAgICAgPHN0RXZ0Omluc3RhbmNlSUQ+eG1wLmlpZDpjMDFmNjFiZi1hYTM3LTQyNTItOTFjOS0wY2VhNjhiZWE0MGU8L3N0RXZ0Omluc3RhbmNlSUQ+CiAgICAgICAgICAgICAgICAgIDxzdEV2dDp3aGVuPjIwMTctMDEtMjNUMDA6MTBaPC9zdEV2dDp3aGVuPgogICAgICAgICAgICAgICAgICA8c3RFdnQ6c29mdHdhcmVBZ2VudD5BZG9iZSBQaG90b3Nob3AgQ0MgMjAxNyAoTWFjaW50b3NoKTwvc3RFdnQ6c29mdHdhcmVBZ2VudD4KICAgICAgICAgICAgICAgICAgPHN0RXZ0OmNoYW5nZWQ+Lzwvc3RFdnQ6Y2hhbmdlZD4KICAgICAgICAgICAgICAgPC9yZGY6bGk+CiAgICAgICAgICAgIDwvcmRmOlNlcT4KICAgICAgICAgPC94bXBNTTpIaXN0b3J5PgogICAgICAgICA8dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPgogICAgICAgICA8dGlmZjpYUmVzb2x1dGlvbj43MjAwMDAvMTAwMDA8L3RpZmY6WFJlc29sdXRpb24+CiAgICAgICAgIDx0aWZmOllSZXNvbHV0aW9uPjcyMDAwMC8xMDAwMDwvdGlmZjpZUmVzb2x1dGlvbj4KICAgICAgICAgPHRpZmY6UmVzb2x1dGlvblVuaXQ+MjwvdGlmZjpSZXNvbHV0aW9uVW5pdD4KICAgICAgICAgPGV4aWY6Q29sb3JTcGFjZT42NTUzNTwvZXhpZjpDb2xvclNwYWNlPgogICAgICAgICA8ZXhpZjpQaXhlbFhEaW1lbnNpb24+NDA8L2V4aWY6UGl4ZWxYRGltZW5zaW9uPgogICAgICAgICA8ZXhpZjpQaXhlbFlEaW1lbnNpb24+NDA8L2V4aWY6UGl4ZWxZRGltZW5zaW9uPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAKPD94cGFja2V0IGVuZD0idyI/PrIqnbMAAAAgY0hSTQAAeiUAAICDAAD5/wAAgOkAAHUwAADqYAAAOpgAABdvkl/FRgAAAONJREFUeNrs2dEKgzAMBdDr8Ku3tY2OfXf2sD4IU6Q1iRdZwMfiQW2SxkFVwRy3wHvdu1apasT10G80r43EUQKXODrgU3+DBriG6wJ67OIE4MWaZhKAmTUPmuMsgdkDZwXMACbWUlc8cUeBBYCwNgshOAAYO9ZIBVK2W6G4VmA4ruUVTzWdgBE41ypx+ZbfDZgtuxOvJ+hWay1fcTkD2foNutdei00ikcjeXRyGPJJmhLmbWVYYYQb6Iw3Pwln34/SDe2IH7iFpRh+JHUg/PNpC/geY4SPgMajmv3sXDuy/IT4DAIksaI1YRbuWAAAAAElFTkSuQmCC"
 
 /***/ }),
-/* 39 */
+/* 41 */
 /***/ (function(module, exports) {
 
 var g;
@@ -10556,7 +10872,7 @@ module.exports = g;
 
 
 /***/ }),
-/* 40 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(11);

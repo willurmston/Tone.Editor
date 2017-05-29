@@ -1,85 +1,232 @@
 @import url('https://fonts.googleapis.com/css?family=Inconsolata')
 
-// html
-//   position: fixed
-//   width: 100vw
-//   height: 100vh
-//   margin: 0
-//
-// body
-//   margin: 0
-//   position: fixed
-//   overflow: hidden
-//   width: 100vw
-//   height: 100vh
-
-
 .tone-editor_container.align-right
   left: auto
   right: 0
   border-right: none
-  border-left: 2px solid rgba(0,0,0,0.2)
+  border-left: 1px solid rgba(0, 0, 0, 0.3)
 
   .resize-handle
     left: -5px
     right: auto
+
+.tone-editor_container.keyboard-visible
+  .header
+    height: 75px
+    transition: height 0.2s ease-in-out
+    overflow: hidden
+
+  .component-container
+    // padding-top: 85px
+
+.tone-editor_container.collapsed
+  width: 23px
+  cursor: pointer
+
+  .collapsed-tone-js-logo
+    opacity: 0.5
+    transition: opacity 0.2s 0.15s
+    cursor: pointer
+
+  .panel-expand-triangle
+    left: -1px
+    top: 8px
+    transform: rotateZ(-180deg)
+    transition: all 0.2s ease-out
+
+  .resize-handle
+    display: none
+
+  .header, .component-container
+    opacity: 0
+    transition: opacity 0.2s
+    pointer-events: none
+
+.tone-editor_container.transition-width
+  transition: width 0.2s ease-out
 
 .tone-editor_container
   position: relative
   width: 272px
   height: 100vh
   position: fixed
+  display: flex
+  flex-direction: column
   top: 0
   left: 0
   background: white
-  padding: 10px
-  overflow-y: scroll
-  border-right: 2px solid rgba(0,0,0,0.2)
+  // padding: 10px
+  padding-top: 0
+  overflow-y: hidden
+  overflow-x: hidden
+  border-right: 1px solid rgba(0, 0, 0, 0.3)
+  transition: width 0.2s ease-out
+
+  // ::-webkit-scrollbar
+  //   width: 4px
+  //   background-color: rgba(0,0.0.3)
+  //
+
+  // for expanding animation
+  .header, .component-container
+    transition: opacity 0.2s 0.15s
 
   *
     user-select: none
     font-family: 'Inconsolata'
 
+  .panel-expand-triangle
+    top: 0
+    left: 0
+    position: absolute
+    transform: rotate(-180deg)
+    transition: all 0.2s
+
+  // REUSABLE BITS
+  .extra-buttons
+    // margin-left: 10px
+    overflow: hidden
+    transition: opacity 0.15s
+    display: flex
+    position: absolute
+    right: 0
+    overflow: visible
+
+    *:not(.expand-triangle)
+      cursor: pointer
+      // opacity: 0.75
+      transition: opacity 0.2s
+      margin-left: 5px
+
+    .keyboard-target-button
+      opacity: 0.3
+
+    .keyboard-target-button.active
+      opacity: 1
+
+    .copy-button
+      opacity: 1
+      overflow: visible
+
+  .expand-triangle
+    width: 26px
+    height: 26px
+    background-image: url(../img/expand-triangle.png)
+    background-size: 56%
+    background-position: center
+    background-repeat: no-repeat
+    opacity: 0.7
+    cursor: pointer
+    transition: transform 0.05s
+
+  .expand-triangle.expanded
+    transform: rotateZ(-90deg)
+    transition: transform 0.05s
+
+  .expand-triangle.expanded:hover
+    opacity: 1
+
+  .panel-expand-triangle
+    width: 26px
+    height: 26px
+    left: 6px
+    top: 2px
+    background-size: 56%
+    background-position: center
+    background-repeat: no-repeat
+    cursor: pointer
+    transform: rotateZ(-90deg)
+    transition: all 0.05s
+    background-image: url(../img/expand-triangle-black.png)
+    opacity: 0.4
+    z-index: 1000
+
+  .panel-expand-triangle:hover
+    opacity: 0.7
+
   .component-container
+    width: calc(100% - 4px)
     display: flex
     align-items: flex-start
-    flex-wrap: wrap
-    padding-top: 20px
-    padding-bottom: 40px
-
-  div.header
-    width: 100%
-    display: flex
     justify-content: flex-start
-    position: fixed
-    top: 10px
+    flex-wrap: nowrap
+    overflow-x: scroll
+    padding: 0 0 30px 0
+    flex-direction: column
 
-    *
-      margin-right: 4px
+  .component-container.multi-column
+    align-content: flex-start
+    flex-wrap: wrap
+    justify-content: flex-start
+    flex-direction: column
+
+    .component
+      margin-left: 10px
+
+
+  .header
+    width: 100%
+    flex-shrink: 0
+    // display: flex
+    // justify-content: flex-start
+    background: white
+    height: 27px
+    z-index: 100
+    overflow: hidden
+    position: relative
+    z-index: 100
+    border-bottom: 0.001em solid rgba(0, 0, 0, 0.1)
+    box-sizing: border-box
+    transition: height 0.2s ease-in-out
+
+    .top-row
+      width: calc(100% - 20px)
+      position: relative
+      // top: 0
+      // left: 0
+      display: flex
+      justify-content: flex-start
+      overflow: visible
+      margin: 0 10px 0 10px
+
 
     h3
       opacity: 0.5
+      color: #000
       display: inline-block
-      margin: 4px 6px 4px 0
-
-    div.keyboard-button
-      display: block
+      margin: 4px 6px 2px 21px
       cursor: pointer
 
-    .copy-all
-      display: block
-      cursor: pointer
-
+  .keyboard-container
+    border-top: 0.001em solid rgba(0, 0, 0, 0.1)
+    background: #f5f5f5
 
   svg.keyboard
-    width: 100%
-    margin-bottom: 6px
-    // height: 0
+    width: 272px
     transition: height 0.15s
     cursor: pointer
+    display: block
+    margin: -1px auto
 
     g#labels
       opacity: 0.4
+      pointer-events: none
+
+    .white:hover
+      fill: rgba(0,0,0,0.04)
+      cursor: pointer
+
+    .white.note-playing
+      fill: lightgray
+
+    .black.note-playing
+      fill: darkgray
+
+    .black:hover
+      fill: rgba(0,0,0,0.8)
+
+
+
 
   svg.keyboard.collapsed
     height: 0
@@ -89,7 +236,7 @@
   div.component.selected
 
   div.component
-    width: 266px
+    width: calc(272px - 20px)
     position: relative
     background: darkGray
     padding-left: 6px
@@ -98,12 +245,13 @@
     flex-shrink: 0
     max-height: 24px
     border-bottom: 1px solid rgba(0, 0, 0, 0.1)
-    border-top: 1px solid rgba(255, 255, 255, 0.5)
+    // border-top: 1px solid rgba(255, 255, 255, 0.5)
     box-shadow: 2px 2px 8px rgba(100, 100, 100, 0.2)
     overflow: hidden
-    border-radius: 4px
-    margin-bottom: 10px
-    margin-right: 10px
+    border-radius: 2px
+    margin: 10px auto 0 auto
+    // margin-bottom: 10px
+    // margin-right: 10px
 
   div.component.expanded
     max-height: 3000px
@@ -112,23 +260,21 @@
   .keyboard-target-button.active
     opacity: 1
 
-
   div.subcomponent
     position: relative
-    background: darkGray
+    // background: darkGray
     // padding-left: 6px
     font-size: 16px
     // max-height: 30px
     max-height: 24px
     border-bottom: 1px solid rgba(0, 0, 0, 0.1)
-    background-color: rgba(0, 0, 0, 0.2)
+    // background-color: rgba(0, 0, 0, 0.2)
     overflow: hidden
 
     div.component-header
       h3.component-name
-        margin-left: 12px
+        margin-left: 10px
         font-weight: 200
-
 
   div.subcomponent.expanded
     // padding-bottom: 4px
@@ -169,48 +315,14 @@
       text-decoration: underline
       cursor: pointer
 
-    .expand-triangle
-      width: 13px
-      height: 26px
-      background-image: url(../img/expand-triangle.png)
-      background-size: contain
-      background-position: center
-      background-repeat: no-repeat
-      position: absolute
-      right: 7px
-      top: -1px
-      opacity: 0.9
-      cursor: pointer
-      transition: transform 0.05s
 
-    .expand-triangle.expanded
-      transform: rotateZ(-90deg)
-      transition: transform 0.05s
-
-    .expand-triangle.expanded:hover
-      opacity: 1
-
-    .extra-buttons
-      margin-left: 10px
-      overflow: hidden
-      transition: opacity 0.15s
-      display: flex
-
-      *
-        cursor: pointer
-        opacity: 0
-        transition: opacity 0.15s
-        margin-right: 4px
-
-      .keyboard-target-button.active
-        opacity: 1
 
 
   .component-header:hover
-
-    .extra-buttons > *
-      opacity: 0.75
-      transition: opacity 0.15s
+    //
+    // .extra-buttons > *
+    //   opacity: 0.75
+    //   transition: opacity 0.15s
 
 
   .parameter-group
@@ -287,8 +399,6 @@
         position: relative
         top: -1px
         pointer-events: none
-
-
 
       .parameter-value
         margin-right: 10px
@@ -444,6 +554,13 @@
       .parameter-value
         pointer-events: none
 
+    .toggle
+      input.toggle
+        width: 14px
+        height: 14px
+        position: relative
+        top: 1px
+
   .resize-handle
     width: 10px
     height: 100%
@@ -459,9 +576,26 @@
     // left: 8px
     // z-index: 200
 
+  // style when hidden
+  .collapsed-tone-js-logo
+    opacity: 0
+    left: -22px
+    top: 42px
+    transform: rotateZ(-90deg)
+    position: absolute
+    transition: opacity 0.2s
+    pointer-events: none
+    cursor: pointer
 
 
-
+@keyframes copy-button-animation
+  0%
+    transform: scale(1)
+  50%
+    transform: scale(1.35)
+  100%
+    transform: scale(1.5)
+    opacity: 0
 
 
 @keyframes signal-icon-spin
