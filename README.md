@@ -104,8 +104,9 @@ All methods are chainable.
 
 ### Copying changes back into your code
 * Click 📋 on a component to copy its settings to the clipboard
-* Click 📋 at the top of the panel to copy settings for all the components in the Editor
-* Click 💾 button at the top of the panel to download the settings as a script
+* Click 📋 at the top of the panel to copy settings for all the components
+* Click 🎹 on an instrument to play it with your computer keyboard
+* Click 💾 at the top of the panel to download the settings as a script
 
 ### Pro tips
 * When playing the keyboard, use the `z` and `x` keys to change octaves
