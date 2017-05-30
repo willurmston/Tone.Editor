@@ -14,7 +14,7 @@ module.exports = {
     output: {
         publicPath: "/ToneEditor/",
         path: path.join(__dirname, 'build'),
-        filename: 'Tone-Editor.min.js'
+        filename: 'ToneEditor.min.js'
     },
     module: {
       loaders:[],

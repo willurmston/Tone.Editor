@@ -95,18 +95,18 @@ define(['Utils','ToneEditor','State', 'Templates/Components/Component', 'Keyboar
   }
 
   // Shortcut for adding Tone.Master
-  ToneEditor.master = function() {
-    ToneEditor.add('Master', Tone.Master, 'skyblue')
+  ToneEditor.master = function(color) {
+    ToneEditor.add('Master', Tone.Master, color || 'skyblue')
     return ToneEditor
   }
 
   // Shows transport controls
-  ToneEditor.transport = function(timeIn, timeOut) {
+  ToneEditor.transport = function(timeIn, timeOut, color) {
 
     if (timeIn) ToneEditor._options.transportScrubIn = Tone.Time(timeIn).toSeconds()
     if (timeOut) ToneEditor._options.transportScrubOut = Tone.Time(timeOut).toSeconds()
 
-    ToneEditor.add('Transport', Tone.Transport, 'orange')
+    ToneEditor.add('Transport', Tone.Transport, color || 'orange')
     return ToneEditor
   }
 
