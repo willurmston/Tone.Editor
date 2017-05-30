@@ -7,6 +7,21 @@ define( function() {
       // name (last resort)
         // if all of these fail, use defaults
 
+  // var defaults = {
+  //   slider: {
+  //     uiType: 'slider',
+  //     unit: '',
+  //     min: 0,
+  //     max: 100,
+  //     isDefault: true
+  //   },
+  //   menu: {
+  //     uiType: 'menu',
+  //     menuItems: [],
+  //     unit: '',
+  //     isDefault: true
+  //   }
+  // }
 
   // CHECK BASED ON PARAMETER NAME
   var fromName = {
@@ -42,6 +57,13 @@ define( function() {
       min: -100,
       max: 10
     },
+
+    'normalRange': {
+      uiType: 'slider',
+      unit: '',
+      min: 0,
+      max: 1
+    },
     'default': {
       uiType: 'slider',
       unit: '',
@@ -70,6 +92,36 @@ define( function() {
       'frequency': fromName.frequency
     },
 
+    'Envelope': {
+      'attack': {
+        uiType: 'slider',
+        unit: 's',
+        min: 0,
+        max: 10
+      },
+      'decay': {
+        uiType: 'slider',
+        unit: 's',
+        min: 0,
+        max: 10
+      },
+      'sustain': fromName.normalRange,
+      'release': {
+        uiType: 'slider',
+        unit: 's',
+        min: 0,
+        max: 10
+      },
+      'attackCurve': {
+        uiType: 'menu',
+        menuItems: ['linear','exponential','sine','cosine','bounce','ripple','step']
+      },
+      'releaseCurve': {
+        uiType: 'menu',
+        menuItems: ['linear','exponential','sine','cosine','bounce','ripple','step']
+      }
+    },
+
     // COMPONENT
     'Oscillator': {
       'frequency': fromName.frequency,
@@ -95,6 +147,10 @@ define( function() {
         unit: '',
         min: 0,
         max: 1
+      },
+      'swingSubdivision': {
+        uiType: 'menu',
+        menuItems: ['8n', '8t', '16n', '16t', '24n', '24t']
       },
       'timeSignature': {
         uiType: 'slider',
@@ -145,7 +201,6 @@ define( function() {
   }
 
   module.exports = function (uiElementOrName,     toneParam, parentComponent) {
-
 
     if (typeof uiElementOrName === 'object') {
       var name = uiElementOrName.name

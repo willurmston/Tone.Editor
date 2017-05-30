@@ -18,14 +18,12 @@ Include Tone-Editor.min.js in your page *after* Tone.js.
 Define some Tone components and their settings.
 *Your workflow will be simplest if you keep settings in separate objects.*
 ```javascript
-var reverbSettings =
-{
+var reverbSettings = {
   "roomSize": 0.7,
 	"dampening": 4300
 }
 
-var synthSettings =
-{
+var synthSettings = {
   oscillator: {
       type: "square"
   },
@@ -73,7 +71,7 @@ ToneEditor
   },'lightgreen')
 ```
 
-Any changes made to the GUI will affect your Tone objects. See `example/index.html` for a demo.
+Any changes made to the GUI will affect your Tone objects.
 
 ### .master()
 Adds Tone.Master to the Editor
@@ -112,5 +110,13 @@ All methods are chainable.
 * Click 🎹 at the top of the panel to show & hide the keyboard
 * Use the `z` and `x` keys to change octaves
 
+### Pro Tips™
+* Drag the edge of the panel to show more
+
 ### Attribution
 Thanks to the author of Tone.js, [Yotam Mann](https://github.com/tambien), and the authors of [NexusUI](https://github.com/lsu-emdm/nexusUI/).
+
+### Known bugs (tested with Tone.js r10)
+* In the Transport component, changing the BPM doesn't update the loop points if they are in notation format
+* Resizing the panel is kinda finicky
+* ToneEditor.js has to be linked to in the **body** of your HTML

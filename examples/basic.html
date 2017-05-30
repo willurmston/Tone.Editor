@@ -10,11 +10,10 @@
         font-family: "helvetica", "arial", sans-serif;
         font-weight: 400;
         top: 30%;
-        left: 40px;
+        right: 40px;
         position: absolute;
-        transform: rotateZ(30deg);
-        color: hotPink;
-        text-shadow: 3px 3px 3px hotpink;
+        width: 40vw;
+        color: black;
       }
     </style>
   </head>
@@ -24,19 +23,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/0.10.0/Tone.min.js"></script>
 
     <!-- include ToneEditor.js after Tone.js -->
-    <script src="../build/ToneEditor.min.js" charset="utf-8"></script>
+    <script src="../build/ToneEditor.js" charset="utf-8"></script>
 
     <h1 id="text">My cool music site</h1>
 
 
     <script type="text/javascript">
-      var reverb = new Tone.Freeverb({
-          "roomSize": 0.7,
-          "dampening": 4300
-      }).toMaster()
 
-      var synthSettings =
-      {
+      var synthSettings = {
         "frequency": 110,
         "detune": 0,
         "oscillator": {
@@ -78,6 +72,12 @@
         "volume": -24.908225375657832
       }
 
+      var reverbSettings = {
+          "roomSize": 0.7,
+          "dampening": 4300
+      }
+
+      var reverb = new Tone.Freeverb( reverbSettings ).toMaster()
       var synth = new Tone.MonoSynth( synthSettings ).connect(reverb)
 
       var synthPart = new Tone.Sequence(function(time, note){
@@ -86,17 +86,12 @@
 
       Tone.Transport.start()
 
-      // ToneEditor
+      // ToneEditor ///////////////////////////////////////////////////////
       ToneEditor.add({
         'synth': synth,
         'reverb': reverb
       })
-      .master()
       .transport()
-      .options({
-        minify: true,
-        align: 'right'
-      })
 
 
     </script>

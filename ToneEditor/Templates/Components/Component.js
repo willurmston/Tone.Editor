@@ -95,6 +95,15 @@ define('Templates/Components/Component', ['Utils','ToneEditor','../UIElements/UI
     this.subComponents = []
     this.subComponentsByName = {}
 
+    var childComponent = _this.toneComponent
+
+    // if the key doesn't exist, it's probably a PolySynth
+    if (toneComponent instanceof Tone.PolySynth)  {
+      this.isPolySynth = true
+      // tempContainer.querySelector('.component-class').innerHTML +='('+toneComponent.voices.length+')'
+      childComponent = _this.toneComponent.voices[0]
+    }
+
     utils.iterate( flattenedProps, function(key, prop) {
       if (typeof prop === 'object' && _this.isSubcomponent === false) {
         var options = {
@@ -102,19 +111,19 @@ define('Templates/Components/Component', ['Utils','ToneEditor','../UIElements/UI
           parentComponent: _this
         }
 
-        var heritage = utils.classify(_this.toneComponent[key])
-        var newComp = new Component( key, _this.toneComponent[key], heritage, options )
+        var heritage = utils.classify(childComponent[key])
+        var newComp = new Component( key, childComponent[key], heritage, options )
         _this.subComponents.push( newComp )
         _this.subComponentsByName[key] = newComp
 
       } else if (typeof prop === 'array') {
         // NOTE this might create problems later with parameters that are arrays (i.e. waveform partials).
-        // Try setting an array and see what happens
+        // ignore arrays for now
 
       } else if (typeof prop === 'number') {
         // console.log('number', key, prop)
 
-        var meta = utils.getMeta(key, toneComponent[key], _this )
+        var meta = utils.getMeta(key, childComponent[key], _this )
 
 
         if (meta.uiType === 'hidden') {
@@ -132,7 +141,7 @@ define('Templates/Components/Component', ['Utils','ToneEditor','../UIElements/UI
           uiType: 'toggle'
         }
 
-        var meta = utils.getMeta(key, toneComponent[key], _this )
+        var meta = utils.getMeta(key, childComponent[key], _this )
 
         if (meta.uiType === 'hidden') {
 
@@ -140,6 +149,19 @@ define('Templates/Components/Component', ['Utils','ToneEditor','../UIElements/UI
 
           // get the right constructor based on uiType
           var uiConstructor = require('../UIElements/Toggle.js')
+          _this.parameters.push( new uiConstructor( key, _this, meta, options ) )
+
+        }
+      } else if (typeof prop === 'string') {
+        var options = {
+          uiType: 'menu'
+        }
+
+        var meta = utils.getMeta(key, childComponent[key], _this )
+
+        if (meta.uiType !== 'hidden') {
+          // get the right constructor based on uiType
+          var uiConstructor = require('../UIElements/Menu.js')
           _this.parameters.push( new uiConstructor( key, _this, meta, options ) )
 
         }

@@ -21,6 +21,9 @@ define(['Utils', 'Templates/UIElements/UIElement'], function(utils, UIElement){
     this.menuElement = this.element.getElementsByTagName('select')[0]
 
     var menuOptions = ''
+
+    meta.menuItems = meta.menuItems || []
+
     meta.menuItems.forEach( function(option) {
       menuOptions+='<option value="'+option+'">'+option+'</option>'
     })
@@ -57,7 +60,14 @@ define(['Utils', 'Templates/UIElements/UIElement'], function(utils, UIElement){
         }
       }
 
-      this.parentToneComponent.set(this.parameterName, value)
+      // call set() on parent parent (works for both poly and mono synths)
+      // we have to do this because PolySynth contains multiple voices, so it only works if you call set() from the top down
+      // luckily, the same interface works for Mono instruments
+      if (this.parentComponent.isSubcomponent) {
+        _this.parentComponent.parentComponent.toneComponent.set(_this.parentComponent.name+'.'+_this.name, value)
+      } else {
+        _this.parentToneComponent.set(_this.name, value)
+      }
       this.valueElement.innerHTML = value
     }
 

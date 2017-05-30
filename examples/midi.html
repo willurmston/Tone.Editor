@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>ToneEditor Example</title>
+
+    <style media="screen">
+      html {
+        /*background: blue;*/
+      }
+      #text{
+        font-size: 7vw;
+        font-family: "helvetica", "arial", sans-serif;
+        font-weight: 400;
+        top: 30%;
+        left: 40px;
+        position: absolute;
+        transform: rotateZ(30deg);
+        color: lightpink;
+        text-shadow: 3px 3px 3px hotpink;
+        user-select: none;
+        cursor: default;
+      }
+    </style>
+    <!-- include Tone.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/0.10.0/Tone.min.js"></script>
+    <!-- just for this example -->
+    <script src="./MidiConvert.js"></script>
+
+  </head>
+  <body>
+
+    <!-- include ToneEditor.js after Tone.js -->
+    <script src="../build/ToneEditor.js" charset="utf-8"></script>
+
+    <h1 id="text">A.G. Cook—<em>Superstar</em></h1>
+
+
+    <script type="text/javascript">
+
+      // TONE SETTINGS //////////////////////////////////////////////////////////////
+      var synthSettings = {"frequency":116.54093933105469,"detune":0.004000000189989805,"portamento":0,"volume":-25.165660625701264,"oscillator":{"frequency":116.54093933105469,"detune":0.004000000189989805,"type":"square","phase":0,"volume":0,"mute":false},"filter":{"type":"lowpass","frequency":1307.18994140625,"rolloff":-12,"Q":6.576000213623047,"gain":0},"envelope":{"attack":0,"decay":2.961,"sustain":0.007,"release":1.366,"attackCurve":"linear","releaseCurve":"exponential"},"filterEnvelope":{"baseFrequency":14.373,"octaves":8.813,"exponent":18.805,"attack":0,"decay":0.884,"sustain":0.134,"release":1.974,"attackCurve":"linear","releaseCurve":"exponential"}};
+
+      var reverbSettings = {"roomSize":0.9079999923706055,"dampening":7285.7177734375,"wet":0.5839999914169312};
+
+      var TransportSettings = {"bpm":120,"swing":0,"swingSubdivision":"8n","timeSignature":4,"loopStart":0,"loopEnd":0};
+
+
+      // Create instruments and effects //////////////////////////////////////////////////////////////
+      var synth = new Tone.PolySynth( 6, Tone.MonoSynth )
+      synth.set( synthSettings  )
+
+      var reverb = new Tone.Freeverb( reverbSettings ).toMaster()
+      synth.connect( reverb )
+
+
+      var text = document.getElementById('text')
+
+      // load a midi file
+      MidiConvert.load('./Superstar.mid').then( function(midi) {
+  			var superstar = midi.tracks[0].notes
+
+  			// make sure you set the tempo before you schedule the events
+  			Tone.Transport.bpm.value = midi.bpm
+  			Tone.Transport.timeSignature = midi.timeSignature
+
+  			var superstarPart = new Tone.Part(function(time, event){
+          
+          var newHue = (Math.random() * 360).toFixed(2)
+          text.style.color = 'hsl('+newHue+', 85%, 90%)'
+
+    			synth.triggerAttackRelease(event.name, event.duration, time, event.velocity);
+    		}, superstar).start(0)
+
+        // skip ahead in song to the good part
+        Tone.Transport.position = '25:0:0'
+        Tone.Transport.start()
+      })
+
+      // ToneEditor //////////////////////////////////////////////////////////
+      ToneEditor
+        .add('synth', synth)
+        .add('reverb', reverb)
+        .options({
+          minify: true,
+          align: 'right'
+        })
+        .transport()
+        .master()
+
+
+
+
+
+    </script>
+  </body>
+</html>

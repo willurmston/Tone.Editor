@@ -710,6 +710,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
     var _this = this
 
+
+
     this.isSignal = utils.isSignal(_this.toneParameter)
 
   }
@@ -830,6 +832,15 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     this.subComponents = []
     this.subComponentsByName = {}
 
+    var childComponent = _this.toneComponent
+
+    // if the key doesn't exist, it's probably a PolySynth
+    if (toneComponent instanceof Tone.PolySynth)  {
+      this.isPolySynth = true
+      // tempContainer.querySelector('.component-class').innerHTML +='('+toneComponent.voices.length+')'
+      childComponent = _this.toneComponent.voices[0]
+    }
+
     utils.iterate( flattenedProps, function(key, prop) {
       if (typeof prop === 'object' && _this.isSubcomponent === false) {
         var options = {
@@ -837,26 +848,26 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
           parentComponent: _this
         }
 
-        var heritage = utils.classify(_this.toneComponent[key])
-        var newComp = new Component( key, _this.toneComponent[key], heritage, options )
+        var heritage = utils.classify(childComponent[key])
+        var newComp = new Component( key, childComponent[key], heritage, options )
         _this.subComponents.push( newComp )
         _this.subComponentsByName[key] = newComp
 
       } else if (typeof prop === 'array') {
         // NOTE this might create problems later with parameters that are arrays (i.e. waveform partials).
-        // Try setting an array and see what happens
+        // ignore arrays for now
 
       } else if (typeof prop === 'number') {
         // console.log('number', key, prop)
 
-        var meta = utils.getMeta(key, toneComponent[key], _this )
+        var meta = utils.getMeta(key, childComponent[key], _this )
 
 
         if (meta.uiType === 'hidden') {
 
         } else {
           // get the right constructor based on uiType
-          var uiConstructor = __webpack_require__(16)("./"+meta.uiType.capitalize()+'.js')
+          var uiConstructor = __webpack_require__(17)("./"+meta.uiType.capitalize()+'.js')
 
           _this.parameters.push( new uiConstructor( key, _this, meta, options ) )
         }
@@ -867,14 +878,27 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
           uiType: 'toggle'
         }
 
-        var meta = utils.getMeta(key, toneComponent[key], _this )
+        var meta = utils.getMeta(key, childComponent[key], _this )
 
         if (meta.uiType === 'hidden') {
 
         } else {
 
           // get the right constructor based on uiType
-          var uiConstructor = __webpack_require__(9)
+          var uiConstructor = __webpack_require__(10)
+          _this.parameters.push( new uiConstructor( key, _this, meta, options ) )
+
+        }
+      } else if (typeof prop === 'string') {
+        var options = {
+          uiType: 'menu'
+        }
+
+        var meta = utils.getMeta(key, childComponent[key], _this )
+
+        if (meta.uiType !== 'hidden') {
+          // get the right constructor based on uiType
+          var uiConstructor = __webpack_require__(7)
           _this.parameters.push( new uiConstructor( key, _this, meta, options ) )
 
         }
@@ -992,14 +1016,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
       if (copyButton.classList.contains('copy-all')) { // it's the copy-all button
         ToneEditor.components.forEach( function(component) {
-          text+='var '+component.id+'Settings = '+'\n'+component.toString(true, true)+';\n\n'
+          text+='var '+component.id+'Settings = '+component.toString(true, true)+';\n\n'
         })
 
       } else { // It's a component copy button
         var id = copyButton.getAttribute('data-component-id')
         var component = ToneEditor.componentsById[id]
 
-        text+='var '+id+'Settings = '+'\n'+component.toString()
+        text+='var '+id+'Settings = '+component.toString()+';'
       }
 
       // ANIMATION
@@ -1034,9 +1058,99 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 /* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// pass a UIElement object into this function to add superpowers relevant to the UIType
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(4)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, UIElement){
+
+  function Menu(parameterName, parentComponent, meta, options) {
+    var _this = this
+
+    UIElement.call(this, parameterName, parentComponent, meta, options)
+
+    // BUILD HTML
+    var tempContainer = document.createElement('div')
+    tempContainer.innerHTML = __webpack_require__(30)
+
+    // INJECT VALUES INTO TEMPLATE
+    tempContainer.querySelector('.parameter-name').innerHTML = this.name
+
+    // STORE ELEMENT AND DITCH tempContainer
+    this.element = tempContainer.firstElementChild
+    this.element.setAttribute('id', this.id)
+    this.valueElement = this.element.querySelector('div.value')
+
+    this.menuElement = this.element.getElementsByTagName('select')[0]
+
+    var menuOptions = ''
+
+    meta.menuItems = meta.menuItems || []
+
+    meta.menuItems.forEach( function(option) {
+      menuOptions+='<option value="'+option+'">'+option+'</option>'
+    })
+    this.menuElement.innerHTML = menuOptions
+
+    this.valueElement.addEventListener('keydown', function(e) {
+      if (e.keyCode === 13) {
+        var value = this.innerHTML
+        _this.applyValue( value )
+        _this.valueElement.setAttribute('contenteditable', false)
+      }
+    })
+
+    this.menuElement.onchange = function() {
+      _this.applyValue(this.value)
+      // prevent typing from changing the selection
+      this.blur()
+    }
+
+    this.applyValue = function(value) {
+      if (_this.initialized === true && _this.overwritten === false) {
+        _this.element.classList.add('overwritten')
+        ToneEditor._editedParameters.push(ui)
+        ToneEditor._updateEditCount()
+        _this.overwritten = true
+      }
+
+      var options = this.menuElement.children
+      for (var i = 0; i < options.length; i++) {
+        if (options[i].value === value) {
+          options[i].setAttribute('selected', '')
+        } else {
+          options[i].removeAttribute('selected')
+        }
+      }
+
+      // call set() on parent parent (works for both poly and mono synths)
+      // we have to do this because PolySynth contains multiple voices, so it only works if you call set() from the top down
+      // luckily, the same interface works for Mono instruments
+      if (this.parentComponent.isSubcomponent) {
+        _this.parentComponent.parentComponent.toneComponent.set(_this.parentComponent.name+'.'+_this.name, value)
+      } else {
+        _this.parentToneComponent.set(_this.name, value)
+      }
+      this.valueElement.innerHTML = value
+    }
+
+    this.applyValue( this.getValue() )
+
+  }
+
+  // inherit UIElement stuff
+  Menu.prototype = UIElement.prototype
+
+  module.exports = Menu
+
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__))
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
 // EXTENDS UIElement.Slider
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(8), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, Slider, UIElement, Keyboard){
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(9), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, Slider, UIElement, Keyboard){
 
 
   function Scrubber( parameterName, parentComponent, meta, options) {
@@ -1061,7 +1175,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
@@ -1091,7 +1205,16 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
       // round value if appropriate
       if (meta.integer) value = Math.round( value )
 
-      _this.parentToneComponent.set(_this.name, value)
+      // call set() on parent parent (works for both poly and mono synths)
+      // we have to do this because PolySynth contains multiple voices, so it only works if you call set() from the top down
+      // luckily, the same interface works for Mono instruments
+      if (this.parentComponent.isSubcomponent) {
+        _this.parentComponent.parentComponent.toneComponent.set(_this.parentComponent.name+'.'+_this.name, value)
+      } else {
+        _this.parentToneComponent.set(_this.name, value)
+      }
+
+      // this prevents a feedback loop
       if (!triggeredByUi) {
         _this.nxWidget.set({value: value})
       }
@@ -1154,7 +1277,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
       // }
 
       _this.applyValue(value)
-      
+
       _this.initialized = true
 
     }) // END DEFERRED CALLBACK
@@ -1236,7 +1359,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
@@ -1270,7 +1393,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
         _this.overwritten = true
       }
 
-      _this.parentComponent.toneComponent.set(parameterName, value)
+      // call set() on parent parent (works for both poly and mono synths)
+      // we have to do this because PolySynth contains multiple voices, so it only works if you call set() from the top down
+      // luckily, the same interface works for Mono instruments
+      if (this.parentComponent.isSubcomponent) {
+        _this.parentComponent.parentComponent.toneComponent.set(_this.parentComponent.name+'.'+_this.name, value)
+      } else {
+        _this.parentToneComponent.set(_this.name, value)
+      } 
       if (!triggeredByUi) _this.valueElement.checked = value
     }
 
@@ -1287,13 +1417,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports) {
 
 module.exports = "<svg viewBox=\"0 0 100 100\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"><g id=\"Page-1\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"><g id=\"play\" fill=\"#000000\"><polygon id=\"Triangle\" points=\"100 50 0 100 1.42108547e-14 0\"></polygon></g></g></svg>"
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
@@ -1305,9 +1435,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
   __webpack_require__(23),
   __webpack_require__(2),
   __webpack_require__(1),
-  __webpack_require__(13),
   __webpack_require__(14),
-  __webpack_require__(12),
+  __webpack_require__(15),
+  __webpack_require__(13),
   __webpack_require__(3),
   __webpack_require__(6)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, NexusUI, ToneEditor, State, Listen) {
@@ -1350,7 +1480,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// API
@@ -1386,7 +1516,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// API
       // CHECK IF NEEDS A SPECIAL COMPONENT TYPE (i.e. Transport or Master)
       if (heritage.includes('Transport')) {
 
-        var TransportComponent = __webpack_require__(15)
+        var TransportComponent = __webpack_require__(16)
 
         // ADD PARAMETERS TO OBJECT
         var newComponent = new TransportComponent( name, component, heritage, options)
@@ -1484,7 +1614,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// API
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0),__webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, ToneEditor, Keyboard) {
@@ -1537,7 +1667,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(2),__webpack_require__(0),__webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function(ToneEditor, utils, State) {
@@ -1616,11 +1746,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// WRAPPER FOR COMPONENT WITH SPECIAL PROPERTIES
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0),__webpack_require__(2), __webpack_require__(5), __webpack_require__(7),__webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, ToneEditor, Component, Scrubber, Keyboard){
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0),__webpack_require__(2), __webpack_require__(5), __webpack_require__(8),__webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, ToneEditor, Component, Scrubber, Keyboard){
 
   function Transport(name, toneComponent, heritage, options) {
     var _this = this
@@ -1721,9 +1851,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// WRAPPER FOR C
     Tone.Transport.on('start', function() {
       playPause.innerHTML = __webpack_require__(37)
     }).on('pause', function() {
-      playPause.innerHTML = __webpack_require__(10)
+      playPause.innerHTML = __webpack_require__(11)
     }).on('stop', function() {
-      playPause.innerHTML = __webpack_require__(10)
+      playPause.innerHTML = __webpack_require__(11)
     })
 
   }
@@ -1736,14 +1866,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// WRAPPER FOR C
 
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
-	"./Menu.js": 17,
-	"./Scrubber.js": 7,
-	"./Slider.js": 8,
-	"./Toggle.js": 9,
+	"./Menu.js": 7,
+	"./Scrubber.js": 8,
+	"./Slider.js": 9,
+	"./Toggle.js": 10,
 	"./UIElement.js": 4
 };
 function webpackContext(req) {
@@ -1760,87 +1890,7 @@ webpackContext.keys = function webpackContextKeys() {
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = 16;
-
-/***/ }),
-/* 17 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// pass a UIElement object into this function to add superpowers relevant to the UIType
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(4)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, UIElement){
-
-  function Menu(parameterName, parentComponent, meta, options) {
-    var _this = this
-
-    UIElement.call(this, parameterName, parentComponent, meta, options)
-
-    // BUILD HTML
-    var tempContainer = document.createElement('div')
-    tempContainer.innerHTML = __webpack_require__(30)
-
-    // INJECT VALUES INTO TEMPLATE
-    tempContainer.querySelector('.parameter-name').innerHTML = this.name
-
-    // STORE ELEMENT AND DITCH tempContainer
-    this.element = tempContainer.firstElementChild
-    this.element.setAttribute('id', this.id)
-    this.valueElement = this.element.querySelector('div.value')
-
-    this.menuElement = this.element.getElementsByTagName('select')[0]
-
-    var menuOptions = ''
-    meta.menuItems.forEach( function(option) {
-      menuOptions+='<option value="'+option+'">'+option+'</option>'
-    })
-    this.menuElement.innerHTML = menuOptions
-
-    this.valueElement.addEventListener('keydown', function(e) {
-      if (e.keyCode === 13) {
-        var value = this.innerHTML
-        _this.applyValue( value )
-        _this.valueElement.setAttribute('contenteditable', false)
-      }
-    })
-
-    this.menuElement.onchange = function() {
-      _this.applyValue(this.value)
-      // prevent typing from changing the selection
-      this.blur()
-    }
-
-    this.applyValue = function(value) {
-      if (_this.initialized === true && _this.overwritten === false) {
-        _this.element.classList.add('overwritten')
-        ToneEditor._editedParameters.push(ui)
-        ToneEditor._updateEditCount()
-        _this.overwritten = true
-      }
-
-      var options = this.menuElement.children
-      for (var i = 0; i < options.length; i++) {
-        if (options[i].value === value) {
-          options[i].setAttribute('selected', '')
-        } else {
-          options[i].removeAttribute('selected')
-        }
-      }
-
-      this.parentToneComponent.set(this.parameterName, value)
-      this.valueElement.innerHTML = value
-    }
-
-    this.applyValue( this.getValue() )
-
-  }
-
-  // inherit UIElement stuff
-  Menu.prototype = UIElement.prototype
-
-  module.exports = Menu
-
-}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__))
-
+webpackContext.id = 17;
 
 /***/ }),
 /* 18 */
@@ -1920,6 +1970,21 @@ var __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_RESULT__ = function() {
       // name (last resort)
         // if all of these fail, use defaults
 
+  // var defaults = {
+  //   slider: {
+  //     uiType: 'slider',
+  //     unit: '',
+  //     min: 0,
+  //     max: 100,
+  //     isDefault: true
+  //   },
+  //   menu: {
+  //     uiType: 'menu',
+  //     menuItems: [],
+  //     unit: '',
+  //     isDefault: true
+  //   }
+  // }
 
   // CHECK BASED ON PARAMETER NAME
   var fromName = {
@@ -1955,6 +2020,13 @@ var __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_RESULT__ = function() {
       min: -100,
       max: 10
     },
+
+    'normalRange': {
+      uiType: 'slider',
+      unit: '',
+      min: 0,
+      max: 1
+    },
     'default': {
       uiType: 'slider',
       unit: '',
@@ -1983,6 +2055,36 @@ var __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_RESULT__ = function() {
       'frequency': fromName.frequency
     },
 
+    'Envelope': {
+      'attack': {
+        uiType: 'slider',
+        unit: 's',
+        min: 0,
+        max: 10
+      },
+      'decay': {
+        uiType: 'slider',
+        unit: 's',
+        min: 0,
+        max: 10
+      },
+      'sustain': fromName.normalRange,
+      'release': {
+        uiType: 'slider',
+        unit: 's',
+        min: 0,
+        max: 10
+      },
+      'attackCurve': {
+        uiType: 'menu',
+        menuItems: ['linear','exponential','sine','cosine','bounce','ripple','step']
+      },
+      'releaseCurve': {
+        uiType: 'menu',
+        menuItems: ['linear','exponential','sine','cosine','bounce','ripple','step']
+      }
+    },
+
     // COMPONENT
     'Oscillator': {
       'frequency': fromName.frequency,
@@ -2008,6 +2110,10 @@ var __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_RESULT__ = function() {
         unit: '',
         min: 0,
         max: 1
+      },
+      'swingSubdivision': {
+        uiType: 'menu',
+        menuItems: ['8n', '8t', '16n', '16t', '24n', '24t']
       },
       'timeSignature': {
         uiType: 'slider',
@@ -2058,7 +2164,6 @@ var __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_RESULT__ = function() {
   }
 
   module.exports = function (uiElementOrName,     toneParam, parentComponent) {
-
 
     if (typeof uiElementOrName === 'object') {
       var name = uiElementOrName.name
@@ -10881,7 +10986,7 @@ module.exports = g;
 /* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(11);
+module.exports = __webpack_require__(12);
 
 
 /***/ })

@@ -19,6 +19,8 @@ define('UIElement', ['Utils','ToneEditor','Keyboard', 'Templates/Components/Comp
 
     var _this = this
 
+
+
     this.isSignal = utils.isSignal(_this.toneParameter)
 
   }

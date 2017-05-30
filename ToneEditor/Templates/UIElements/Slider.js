@@ -25,7 +25,16 @@ define(['Utils', 'Templates/UIElements/UIElement', 'Keyboard'], function(utils, 
       // round value if appropriate
       if (meta.integer) value = Math.round( value )
 
-      _this.parentToneComponent.set(_this.name, value)
+      // call set() on parent parent (works for both poly and mono synths)
+      // we have to do this because PolySynth contains multiple voices, so it only works if you call set() from the top down
+      // luckily, the same interface works for Mono instruments
+      if (this.parentComponent.isSubcomponent) {
+        _this.parentComponent.parentComponent.toneComponent.set(_this.parentComponent.name+'.'+_this.name, value)
+      } else {
+        _this.parentToneComponent.set(_this.name, value)
+      }
+
+      // this prevents a feedback loop
       if (!triggeredByUi) {
         _this.nxWidget.set({value: value})
       }
@@ -88,7 +97,7 @@ define(['Utils', 'Templates/UIElements/UIElement', 'Keyboard'], function(utils, 
       // }
 
       _this.applyValue(value)
-      
+
       _this.initialized = true
 
     }) // END DEFERRED CALLBACK

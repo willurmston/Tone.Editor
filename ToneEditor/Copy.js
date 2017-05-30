@@ -45,14 +45,14 @@ define(['./libs/clipboard.min','Utils','ToneEditor','State', 'Templates/Componen
 
       if (copyButton.classList.contains('copy-all')) { // it's the copy-all button
         ToneEditor.components.forEach( function(component) {
-          text+='var '+component.id+'Settings = '+'\n'+component.toString(true, true)+';\n\n'
+          text+='var '+component.id+'Settings = '+component.toString(true, true)+';\n\n'
         })
 
       } else { // It's a component copy button
         var id = copyButton.getAttribute('data-component-id')
         var component = ToneEditor.componentsById[id]
 
-        text+='var '+id+'Settings = '+'\n'+component.toString()
+        text+='var '+id+'Settings = '+component.toString()+';'
       }
 
       // ANIMATION
