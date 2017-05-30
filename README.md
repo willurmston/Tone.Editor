@@ -10,7 +10,8 @@ A GUI overlay for making websites using [Tone.js](https://github.com/Tonejs/Tone
 Tone.js is a fun, flexible and hi-performance web music framework, but because it's text-based, the process of being creative with it can be slow. A GUI layer solves this problem, allowing you fiddle with parameters of all your Tone objects in real time, then copy the changes into your code. [Play with a demo here](http://urmston.xyz/tone-editor-example).
 
 ### Setup
-Include Tone-Editor.min.js in your page *after* Tone.js.
+Include Tone-Editor.min.js in your page *after* Tone.js. **Note** For some reason you have to put it in the body, not the head for now.
+
 ```html
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/0.10.0/Tone.min.js"></script>
 <script src="js/Tone-Editor.min.js" charset="utf-8"></script>
