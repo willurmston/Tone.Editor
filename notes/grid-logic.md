@@ -9,7 +9,7 @@ if panelWidth === 1 columns:
 |[5]|
 |[6]|
 
-* flex-direction:
+* flex-wrap: nowrap
 
 if panelWidth >= 2 columns:
 
@@ -18,6 +18,7 @@ if panelWidth >= 2 columns:
 |[3]    |
 |[4]    |
 
+* flex-wrap: wrap
 * flex-direction: column
 
 

@@ -97,14 +97,15 @@ ToneEditor.options({
   minify: true,
 
   // Change the name of the downloaded settings file
-  // Click the button at the top of the panel to download
   filename: 'yourSiteTitle_ToneSettings.js'
-
 })
 ```
 All methods are chainable.
 
 ### Copying changes back into your code
-* Click the clipboard button on any component to copy its settings to the clipboard
-* Click the clipboard button at the top of the panel to copy settings for all the components in the Editor
-* Click the download button button at the top of the panel to download the settings in a script
+* Click 📋 on a component to copy its settings to the clipboard
+* Click 📋 at the top of the panel to copy settings for all the components in the Editor
+* Click 💾 button at the top of the panel to download the settings as a script
+
+### Pro tips
+* When playing the keyboard, use the `z` and `x` keys to change octaves

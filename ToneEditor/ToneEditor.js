@@ -5,13 +5,14 @@
       this._options = {
         // public options (accessible from API)
         minify: false,
-        filename: document.title.split(' ').join()+'_ToneSettings.js',
+        filename: document.title.split(' ').join('')+'_ToneSettings.js',
         align: 'left',
 
         // private options
         transportScrubIn: 0,
         transportScrubOut: 180,
-        columnWidth: 272
+        columnWidth: 272,
+        minPanelWidth: 290
       }
       this.components = []
       this.componentsById = {}

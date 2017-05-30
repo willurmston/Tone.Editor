@@ -22,6 +22,8 @@ define( ['./Utils','ToneEditor', 'Keyboard'], function(utils, ToneEditor, Keyboa
         ToneEditor.toggle()
       } else if (classList.contains('tone-editor_container') && classList.contains('collapsed') ) {
         ToneEditor.expand()
+      } else if (classList.contains('download-button')) {
+        ToneEditor.download()
       }
     })
     ToneEditor.element.addEventListener('dblclick', function(e) {

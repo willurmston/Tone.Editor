@@ -11,14 +11,18 @@ define( ['ToneEditor','Utils','State'], function(ToneEditor, utils, State) {
   var saveTimer
 
   ToneEditor.resize = function(width) {
-    ToneEditor.element.style.width = width + 'px'
-    ToneEditor.resizedWidth = width
+    if (width >= ToneEditor._options.minPanelWidth) {
+      ToneEditor.element.style.width = width + 'px'
+      ToneEditor.resizedWidth = width
+    }
 
     if (width >= ToneEditor._options.columnWidth * 2) {
       ToneEditor.componentContainer.classList.add('multi-column')
     } else {
       ToneEditor.componentContainer.classList.remove('multi-column')
     }
+
+
 
     return this
   }
@@ -37,9 +41,6 @@ define( ['ToneEditor','Utils','State'], function(ToneEditor, utils, State) {
 
       } else if (ToneEditor._options.align === 'left') {
 
-        // min width
-        if (mouseX <= 272) mouseX = 272
-
         width = mouseX
       }
 
@@ -56,11 +57,13 @@ define( ['ToneEditor','Utils','State'], function(ToneEditor, utils, State) {
   }, false)
   document.addEventListener('mousedown', function(e) {
     if (e.target.classList.contains('resize-handle')) {
+      ToneEditor.element.classList.remove('transition-width')
       resizing = true
     }
   }, false)
   document.addEventListener('mouseup', function() {
     if (resizing) {
+      ToneEditor.element.classList.add('transition-width')
       resizing = false
     }
   }, false)

@@ -58,14 +58,12 @@ define('State', ['Utils', 'ToneEditor','Keyboard'], function(utils, ToneEditor, 
     window.localStorage.setItem( 'ToneEditor', JSON.stringify(workingState) )
   }
 
-  // retreive the stored state and update ever
+  // retreive the stored state and update everything
   function get() {
     var storedState = JSON.parse(window.localStorage.getItem('ToneEditor'))
 
     // return
     if (!storedState) return
-
-    // storedState = utils.merge(workingState, storedState)
 
     // save state in MEMORY so it can be saved to storage later in .save()
     workingState = storedState
@@ -103,15 +101,14 @@ define('State', ['Utils', 'ToneEditor','Keyboard'], function(utils, ToneEditor, 
     if (storedState.keyboard.targetName === null) {
       // do nothing
     } else if (ToneEditor.componentsById[storedState.keyboard.targetName] !== undefined) {
-      console.log('newTarget', newTarget, storedState.keyboard.isActive)
       var newTarget = ToneEditor.componentsById[storedState.keyboard.targetName]
       Keyboard.setTarget(newTarget)
+    }
 
-      if (storedState.keyboard.isActive) {
-        Keyboard.activate()
-      } else {
-        Keyboard.deactivate()
-      }
+    if (storedState.keyboard.isActive) {
+      Keyboard.activate()
+    } else {
+      Keyboard.deactivate()
     }
 
     if (storedState.keyboard.isVisible) {

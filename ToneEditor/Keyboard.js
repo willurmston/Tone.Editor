@@ -104,6 +104,11 @@ define('Keyboard', ['Utils','ToneEditor','State'], function(utils, ToneEditor, S
 
   Keyboard.octave = 4 // middle c
 
+  // note name textbox
+  var noteNameEl = ToneEditor.element.querySelector('.note-name')
+
+
+
   // keys that are down
   var currentNotes = {}
 
@@ -111,13 +116,11 @@ define('Keyboard', ['Utils','ToneEditor','State'], function(utils, ToneEditor, S
     if (Keyboard.isActive && Keyboard.target !== null && noteIndex !== undefined ) {
       Keyboard.element.querySelector('rect[data-index="'+noteIndex+'"]').classList.add('note-playing')
 
-      var note = Tone.Frequency().midiToFrequency((Keyboard.octave*12)+noteIndex)
-
+      var note = Tone.Frequency((Keyboard.octave*12)+noteIndex, 'midi')
 
       if (currentNotes[note] === undefined) {
-        // console.log('should start')
-        // console.log(currentNotes[note])
         currentNotes[note] = true
+        noteNameEl.innerHTML = note.toNote() +'<br>'+ note.toMidi()
         Keyboard.target.toneComponent.triggerAttack( note )
       }
     }
@@ -127,7 +130,7 @@ define('Keyboard', ['Utils','ToneEditor','State'], function(utils, ToneEditor, S
     if (Keyboard.isActive && Keyboard.target !== null && noteIndex !== undefined) {
       Keyboard.element.querySelector('rect[data-index="'+noteIndex+'"]').classList.remove('note-playing')
 
-      var note = Tone.Frequency().midiToFrequency((Keyboard.octave*12)+noteIndex)
+      var note = Tone.Frequency((Keyboard.octave*12)+noteIndex, 'midi')
 
       if (currentNotes[note] === true) {
         // console.log('should end')
