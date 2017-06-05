@@ -50,6 +50,9 @@
         document.body.appendChild(this.element)
         _this._copyAllButton = _this.element.querySelector('div.copy-all')
 
+        // call callDrawCallbacks
+        this.callDrawCallbacks()
+
         return _this.element
       }
       this.expand = function() {
@@ -78,6 +81,8 @@
       }
     }
 
+    Tone.extend(Tone.Editor)
+
     Tone.Editor.prototype._focusValueElement = function(element) {
       element.setAttribute('data-previous-value', element.innerHTML)
       element.setAttribute('contenteditable', true)
@@ -85,7 +90,16 @@
       document.execCommand('selectAll',false,null)
     }
 
-    Tone.extend(Tone.Editor)
+    Tone.Editor.prototype.deferred = []
+    Tone.Editor.prototype.deferUntilDrawn = function(callback) {
+      this.deferred.push(callback)
+    }
+    Tone.Editor.prototype.callDrawCallbacks = function() {
+      this.deferred.forEach( function(callback) {
+        callback()
+      })
+    }
+
 
     // INITIALIZE Tone.Editor
     var EditorConstructor = Tone.Editor

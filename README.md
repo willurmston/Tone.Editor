@@ -123,4 +123,3 @@ Thanks to the author of Tone.js, [Yotam Mann](https://github.com/tambien), and t
 ### Known bugs (tested with Tone.js r10)
 * In the Transport component, changing the BPM doesn't update the loop points if they are in notation format
 * Resizing the panel is kinda finicky
-* Tone.Editor.js has to be linked to in the **body** of your HTML

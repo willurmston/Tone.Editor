@@ -441,6 +441,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
         document.body.appendChild(this.element)
         _this._copyAllButton = _this.element.querySelector('div.copy-all')
 
+        // call callDrawCallbacks
+        this.callDrawCallbacks()
+
         return _this.element
       }
       this.expand = function() {
@@ -469,6 +472,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
       }
     }
 
+    Tone.extend(Tone.Editor)
+
     Tone.Editor.prototype._focusValueElement = function(element) {
       element.setAttribute('data-previous-value', element.innerHTML)
       element.setAttribute('contenteditable', true)
@@ -476,7 +481,16 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
       document.execCommand('selectAll',false,null)
     }
 
-    Tone.extend(Tone.Editor)
+    Tone.Editor.prototype.deferred = []
+    Tone.Editor.prototype.deferUntilDrawn = function(callback) {
+      this.deferred.push(callback)
+    }
+    Tone.Editor.prototype.callDrawCallbacks = function() {
+      this.deferred.forEach( function(callback) {
+        callback()
+      })
+    }
+
 
     // INITIALIZE Tone.Editor
     var EditorConstructor = Tone.Editor
@@ -978,7 +992,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 /* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(22),__webpack_require__(0),__webpack_require__(2),__webpack_require__(1), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_RESULT__ = function (Clipboard, utils, ToneEditor, State, Component) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(22),__webpack_require__(2),__webpack_require__(0),__webpack_require__(1), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_RESULT__ = function (Clipboard, utils, ToneEditor, State, Component) {
 
   Component.prototype.toString = function(minify, useRefObjects) {
     var _this = this
@@ -1018,35 +1032,38 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     return result
   }
 
-  // RETURNS FLATTENED PROPERTIES OF TONECOMPONENT
-  new Clipboard( '.tone-editor_container .copy-button', {
-    text: function(copyButton) {
-      var text = ''
+  Tone.Editor.deferUntilDrawn( function() {
+    // RETURNS FLATTENED PROPERTIES OF TONECOMPONENT
+    new Clipboard( '.tone-editor_container .copy-button', {
+      text: function(copyButton) {
+        var text = ''
 
-      if (copyButton.classList.contains('copy-all')) { // it's the copy-all button
-        ToneEditor.components.forEach( function(component) {
-          text+='var '+component.id+'Settings = '+component.toString(true, true)+';\n\n'
-        })
+        if (copyButton.classList.contains('copy-all')) { // it's the copy-all button
+          ToneEditor.components.forEach( function(component) {
+            text+='var '+component.id+'Settings = '+component.toString(true, true)+';\n\n'
+          })
 
-      } else { // It's a component copy button
-        var id = copyButton.getAttribute('data-component-id')
-        var component = ToneEditor.componentsById[id]
+        } else { // It's a component copy button
+          var id = copyButton.getAttribute('data-component-id')
+          var component = ToneEditor.componentsById[id]
 
-        text+='var '+id+'Settings = '+component.toString()+';'
+          text+='var '+id+'Settings = '+component.toString()+';'
+        }
+
+        // ANIMATION
+        copyButton.innerHTML = '✔️'
+        copyButton.style = '-webkit-animation: copy-button-animation 0.5s forwards; animation: copy-button-animation 0.5s forwards;'
+
+        setTimeout( function() {
+          copyButton.innerHTML = '📋'
+          copyButton.style = ''
+        }, 500)
+
+        return text
       }
-
-      // ANIMATION
-      copyButton.innerHTML = '✔️'
-      copyButton.style = '-webkit-animation: copy-button-animation 0.5s forwards; animation: copy-button-animation 0.5s forwards;'
-
-      setTimeout( function() {
-        copyButton.innerHTML = '📋'
-        copyButton.style = ''
-      }, 500)
-
-      return text
-    }
+    })
   })
+
 
   ToneEditor.download = function() {
     var text = ''
@@ -1058,6 +1075,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
     utils.downloadTextFile(filename, text)
   }
+
 
 }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__))
@@ -10471,7 +10489,7 @@ module.exports = "<div class=subcomponent> <div class=component-header> <h3 clas
 /* 29 */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=tone-editor_container> <div class=\"expand-triangle panel-expand-triangle expanded\"></div> <h3 class=collapsed-tone-js-logo> Tone.js </h3> <div class=header> <div class=top-row> <h3 class=tone-js-logo>Tone.js</h3> <div class=extra-buttons> <div class=keyboard-button>🎹</div> <div class=\"copy-button copy-all\">📋</div> <div class=download-button>💾</div> <div class=docs-button><a href=https://github.com/willurmston/ToneEditor#readme target=_blank>?</a></div> </div> </div> <div class=keyboard-container> <svg class=keyboard xmlns=http://www.w3.org/2000/svg viewBox=\"0 0 400.5 70\"> <defs> <style>.cls-5,.white{fill:#fff}.black,.white{stroke:#979797;stroke-width:.5px}.black{fill:#494949}.black,.cls-4,.cls-5{isolation:isolate}.cls-4,.cls-5{font-size:24px;font-family:Inconsolata-Bold,Inconsolata;font-weight:700;letter-spacing:.05em}.cls-4{fill:#5e5e5e}</style> </defs> <g id=white-keys> <rect data-index=0 class=\"key white\" x=0.25 y=0.25 width=36.36 height=70 /> <rect data-index=2 class=\"key white\" x=36.61 y=0.25 width=36.36 height=70 /> <rect data-index=4 class=\"key white\" x=72.98 y=0.25 width=36.36 height=70 /> <rect data-index=5 class=\"key white\" x=109.34 y=0.25 width=36.36 height=70 /> <rect data-index=7 class=\"key white\" x=145.7 y=0.25 width=36.36 height=70 /> <rect data-index=9 class=\"key white\" x=182.07 y=0.25 width=36.36 height=70 /> <rect data-index=11 class=\"key white\" x=218.43 y=0.25 width=36.36 height=70 /> <rect data-index=12 class=\"key white\" x=254.8 y=0.25 width=36.36 height=70 /> <rect data-index=14 class=\"key white\" x=291.16 y=0.25 width=36.36 height=70 /> <rect data-index=16 class=\"key white\" x=327.52 y=0.25 width=36.36 height=70 /> <rect data-index=17 class=\"key white\" x=363.89 y=0.25 width=36.36 height=70 /> </g> <g id=black-keys> <rect data-index=1 class=\"key black\" x=22.25 y=0.25 width=29.12 height=34.46 /> <rect data-index=3 class=\"key black\" x=58.25 y=0.25 width=29.12 height=34.46 /> <rect data-index=6 class=\"key black\" x=131.25 y=0.25 width=29.12 height=34.46 /> <rect data-index=8 class=\"key black\" x=167.25 y=0.25 width=29.12 height=34.46 /> <rect data-index=10 class=\"key black\" x=204.25 y=0.25 width=29.12 height=34.46 /> <rect data-index=13 class=\"key black\" x=276.25 y=0.25 width=29.12 height=34.46 /> <rect data-index=15 class=\"key black\" x=313.25 y=0.25 width=29.12 height=34.46 /> </g> <g id=labels> <g id=A class=black> <text class=cls-4 transform=\"translate(12.77 61.33)\">A</text> </g> <g id=J class=black> <text class=cls-4 transform=\"translate(230.95 61.33)\">J</text> </g> <g id=F class=black> <text class=cls-4 transform=\"translate(121.86 61.33)\">F</text> </g> <g id=_ data-name=; class=black> <text class=cls-4 transform=\"translate(340.04 61.33)\">;</text> </g> <g id=S class=black> <text class=cls-4 transform=\"translate(49.13 61.33)\">S</text> </g> <g id=K class=black> <text class=cls-4 transform=\"translate(267.31 61.33)\">K</text> </g> <g id=G class=black> <text class=cls-4 transform=\"translate(158.22 61.33)\">G</text> </g> <g id=_2 data-name=‘ class=black> <text class=cls-4 transform=\"translate(376.03 61.33)\">‘</text> </g> <g id=D class=black> <text class=cls-4 transform=\"translate(83.58 61.33)\">D</text> </g> <g id=L class=black> <text class=cls-4 transform=\"translate(301.76 61.33)\">L</text> </g> <g id=H class=black> <text class=cls-4 transform=\"translate(192.67 61.33)\">H</text> </g> <g id=W class=black> <text class=cls-5 transform=\"translate(30.36 25.68)\">W</text> </g> <g id=E class=black> <text class=cls-5 transform=\"translate(66.36 25.68)\">E</text> </g> <g id=T class=black> <text class=cls-5 transform=\"translate(139.36 25.68)\">T</text> </g> <g id=Y class=black> <text class=cls-5 transform=\"translate(175.36 25.68)\">Y</text> </g> <g id=U class=black> <text class=cls-5 transform=\"translate(212.36 25.68)\">U</text> </g> <g id=O class=black> <text class=cls-5 transform=\"translate(284.36 25.68)\">O</text> </g> <g id=P class=black> <text class=cls-5 transform=\"translate(321.36 25.68)\">P</text> </g> </g> </svg> <div class=note-name> </div> </div> </div> <div class=component-container> </div> </div> ";
+module.exports = "<div class=tone-editor_container> <div class=\"expand-triangle panel-expand-triangle expanded\"></div> <h3 class=collapsed-tone-js-logo> Tone.js </h3> <div class=header> <div class=top-row> <h3 class=tone-js-logo>Tone.js</h3> <div class=extra-buttons> <div class=keyboard-button>🎹</div> <div class=\"copy-button copy-all\">📋</div> <div class=download-button>💾</div> <div class=docs-button><a href=https://github.com/willurmston/Tone.Editor#add target=_blank>?</a></div> </div> </div> <div class=keyboard-container> <svg class=keyboard xmlns=http://www.w3.org/2000/svg viewBox=\"0 0 400.5 70\"> <defs> <style>.cls-5,.white{fill:#fff}.black,.white{stroke:#979797;stroke-width:.5px}.black{fill:#494949}.black,.cls-4,.cls-5{isolation:isolate}.cls-4,.cls-5{font-size:24px;font-family:Inconsolata-Bold,Inconsolata;font-weight:700;letter-spacing:.05em}.cls-4{fill:#5e5e5e}</style> </defs> <g id=white-keys> <rect data-index=0 class=\"key white\" x=0.25 y=0.25 width=36.36 height=70 /> <rect data-index=2 class=\"key white\" x=36.61 y=0.25 width=36.36 height=70 /> <rect data-index=4 class=\"key white\" x=72.98 y=0.25 width=36.36 height=70 /> <rect data-index=5 class=\"key white\" x=109.34 y=0.25 width=36.36 height=70 /> <rect data-index=7 class=\"key white\" x=145.7 y=0.25 width=36.36 height=70 /> <rect data-index=9 class=\"key white\" x=182.07 y=0.25 width=36.36 height=70 /> <rect data-index=11 class=\"key white\" x=218.43 y=0.25 width=36.36 height=70 /> <rect data-index=12 class=\"key white\" x=254.8 y=0.25 width=36.36 height=70 /> <rect data-index=14 class=\"key white\" x=291.16 y=0.25 width=36.36 height=70 /> <rect data-index=16 class=\"key white\" x=327.52 y=0.25 width=36.36 height=70 /> <rect data-index=17 class=\"key white\" x=363.89 y=0.25 width=36.36 height=70 /> </g> <g id=black-keys> <rect data-index=1 class=\"key black\" x=22.25 y=0.25 width=29.12 height=34.46 /> <rect data-index=3 class=\"key black\" x=58.25 y=0.25 width=29.12 height=34.46 /> <rect data-index=6 class=\"key black\" x=131.25 y=0.25 width=29.12 height=34.46 /> <rect data-index=8 class=\"key black\" x=167.25 y=0.25 width=29.12 height=34.46 /> <rect data-index=10 class=\"key black\" x=204.25 y=0.25 width=29.12 height=34.46 /> <rect data-index=13 class=\"key black\" x=276.25 y=0.25 width=29.12 height=34.46 /> <rect data-index=15 class=\"key black\" x=313.25 y=0.25 width=29.12 height=34.46 /> </g> <g id=labels> <g id=A class=black> <text class=cls-4 transform=\"translate(12.77 61.33)\">A</text> </g> <g id=J class=black> <text class=cls-4 transform=\"translate(230.95 61.33)\">J</text> </g> <g id=F class=black> <text class=cls-4 transform=\"translate(121.86 61.33)\">F</text> </g> <g id=_ data-name=; class=black> <text class=cls-4 transform=\"translate(340.04 61.33)\">;</text> </g> <g id=S class=black> <text class=cls-4 transform=\"translate(49.13 61.33)\">S</text> </g> <g id=K class=black> <text class=cls-4 transform=\"translate(267.31 61.33)\">K</text> </g> <g id=G class=black> <text class=cls-4 transform=\"translate(158.22 61.33)\">G</text> </g> <g id=_2 data-name=‘ class=black> <text class=cls-4 transform=\"translate(376.03 61.33)\">‘</text> </g> <g id=D class=black> <text class=cls-4 transform=\"translate(83.58 61.33)\">D</text> </g> <g id=L class=black> <text class=cls-4 transform=\"translate(301.76 61.33)\">L</text> </g> <g id=H class=black> <text class=cls-4 transform=\"translate(192.67 61.33)\">H</text> </g> <g id=W class=black> <text class=cls-5 transform=\"translate(30.36 25.68)\">W</text> </g> <g id=E class=black> <text class=cls-5 transform=\"translate(66.36 25.68)\">E</text> </g> <g id=T class=black> <text class=cls-5 transform=\"translate(139.36 25.68)\">T</text> </g> <g id=Y class=black> <text class=cls-5 transform=\"translate(175.36 25.68)\">Y</text> </g> <g id=U class=black> <text class=cls-5 transform=\"translate(212.36 25.68)\">U</text> </g> <g id=O class=black> <text class=cls-5 transform=\"translate(284.36 25.68)\">O</text> </g> <g id=P class=black> <text class=cls-5 transform=\"translate(321.36 25.68)\">P</text> </g> </g> </svg> <div class=note-name> </div> </div> </div> <div class=component-container> </div> </div> ";
 
 /***/ }),
 /* 30 */

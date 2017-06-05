@@ -1,4 +1,4 @@
-define(['./libs/clipboard.min','Utils','ToneEditor','State', 'Templates/Components/Component'], function (Clipboard, utils, ToneEditor, State, Component) {
+define(['./libs/clipboard.min','ToneEditor','Utils','State', 'Templates/Components/Component'], function (Clipboard, utils, ToneEditor, State, Component) {
 
   Component.prototype.toString = function(minify, useRefObjects) {
     var _this = this
@@ -38,35 +38,38 @@ define(['./libs/clipboard.min','Utils','ToneEditor','State', 'Templates/Componen
     return result
   }
 
-  // RETURNS FLATTENED PROPERTIES OF TONECOMPONENT
-  new Clipboard( '.tone-editor_container .copy-button', {
-    text: function(copyButton) {
-      var text = ''
+  Tone.Editor.deferUntilDrawn( function() {
+    // RETURNS FLATTENED PROPERTIES OF TONECOMPONENT
+    new Clipboard( '.tone-editor_container .copy-button', {
+      text: function(copyButton) {
+        var text = ''
 
-      if (copyButton.classList.contains('copy-all')) { // it's the copy-all button
-        ToneEditor.components.forEach( function(component) {
-          text+='var '+component.id+'Settings = '+component.toString(true, true)+';\n\n'
-        })
+        if (copyButton.classList.contains('copy-all')) { // it's the copy-all button
+          ToneEditor.components.forEach( function(component) {
+            text+='var '+component.id+'Settings = '+component.toString(true, true)+';\n\n'
+          })
 
-      } else { // It's a component copy button
-        var id = copyButton.getAttribute('data-component-id')
-        var component = ToneEditor.componentsById[id]
+        } else { // It's a component copy button
+          var id = copyButton.getAttribute('data-component-id')
+          var component = ToneEditor.componentsById[id]
 
-        text+='var '+id+'Settings = '+component.toString()+';'
+          text+='var '+id+'Settings = '+component.toString()+';'
+        }
+
+        // ANIMATION
+        copyButton.innerHTML = '✔️'
+        copyButton.style = '-webkit-animation: copy-button-animation 0.5s forwards; animation: copy-button-animation 0.5s forwards;'
+
+        setTimeout( function() {
+          copyButton.innerHTML = '📋'
+          copyButton.style = ''
+        }, 500)
+
+        return text
       }
-
-      // ANIMATION
-      copyButton.innerHTML = '✔️'
-      copyButton.style = '-webkit-animation: copy-button-animation 0.5s forwards; animation: copy-button-animation 0.5s forwards;'
-
-      setTimeout( function() {
-        copyButton.innerHTML = '📋'
-        copyButton.style = ''
-      }, 500)
-
-      return text
-    }
+    })
   })
+
 
   ToneEditor.download = function() {
     var text = ''
@@ -78,5 +81,6 @@ define(['./libs/clipboard.min','Utils','ToneEditor','State', 'Templates/Componen
 
     utils.downloadTextFile(filename, text)
   }
+
 
 })

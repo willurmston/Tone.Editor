@@ -16,14 +16,25 @@
         color: black;
       }
     </style>
+
+
+      <!-- include Tone.js -->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/0.10.0/Tone.min.js"></script>
+
+      <script type="text/javascript">
+
+        console.log(Tone.Master)
+      </script>
+
+      <!-- include Tone.Editor.js after Tone.js -->
+
+      <script src="../build/Tone.Editor.js" charset="utf-8"></script>
+
   </head>
+
   <body>
 
-    <!-- include Tone.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/0.10.0/Tone.min.js"></script>
 
-    <!-- include Tone.Editor.js after Tone.js -->
-    <script src="../build/Tone.Editor.js" charset="utf-8"></script>
 
     <h1 id="text">My cool music site</h1>
 
@@ -86,8 +97,8 @@
 
       Tone.Transport.start()
 
-      console.log(Tone.Editor)
-      // Tone.Editor ///////////////////////////////////////////////////////
+      console.log(Tone.Master, Tone.Editor)
+      Tone.Editor ///////////////////////////////////////////////////////
       Tone.Editor.add({
         'synth': synth,
         'reverb': reverb
