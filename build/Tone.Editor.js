@@ -1206,8 +1206,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
 
       if (_this.initialized === true && _this.overwritten === false) {
         _this.element.addClass('overwritten')
-        // ToneEditor._editedParameters.push(ui)
-        // ToneEditor._updateEditCount()
+
         _this.overwritten = true
       }
 
@@ -1270,7 +1269,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
       //ON CREATION, GET TONE, SET VALUE/SLIDER
       var value = _this.getValue()
 
-      // CHECK IF PARAMETER IS CONTROLLED BY ANOTHER SIGNAL
+      // CHECK IF PARAMETER IS CONTROLLED BY ANOTHER SIGNAL -- unsupported for now, maybe add later
       // if (_this.toneParameter.overridden) {
       //   var blocker = document.createElement('div')
       //   blocker.classList.add('blocker')
@@ -1292,7 +1291,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
     //SETUP VALUE ELEMENT
     this.valueElement = this.element.querySelector('div.value')
     this.valueElement.addEventListener('mouseover', function(e) {
-      if (ToneEditor.mouseIsDown) {
+      if (Tone.Editor.mouseIsDown) {
         e.preventDefault()
       }
     })

@@ -1,13 +1,17 @@
 
 
-![Banner](https://cdn.rawgit.com/willurmston/ToneEditor/40cb09e8/github-assets/banner.svg)
+<!-- ![Banner](https://cdn.rawgit.com/willurmston/Tone.Editor/40cb09e8/github-assets/banner.svg) -->
+
+## Tone.Editor
 
 
 <!-- # Tone.Editor -->
 A GUI overlay for making websites using [Tone.js](https://github.com/Tonejs/Tone.js). Use it during design and development, then throw it out when you're done. **(BETA)**
 
+![Banner](https://rawgit.com/willurmston/Tone.Editor/master/github-assets/screenshot.png)
+
 ### Why?
-Tone.js is a fun, flexible and hi-performance web music framework, but because it's text-based, the process of being creative with it can be slow. A GUI layer solves this problem, allowing you fiddle with parameters of all your Tone objects in real time, then copy the changes into your code. [Play with a demo here](http://urmston.xyz/ToneEditor/examples/midi.html).
+Tone.js is a fun, flexible and hi-performance web music framework, but because it's text-based, the process of being creative with it can be slow. A GUI layer solves this problem, allowing you fiddle with parameters of all your Tone objects in real time, then copy the changes into your code. [Play with a demo here](http://urmston.xyz/Tone.Editor/examples/midi.html).
 
 ### Setup
 Include Tone-Editor.min.js in your page *after* Tone.js. **Note** For some reason you have to put it in the body, not the head for now.
@@ -57,7 +61,7 @@ var synth = new Tone.MonoSynth(synthSettings).connect(reverb)
 Use `Tone.Editor.add()` to add your Tone objects to the Editor. Optional: customize a component's color.
 
 ```javascript
-ToneEditor
+Tone.Editor
   .add('synth', synth)
   .add({
     reverb: reverb,
@@ -77,18 +81,18 @@ Any changes made to the GUI will affect your Tone objects.
 ### .master()
 Adds Tone.Master to the Editor
 ```javascript
-ToneEditor.master()
+Tone.Editor.master()
 ```
 
 ### .transport()
 Adds Tone.Transport to the Editor. *Optional: set the in and out points (in any Tone.Time format) of the progress scrubber*
 ```javascript
-ToneEditor.transport('0:0:0', '16:0:0')
+Tone.Editor.transport('0:0:0', '16:0:0')
 ```
 ### .options()
 Change options (defaults are below)
 ```javascript
-ToneEditor.options({
+Tone.Editor.options({
   // Align the panel left or right
   align: 'left',
 
@@ -120,4 +124,4 @@ Thanks to the author of Tone.js, [Yotam Mann](https://github.com/tambien), and t
 ### Known bugs (tested with Tone.js r10)
 * In the Transport component, changing the BPM doesn't update the loop points if they are in notation format
 * Resizing the panel is kinda finicky
-* ToneEditor.js has to be linked to in the **body** of your HTML
+* Tone.Editor.js has to be linked to in the **body** of your HTML
