@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>ToneEditor Example</title>
+    <title>Tone.Editor Example</title>
 
     <style media="screen">
       #text{
@@ -23,7 +23,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/0.10.0/Tone.min.js"></script>
 
     <!-- include ToneEditor.js after Tone.js -->
-    <script src="../build/ToneEditor.js" charset="utf-8"></script>
+    <script src="../build/Tone.Editor.js" charset="utf-8"></script>
 
     <h1 id="text">My cool music site</h1>
 
@@ -86,8 +86,9 @@
 
       Tone.Transport.start()
 
-      // ToneEditor ///////////////////////////////////////////////////////
-      ToneEditor.add({
+      console.log(Tone.Editor)
+      // Tone.Editor ///////////////////////////////////////////////////////
+      Tone.Editor.add({
         'synth': synth,
         'reverb': reverb
       })

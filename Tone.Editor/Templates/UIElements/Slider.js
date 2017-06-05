@@ -40,12 +40,9 @@ define(['Utils', 'Templates/UIElements/UIElement', 'Keyboard'], function(utils, 
       }
 
       _this.valueElement.innerHTML = nx.prune(value, 2)
-
     }
 
     // BUILD HTML
-
-
 
     // STORE ELEMENT AND DITCH tempContainer
     this.element = utils.nodeFromString( require('./Slider.html') )

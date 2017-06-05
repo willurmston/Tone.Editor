@@ -42,7 +42,7 @@ define([
   }
 
   // export global variable
-  window.ToneEditor = ToneEditor
+  // Tone.Editor = ToneEditor
 })
 
 

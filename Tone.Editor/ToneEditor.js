@@ -1,6 +1,8 @@
 
   define('ToneEditor', ['Utils'], function(utils) {
-    var ToneEditor = function() {
+
+    Tone.Editor = function() {
+
       // See README for documentation
       this._options = {
         // public options (accessible from API)
@@ -76,12 +78,19 @@
       }
     }
 
-    ToneEditor.prototype._focusValueElement = function(element) {
+    Tone.Editor.prototype._focusValueElement = function(element) {
       element.setAttribute('data-previous-value', element.innerHTML)
       element.setAttribute('contenteditable', true)
       element.focus()
       document.execCommand('selectAll',false,null)
     }
 
-    module.exports = new ToneEditor()
+    Tone.extend(Tone.Editor)
+
+    // INITIALIZE Tone.Editor
+    var EditorConstructor = Tone.Editor
+    Tone.Editor = new EditorConstructor()
+
+    module.exports = Tone.Editor
+
   })

@@ -54,7 +54,7 @@ var reverb = new Tone.Freeverb(reverbSettings).toMaster()
 var synth = new Tone.MonoSynth(synthSettings).connect(reverb)
 ```
 ### .add()
-Use `ToneEditor.add()` to add your Tone objects to the Editor. Optional: customize a component's color.
+Use `Tone.Editor.add()` to add your Tone objects to the Editor. Optional: customize a component's color.
 
 ```javascript
 ToneEditor

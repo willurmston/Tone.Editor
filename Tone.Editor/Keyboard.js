@@ -1,9 +1,9 @@
-define('Keyboard', ['Utils','ToneEditor','State'], function(utils, ToneEditor, State){
+define('Keyboard', ['Utils', 'ToneEditor','State'], function(utils, ToneEditor, State){
 
   var State = require('State')
 
   var Keyboard = {
-    element: ToneEditor.element.querySelector('svg.keyboard'),
+    element: Tone.Editor.element.querySelector('svg.keyboard'),
     target: null,
     isActive: false,
     isVisible: false,
@@ -12,7 +12,7 @@ define('Keyboard', ['Utils','ToneEditor','State'], function(utils, ToneEditor, S
     show: function() {
       // this.element.classList.remove('collapsed')
       this.isVisible = true
-      ToneEditor.element.classList.add('keyboard-visible')
+      Tone.Editor.element.classList.add('keyboard-visible')
 
       // var State = require('State')
       // State.save()
@@ -24,7 +24,7 @@ define('Keyboard', ['Utils','ToneEditor','State'], function(utils, ToneEditor, S
     hide: function() {
       // this.element.classList.add('collapsed')
       this.isVisible = false
-      ToneEditor.element.classList.remove('keyboard-visible')
+      Tone.Editor.element.classList.remove('keyboard-visible')
 
       // var State = require('State')
       // State.save()
@@ -105,7 +105,7 @@ define('Keyboard', ['Utils','ToneEditor','State'], function(utils, ToneEditor, S
   Keyboard.octave = 4 // middle c
 
   // note name textbox
-  var noteNameEl = ToneEditor.element.querySelector('.note-name')
+  var noteNameEl = Tone.Editor.element.querySelector('.note-name')
 
 
 

@@ -5,16 +5,16 @@ var UnminifiedWebpackPlugin = require('unminified-webpack-plugin')
 
 module.exports = {
     entry: {
-        main: [ path.join(__dirname, './ToneEditor/Initialize')],
+        main: [ path.join(__dirname, './Tone.Editor/Initialize')],
     },
     resolve: {
         extensions: [".js"],
-        modules: [path.resolve('./ToneEditor')]
+        modules: [path.resolve('./Tone.Editor')]
     },
     output: {
-        publicPath: "/ToneEditor/",
+        publicPath: "/Tone.Editor/",
         path: path.join(__dirname, 'build'),
-        filename: 'ToneEditor.min.js'
+        filename: 'Tone.Editor.min.js'
     },
     module: {
       loaders:[],

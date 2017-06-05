@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
 /******/
 /******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "/ToneEditor/";
+/******/ 	__webpack_require__.p = "/Tone.Editor/";
 /******/
 /******/ 	// Load entry module and return exports
 /******/ 	return __webpack_require__(__webpack_require__.s = 42);
@@ -391,7 +391,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
   !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils) {
-    var ToneEditor = function() {
+
+    Tone.Editor = function() {
+
       // See README for documentation
       this._options = {
         // public options (accessible from API)
@@ -467,14 +469,21 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
       }
     }
 
-    ToneEditor.prototype._focusValueElement = function(element) {
+    Tone.Editor.prototype._focusValueElement = function(element) {
       element.setAttribute('data-previous-value', element.innerHTML)
       element.setAttribute('contenteditable', true)
       element.focus()
       document.execCommand('selectAll',false,null)
     }
 
-    module.exports = new ToneEditor()
+    Tone.extend(Tone.Editor)
+
+    // INITIALIZE Tone.Editor
+    var EditorConstructor = Tone.Editor
+    Tone.Editor = new EditorConstructor()
+
+    module.exports = Tone.Editor
+
   }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__))
 
@@ -483,12 +492,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0),__webpack_require__(2),__webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, ToneEditor, State){
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(2),__webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, ToneEditor, State){
 
   var State = __webpack_require__(1)
 
   var Keyboard = {
-    element: ToneEditor.element.querySelector('svg.keyboard'),
+    element: Tone.Editor.element.querySelector('svg.keyboard'),
     target: null,
     isActive: false,
     isVisible: false,
@@ -497,7 +506,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     show: function() {
       // this.element.classList.remove('collapsed')
       this.isVisible = true
-      ToneEditor.element.classList.add('keyboard-visible')
+      Tone.Editor.element.classList.add('keyboard-visible')
 
       // var State = require('State')
       // State.save()
@@ -509,7 +518,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     hide: function() {
       // this.element.classList.add('collapsed')
       this.isVisible = false
-      ToneEditor.element.classList.remove('keyboard-visible')
+      Tone.Editor.element.classList.remove('keyboard-visible')
 
       // var State = require('State')
       // State.save()
@@ -590,7 +599,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
   Keyboard.octave = 4 // middle c
 
   // note name textbox
-  var noteNameEl = ToneEditor.element.querySelector('.note-name')
+  var noteNameEl = Tone.Editor.element.querySelector('.note-name')
 
 
 
@@ -1220,12 +1229,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
       }
 
       _this.valueElement.innerHTML = nx.prune(value, 2)
-
     }
 
     // BUILD HTML
-
-
 
     // STORE ELEMENT AND DITCH tempContainer
     this.element = utils.nodeFromString( __webpack_require__(31) )
@@ -1470,7 +1476,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
   }
 
   // export global variable
-  window.ToneEditor = ToneEditor
+  // Tone.Editor = ToneEditor
 }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__))
 
