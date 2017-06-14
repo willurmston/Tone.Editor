@@ -164,7 +164,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
       return this.charAt(0).toUpperCase() + this.slice(1);
   }
 
-  function extend(obj, props) {
+  var utils = {}
+
+  utils.extend = function(obj, props) {
       for(var prop in props) {
           if(props.hasOwnProperty(prop)) {
               obj[prop] = props[prop];
@@ -172,13 +174,31 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
       }
   }
 
-  function remap(x, in_min , in_max , out_min , out_max ) {
+  utils.remap = function(x, in_min , in_max , out_min , out_max ) {
     if (x < in_min) { x = in_min }
     if (x > in_max) { x = in_max }
       return ( x - in_min ) * ( out_max - out_min ) / ( in_max - in_min ) + out_min;
   }
 
-  function iterate(obj, func) {
+  // adapted from https://stackoverflow.com/questions/846221/logarithmic-slider
+  utils.remapLog = function(x, in_min, in_max, out_min, out_max) {
+
+    // calculate adjustment factor
+    var scale = (out_max-out_min) / (in_max-in_min);
+
+    if (x > in_max) x = in_max
+
+    if (x > 0) {
+      var output = Math.exp(out_min + scale*(x-in_min))
+    } else {
+      var output = 0
+    }
+
+    return  output
+  }
+
+
+  utils.iterate = function(obj, func) {
     for (var key in obj) {
       if ( obj.hasOwnProperty(key) ) {
         func(key, obj[key])
@@ -186,7 +206,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     }
   }
 
-  function getWindowSize() {
+  utils.getWindowSize = function() {
     var w = window,
     d = document,
     e = d.documentElement,
@@ -198,7 +218,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
   }
 
 
-  function downloadTextFile(filename, text) {
+  utils.downloadTextFile = function(filename, text) {
     var element = document.createElement('a');
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
     element.setAttribute('download', filename);
@@ -211,25 +231,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     document.body.removeChild(element);
   }
 
-  function nodeFromString( html ) {
+  utils.nodeFromString = function( html ) {
     var tempContainer = document.createElement('div')
     tempContainer.innerHTML = html
 
     return tempContainer.firstElementChild
   }
 
-  var utils = {
-    extend: extend,
-    remap: remap,
-    iterate: iterate,
-    classify: classify,
-    getMeta: getMeta,
-    isSignal: isSignal,
-    getWindowSize: getWindowSize,
-    downloadTextFile: downloadTextFile,
-    nodeFromString: nodeFromString,
-    merge: __webpack_require__(20)
-  }
+  utils.merge = __webpack_require__(20)
 
   window.utils = utils
   module.exports = utils
@@ -10489,7 +10498,7 @@ module.exports = "<div class=subcomponent> <div class=component-header> <h3 clas
 /* 29 */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=tone-editor_container> <div class=\"expand-triangle panel-expand-triangle expanded\"></div> <h3 class=collapsed-tone-js-logo> Tone.js </h3> <div class=header> <div class=top-row> <h3 class=tone-js-logo>Tone.js</h3> <div class=extra-buttons> <div class=keyboard-button>🎹</div> <div class=\"copy-button copy-all\">📋</div> <div class=download-button>💾</div> <div class=docs-button><a href=https://github.com/willurmston/Tone.Editor#add target=_blank>?</a></div> </div> </div> <div class=keyboard-container> <svg class=keyboard xmlns=http://www.w3.org/2000/svg viewBox=\"0 0 400.5 70\"> <defs> <style>.cls-5,.white{fill:#fff}.black,.white{stroke:#979797;stroke-width:.5px}.black{fill:#494949}.black,.cls-4,.cls-5{isolation:isolate}.cls-4,.cls-5{font-size:24px;font-family:Inconsolata-Bold,Inconsolata;font-weight:700;letter-spacing:.05em}.cls-4{fill:#5e5e5e}</style> </defs> <g id=white-keys> <rect data-index=0 class=\"key white\" x=0.25 y=0.25 width=36.36 height=70 /> <rect data-index=2 class=\"key white\" x=36.61 y=0.25 width=36.36 height=70 /> <rect data-index=4 class=\"key white\" x=72.98 y=0.25 width=36.36 height=70 /> <rect data-index=5 class=\"key white\" x=109.34 y=0.25 width=36.36 height=70 /> <rect data-index=7 class=\"key white\" x=145.7 y=0.25 width=36.36 height=70 /> <rect data-index=9 class=\"key white\" x=182.07 y=0.25 width=36.36 height=70 /> <rect data-index=11 class=\"key white\" x=218.43 y=0.25 width=36.36 height=70 /> <rect data-index=12 class=\"key white\" x=254.8 y=0.25 width=36.36 height=70 /> <rect data-index=14 class=\"key white\" x=291.16 y=0.25 width=36.36 height=70 /> <rect data-index=16 class=\"key white\" x=327.52 y=0.25 width=36.36 height=70 /> <rect data-index=17 class=\"key white\" x=363.89 y=0.25 width=36.36 height=70 /> </g> <g id=black-keys> <rect data-index=1 class=\"key black\" x=22.25 y=0.25 width=29.12 height=34.46 /> <rect data-index=3 class=\"key black\" x=58.25 y=0.25 width=29.12 height=34.46 /> <rect data-index=6 class=\"key black\" x=131.25 y=0.25 width=29.12 height=34.46 /> <rect data-index=8 class=\"key black\" x=167.25 y=0.25 width=29.12 height=34.46 /> <rect data-index=10 class=\"key black\" x=204.25 y=0.25 width=29.12 height=34.46 /> <rect data-index=13 class=\"key black\" x=276.25 y=0.25 width=29.12 height=34.46 /> <rect data-index=15 class=\"key black\" x=313.25 y=0.25 width=29.12 height=34.46 /> </g> <g id=labels> <g id=A class=black> <text class=cls-4 transform=\"translate(12.77 61.33)\">A</text> </g> <g id=J class=black> <text class=cls-4 transform=\"translate(230.95 61.33)\">J</text> </g> <g id=F class=black> <text class=cls-4 transform=\"translate(121.86 61.33)\">F</text> </g> <g id=_ data-name=; class=black> <text class=cls-4 transform=\"translate(340.04 61.33)\">;</text> </g> <g id=S class=black> <text class=cls-4 transform=\"translate(49.13 61.33)\">S</text> </g> <g id=K class=black> <text class=cls-4 transform=\"translate(267.31 61.33)\">K</text> </g> <g id=G class=black> <text class=cls-4 transform=\"translate(158.22 61.33)\">G</text> </g> <g id=_2 data-name=‘ class=black> <text class=cls-4 transform=\"translate(376.03 61.33)\">‘</text> </g> <g id=D class=black> <text class=cls-4 transform=\"translate(83.58 61.33)\">D</text> </g> <g id=L class=black> <text class=cls-4 transform=\"translate(301.76 61.33)\">L</text> </g> <g id=H class=black> <text class=cls-4 transform=\"translate(192.67 61.33)\">H</text> </g> <g id=W class=black> <text class=cls-5 transform=\"translate(30.36 25.68)\">W</text> </g> <g id=E class=black> <text class=cls-5 transform=\"translate(66.36 25.68)\">E</text> </g> <g id=T class=black> <text class=cls-5 transform=\"translate(139.36 25.68)\">T</text> </g> <g id=Y class=black> <text class=cls-5 transform=\"translate(175.36 25.68)\">Y</text> </g> <g id=U class=black> <text class=cls-5 transform=\"translate(212.36 25.68)\">U</text> </g> <g id=O class=black> <text class=cls-5 transform=\"translate(284.36 25.68)\">O</text> </g> <g id=P class=black> <text class=cls-5 transform=\"translate(321.36 25.68)\">P</text> </g> </g> </svg> <div class=note-name> </div> </div> </div> <div class=component-container> </div> </div> ";
+module.exports = "<div class=tone-editor_container> <div class=\"expand-triangle panel-expand-triangle expanded\"></div> <h3 class=collapsed-tone-js-logo> Tone.js </h3> <div class=header> <div class=top-row> <h3 class=tone-js-logo>Tone.js</h3> <div class=extra-buttons> <div class=keyboard-button>🎹</div> <div class=\"copy-button copy-all\">📋</div> <div class=download-button>💾</div> <div class=docs-button><a href=https://github.com/willurmston/Tone.Editor#setup target=_blank>?</a></div> </div> </div> <div class=keyboard-container> <svg class=keyboard xmlns=http://www.w3.org/2000/svg viewBox=\"0 0 400.5 70\"> <defs> <style>.cls-5,.white{fill:#fff}.black,.white{stroke:#979797;stroke-width:.5px}.black{fill:#494949}.black,.cls-4,.cls-5{isolation:isolate}.cls-4,.cls-5{font-size:24px;font-family:Inconsolata-Bold,Inconsolata;font-weight:700;letter-spacing:.05em}.cls-4{fill:#5e5e5e}</style> </defs> <g id=white-keys> <rect data-index=0 class=\"key white\" x=0.25 y=0.25 width=36.36 height=70 /> <rect data-index=2 class=\"key white\" x=36.61 y=0.25 width=36.36 height=70 /> <rect data-index=4 class=\"key white\" x=72.98 y=0.25 width=36.36 height=70 /> <rect data-index=5 class=\"key white\" x=109.34 y=0.25 width=36.36 height=70 /> <rect data-index=7 class=\"key white\" x=145.7 y=0.25 width=36.36 height=70 /> <rect data-index=9 class=\"key white\" x=182.07 y=0.25 width=36.36 height=70 /> <rect data-index=11 class=\"key white\" x=218.43 y=0.25 width=36.36 height=70 /> <rect data-index=12 class=\"key white\" x=254.8 y=0.25 width=36.36 height=70 /> <rect data-index=14 class=\"key white\" x=291.16 y=0.25 width=36.36 height=70 /> <rect data-index=16 class=\"key white\" x=327.52 y=0.25 width=36.36 height=70 /> <rect data-index=17 class=\"key white\" x=363.89 y=0.25 width=36.36 height=70 /> </g> <g id=black-keys> <rect data-index=1 class=\"key black\" x=22.25 y=0.25 width=29.12 height=34.46 /> <rect data-index=3 class=\"key black\" x=58.25 y=0.25 width=29.12 height=34.46 /> <rect data-index=6 class=\"key black\" x=131.25 y=0.25 width=29.12 height=34.46 /> <rect data-index=8 class=\"key black\" x=167.25 y=0.25 width=29.12 height=34.46 /> <rect data-index=10 class=\"key black\" x=204.25 y=0.25 width=29.12 height=34.46 /> <rect data-index=13 class=\"key black\" x=276.25 y=0.25 width=29.12 height=34.46 /> <rect data-index=15 class=\"key black\" x=313.25 y=0.25 width=29.12 height=34.46 /> </g> <g id=labels> <g id=A class=black> <text class=cls-4 transform=\"translate(12.77 61.33)\">A</text> </g> <g id=J class=black> <text class=cls-4 transform=\"translate(230.95 61.33)\">J</text> </g> <g id=F class=black> <text class=cls-4 transform=\"translate(121.86 61.33)\">F</text> </g> <g id=_ data-name=; class=black> <text class=cls-4 transform=\"translate(340.04 61.33)\">;</text> </g> <g id=S class=black> <text class=cls-4 transform=\"translate(49.13 61.33)\">S</text> </g> <g id=K class=black> <text class=cls-4 transform=\"translate(267.31 61.33)\">K</text> </g> <g id=G class=black> <text class=cls-4 transform=\"translate(158.22 61.33)\">G</text> </g> <g id=_2 data-name=‘ class=black> <text class=cls-4 transform=\"translate(376.03 61.33)\">‘</text> </g> <g id=D class=black> <text class=cls-4 transform=\"translate(83.58 61.33)\">D</text> </g> <g id=L class=black> <text class=cls-4 transform=\"translate(301.76 61.33)\">L</text> </g> <g id=H class=black> <text class=cls-4 transform=\"translate(192.67 61.33)\">H</text> </g> <g id=W class=black> <text class=cls-5 transform=\"translate(30.36 25.68)\">W</text> </g> <g id=E class=black> <text class=cls-5 transform=\"translate(66.36 25.68)\">E</text> </g> <g id=T class=black> <text class=cls-5 transform=\"translate(139.36 25.68)\">T</text> </g> <g id=Y class=black> <text class=cls-5 transform=\"translate(175.36 25.68)\">Y</text> </g> <g id=U class=black> <text class=cls-5 transform=\"translate(212.36 25.68)\">U</text> </g> <g id=O class=black> <text class=cls-5 transform=\"translate(284.36 25.68)\">O</text> </g> <g id=P class=black> <text class=cls-5 transform=\"translate(321.36 25.68)\">P</text> </g> </g> </svg> <div class=note-name> </div> </div> </div> <div class=component-container> </div> </div> ";
 
 /***/ }),
 /* 30 */

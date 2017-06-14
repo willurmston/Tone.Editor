@@ -92,7 +92,9 @@ define('Utils', ['./Utils/Classify', './Utils/GetMeta', './Utils/isSignal'], fun
       return this.charAt(0).toUpperCase() + this.slice(1);
   }
 
-  function extend(obj, props) {
+  var utils = {}
+
+  utils.extend = function(obj, props) {
       for(var prop in props) {
           if(props.hasOwnProperty(prop)) {
               obj[prop] = props[prop];
@@ -100,13 +102,31 @@ define('Utils', ['./Utils/Classify', './Utils/GetMeta', './Utils/isSignal'], fun
       }
   }
 
-  function remap(x, in_min , in_max , out_min , out_max ) {
+  utils.remap = function(x, in_min , in_max , out_min , out_max ) {
     if (x < in_min) { x = in_min }
     if (x > in_max) { x = in_max }
       return ( x - in_min ) * ( out_max - out_min ) / ( in_max - in_min ) + out_min;
   }
 
-  function iterate(obj, func) {
+  // adapted from https://stackoverflow.com/questions/846221/logarithmic-slider
+  utils.remapLog = function(x, in_min, in_max, out_min, out_max) {
+
+    // calculate adjustment factor
+    var scale = (out_max-out_min) / (in_max-in_min);
+
+    if (x > in_max) x = in_max
+
+    if (x > 0) {
+      var output = Math.exp(out_min + scale*(x-in_min))
+    } else {
+      var output = 0
+    }
+
+    return  output
+  }
+
+
+  utils.iterate = function(obj, func) {
     for (var key in obj) {
       if ( obj.hasOwnProperty(key) ) {
         func(key, obj[key])
@@ -114,7 +134,7 @@ define('Utils', ['./Utils/Classify', './Utils/GetMeta', './Utils/isSignal'], fun
     }
   }
 
-  function getWindowSize() {
+  utils.getWindowSize = function() {
     var w = window,
     d = document,
     e = d.documentElement,
@@ -126,7 +146,7 @@ define('Utils', ['./Utils/Classify', './Utils/GetMeta', './Utils/isSignal'], fun
   }
 
 
-  function downloadTextFile(filename, text) {
+  utils.downloadTextFile = function(filename, text) {
     var element = document.createElement('a');
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
     element.setAttribute('download', filename);
@@ -139,25 +159,14 @@ define('Utils', ['./Utils/Classify', './Utils/GetMeta', './Utils/isSignal'], fun
     document.body.removeChild(element);
   }
 
-  function nodeFromString( html ) {
+  utils.nodeFromString = function( html ) {
     var tempContainer = document.createElement('div')
     tempContainer.innerHTML = html
 
     return tempContainer.firstElementChild
   }
 
-  var utils = {
-    extend: extend,
-    remap: remap,
-    iterate: iterate,
-    classify: classify,
-    getMeta: getMeta,
-    isSignal: isSignal,
-    getWindowSize: getWindowSize,
-    downloadTextFile: downloadTextFile,
-    nodeFromString: nodeFromString,
-    merge: require('Utils/deepmerge')
-  }
+  utils.merge = require('Utils/deepmerge')
 
   window.utils = utils
   module.exports = utils
