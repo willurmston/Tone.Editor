@@ -240,6 +240,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
   utils.merge = __webpack_require__(20)
 
+  utils.classify = classify
+
+  utils.getMeta = getMeta
+
+  utils.isSignal = isSignal
+
   window.utils = utils
   module.exports = utils
 
@@ -594,7 +600,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
       if (this.target) this.target.keyboardTargetButton.classList.remove('active')
 
       return this
-    }
+    },
+
+    // EVENTS
+    _onNoteStart: [],
+    _onNoteEnd: []
   }
 
   // maps e.keyCode values to noteIndex
@@ -624,27 +634,43 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
   // note name textbox
   var noteNameEl = Tone.Editor.element.querySelector('.note-name')
 
-
+  Keyboard.lastNote = undefined
 
   // keys that are down
   var currentNotes = {}
 
   function startNote(noteIndex) {
     if (Keyboard.isActive && Keyboard.target !== null && noteIndex !== undefined ) {
-      Keyboard.element.querySelector('rect[data-index="'+noteIndex+'"]').classList.add('note-playing')
 
       var note = Tone.Frequency((Keyboard.octave*12)+noteIndex, 'midi')
+
+      Keyboard.lastNote = note
+
+      Keyboard.element.querySelector('rect[data-index="'+noteIndex+'"]').classList.add('note-playing')
 
       if (currentNotes[note] === undefined) {
         currentNotes[note] = true
         noteNameEl.innerHTML = note.toNote() +'<br>'+ note.toMidi()
         Keyboard.target.toneComponent.triggerAttack( note )
+
+        //call notestart callbacks
+        Keyboard._onNoteStart.forEach( function(callback) {
+          callback({
+            name: Keyboard.target.name,
+            target: Keyboard.target.toneComponent,
+            octave: Keyboard.octave,
+            note: Keyboard.lastNote
+          })
+        })
       }
     }
   }
 
   function endNote(noteIndex) {
     if (Keyboard.isActive && Keyboard.target !== null && noteIndex !== undefined) {
+
+
+
       Keyboard.element.querySelector('rect[data-index="'+noteIndex+'"]').classList.remove('note-playing')
 
       var note = Tone.Frequency((Keyboard.octave*12)+noteIndex, 'midi')
@@ -654,6 +680,16 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
         Keyboard.target.toneComponent.triggerRelease( note, '+0' ).triggerRelease()
         currentNotes[note] = undefined
+
+        //call noteend callbacks
+        Keyboard._onNoteEnd.forEach( function(callback) {
+          callback({
+            name: Keyboard.target.name,
+            target: Keyboard.target.toneComponent,
+            octave: Keyboard.octave,
+            note: Keyboard.lastNote
+          })
+        })
       }
 
     }
@@ -1640,6 +1676,15 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// API
     return ToneEditor
   }
 
+  // listen for events
+  ToneEditor.on = function(eventName, callback) {
+    if (eventName === 'notestart') {
+      Keyboard._onNoteStart.push(callback)
+    } else if (eventName === 'noteend') {
+      Keyboard._onNoteEnd.push(callback)
+    }
+  }
+
   module.exports = ToneEditor
 }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__))
@@ -1650,7 +1695,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// API
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0),__webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = function(utils, ToneEditor, Keyboard) {
-  startListeners = function() {
+  var startListeners = function() {
 
     // DELEGATED CLICK LISTENERS
     ToneEditor.element.addEventListener('click', function(e){

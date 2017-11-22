@@ -1,5 +1,5 @@
 define( ['./Utils','ToneEditor', 'Keyboard'], function(utils, ToneEditor, Keyboard) {
-  startListeners = function() {
+  var startListeners = function() {
 
     // DELEGATED CLICK LISTENERS
     ToneEditor.element.addEventListener('click', function(e){

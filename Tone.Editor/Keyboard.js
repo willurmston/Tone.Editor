@@ -77,7 +77,11 @@ define('Keyboard', ['Utils', 'ToneEditor','State'], function(utils, ToneEditor, 
       if (this.target) this.target.keyboardTargetButton.classList.remove('active')
 
       return this
-    }
+    },
+
+    // EVENTS
+    _onNoteStart: [],
+    _onNoteEnd: []
   }
 
   // maps e.keyCode values to noteIndex
@@ -107,27 +111,43 @@ define('Keyboard', ['Utils', 'ToneEditor','State'], function(utils, ToneEditor, 
   // note name textbox
   var noteNameEl = Tone.Editor.element.querySelector('.note-name')
 
-
+  Keyboard.lastNote = undefined
 
   // keys that are down
   var currentNotes = {}
 
   function startNote(noteIndex) {
     if (Keyboard.isActive && Keyboard.target !== null && noteIndex !== undefined ) {
-      Keyboard.element.querySelector('rect[data-index="'+noteIndex+'"]').classList.add('note-playing')
 
       var note = Tone.Frequency((Keyboard.octave*12)+noteIndex, 'midi')
+
+      Keyboard.lastNote = note
+
+      Keyboard.element.querySelector('rect[data-index="'+noteIndex+'"]').classList.add('note-playing')
 
       if (currentNotes[note] === undefined) {
         currentNotes[note] = true
         noteNameEl.innerHTML = note.toNote() +'<br>'+ note.toMidi()
         Keyboard.target.toneComponent.triggerAttack( note )
+
+        //call notestart callbacks
+        Keyboard._onNoteStart.forEach( function(callback) {
+          callback({
+            name: Keyboard.target.name,
+            target: Keyboard.target.toneComponent,
+            octave: Keyboard.octave,
+            note: Keyboard.lastNote
+          })
+        })
       }
     }
   }
 
   function endNote(noteIndex) {
     if (Keyboard.isActive && Keyboard.target !== null && noteIndex !== undefined) {
+
+
+
       Keyboard.element.querySelector('rect[data-index="'+noteIndex+'"]').classList.remove('note-playing')
 
       var note = Tone.Frequency((Keyboard.octave*12)+noteIndex, 'midi')
@@ -137,6 +157,16 @@ define('Keyboard', ['Utils', 'ToneEditor','State'], function(utils, ToneEditor, 
 
         Keyboard.target.toneComponent.triggerRelease( note, '+0' ).triggerRelease()
         currentNotes[note] = undefined
+
+        //call noteend callbacks
+        Keyboard._onNoteEnd.forEach( function(callback) {
+          callback({
+            name: Keyboard.target.name,
+            target: Keyboard.target.toneComponent,
+            octave: Keyboard.octave,
+            note: Keyboard.lastNote
+          })
+        })
       }
 
     }

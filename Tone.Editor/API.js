@@ -123,5 +123,14 @@ define(['Utils','ToneEditor','State', 'Templates/Components/Component', 'Keyboar
     return ToneEditor
   }
 
+  // listen for events
+  ToneEditor.on = function(eventName, callback) {
+    if (eventName === 'notestart') {
+      Keyboard._onNoteStart.push(callback)
+    } else if (eventName === 'noteend') {
+      Keyboard._onNoteEnd.push(callback)
+    }
+  }
+
   module.exports = ToneEditor
 })

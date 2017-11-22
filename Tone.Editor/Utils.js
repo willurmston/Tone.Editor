@@ -168,6 +168,12 @@ define('Utils', ['./Utils/Classify', './Utils/GetMeta', './Utils/isSignal'], fun
 
   utils.merge = require('Utils/deepmerge')
 
+  utils.classify = classify
+
+  utils.getMeta = getMeta
+
+  utils.isSignal = isSignal
+
   window.utils = utils
   module.exports = utils
 
